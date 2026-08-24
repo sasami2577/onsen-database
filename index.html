@@ -1,0 +1,6 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>温泉データベース</title><link rel="stylesheet" href="styles.css"></head><body>
+<header><div class="brand"><span>♨</span><div><b>温泉データベース</b><small>みんなでつくる温泉情報</small></div></div><button id="add">＋ 温泉を追加</button></header>
+<section class="hero"><h1>行きたい温泉を探そう</h1><p>全国の温泉施設を、みんなで記録・共有。</p><input id="search" placeholder="温泉名・地域で検索"></section>
+<main><div class="title"><h2>温泉一覧</h2><span id="count"></span></div><div id="cards"></div></main>
+<div id="modal" class="hidden"><div class="dialog"><button id="close">×</button><h2>温泉を追加</h2><form id="form"><label>温泉名<input id="name" required></label><label>地域<input id="area"></label><label>料金<input id="price" type="number"></label><label>メモ<textarea id="note"></textarea></label><button>登録する</button></form></div></div>
+<script src="app.js"></script></body></html>
