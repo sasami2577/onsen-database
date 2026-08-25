@@ -1,5 +1,5 @@
-const SUPABASE_URL = "ここにSupabaseのProject URL";
-const SUPABASE_ANON_KEY = "ここにSupabaseのanon public key";
+constSUPABASE_URL="https://kquwafghdaopeeqsalxm.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_6jb3CQIiwJf7dR1eEGMStq_MLcoJVeM";
 
 const db = (!SUPABASE_URL.includes("ここに") && !SUPABASE_ANON_KEY.includes("ここに"))
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
@@ -23,7 +23,6 @@ function render(){
   const count=$("#count");
   const cards=$("#cards");
   if(count) count.textContent=`${list.length}件`;
-
   if(!cards) return;
 
   if(!list.length){
@@ -54,8 +53,6 @@ function showDetail(id){
     x.closedDays ? `定休日：${x.closedDays}` : "",
     x.price !== "" && x.price != null ? `大人料金：¥${Number(x.price).toLocaleString()}` : "",
     x.springType ? `泉質：${x.springType}` : "",
-    x.sauna?.length ? `サウナ：${x.sauna.join("、")}` : "",
-    x.bath?.length ? `浴場：${x.bath.join("、")}` : "",
     x.note || ""
   ].filter(Boolean).join("\n"));
 }
