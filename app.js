@@ -1,4 +1,4 @@
-const const SUPABASE_URL = "https://kquwafghdaopeeqsalxm.supabase.co";
+const SUPABASE_URL = "https://kquwafghdaopeeqsalxm.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_6jb3CQIiwJf7dR1eEGMStQ_MLcoJVeM";
 
 const db = (!SUPABASE_URL.includes("ここに") && !SUPABASE_ANON_KEY.includes("ここに"))
