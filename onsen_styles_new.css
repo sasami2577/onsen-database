@@ -1,0 +1,31 @@
+/* 温泉データベース 新styles.css */
+:root{--bg:#f5f8f6;--card:#fff;--text:#26332f;--muted:#6d7a75;--line:#dfe7e3;--accent:#2f8f7a;--accent-dark:#247462;--accent-light:#e7f3ef;--danger:#c85c5c;--shadow:0 8px 24px rgba(30,60,50,.08)}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg)}
+body{min-height:100%;margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:8px;min-width:0;font-size:18px}.brand span{font-size:28px;line-height:1}.brand b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+header button,#add{border:1px solid var(--line);border-radius:999px;padding:9px 15px;background:#fff;color:var(--text);font-weight:700}#add{color:#fff;background:var(--accent);border-color:var(--accent)}
+.hero{padding:34px 16px 22px}.hero h1{margin:0 0 8px;font-size:clamp(30px,8vw,52px);line-height:1.15}.hero p{margin:0 0 18px;color:var(--muted)}
+#search{width:100%;min-height:48px;padding:11px 15px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:var(--shadow)}
+main{width:min(100%,1000px);margin:0 auto;padding:0 16px 40px}.title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 14px}.title h2{margin:0;font-size:24px}.status{color:var(--muted);font-size:13px}
+#cards{display:grid;grid-template-columns:1fr;gap:14px}.card{padding:18px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.card h3{margin:0 0 7px;font-size:21px}.card p{margin:5px 0}
+.hidden{display:none!important}
+#modal{position:fixed;inset:0;z-index:100;overflow:auto;padding:16px;background:rgba(20,30,27,.48)}
+#modal .dialog{width:min(100%,760px);max-height:calc(100dvh - 32px);margin:0 auto;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:15px 18px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line)}
+.close{width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:#fff;font-size:24px}
+#form{padding:18px}#form section{margin:0 0 24px}#form section h3{margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent-light);font-size:21px}
+label{display:block;margin:0 0 13px;font-weight:700}label em{color:var(--danger);font-size:12px;font-style:normal}
+input[type="text"],input[type="tel"],input[type="url"],input[type="number"],input[type="time"],select,textarea{width:100%;min-height:46px;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--text)}
+textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,143,122,.13);outline:none}
+fieldset{margin:0 0 16px;padding:14px;border:1px solid var(--line);border-radius:14px}fieldset legend{padding:0 7px;color:var(--muted);font-weight:700}fieldset label{display:inline-flex;align-items:center;gap:7px;margin:5px 14px 5px 0;font-weight:500}
+input[type="checkbox"],input[type="radio"]{width:19px;height:19px;accent-color:var(--accent)}
+.rental-row{display:grid;grid-template-columns:1fr 100px 42px;gap:8px;align-items:center;margin-bottom:8px}.rental-row input{margin:0}.remove-rental{width:42px;height:42px;border:1px solid #ead1d1;border-radius:10px;background:#fff;color:var(--danger);font-size:22px}
+#addRental{width:100%;min-height:44px;border:1px dashed var(--accent);border-radius:11px;background:var(--accent-light);color:var(--accent-dark);font-weight:700}
+.submit,button[type="submit"]{width:100%;min-height:50px;border:0;border-radius:13px;background:var(--accent);color:#fff;font-weight:800;font-size:17px}
+#map,.map{width:100%;min-height:300px;margin:16px 0;overflow:hidden;border:1px solid var(--line);border-radius:18px}
+@media(max-width:480px){header{padding:11px 12px}.brand{font-size:15px}.brand span{font-size:24px}header button,#add{padding:8px 11px;font-size:14px}.hero{padding:26px 12px 18px}main{padding:0 12px 30px}#form{padding:14px}#modal{padding:8px}#modal .dialog{max-height:calc(100dvh - 16px);border-radius:16px}.rental-row{grid-template-columns:1fr 80px 38px;gap:6px}}
+@media(min-width:700px){.hero{padding:48px 24px 30px}main{padding-left:24px;padding-right:24px}#cards{grid-template-columns:repeat(2,minmax(0,1fr))}#form{padding:24px}}
+@media(min-width:1000px){#cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
