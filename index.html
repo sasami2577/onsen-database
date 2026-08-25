@@ -1,69 +1,91 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>温泉データベース</title><link rel="stylesheet" href="styles.css"></head><body>
-<header><div class="brand"><span>♨</span><div><b>温泉データベース</b><small>みんなでつくる温泉情報</small></div></div><button id="add">＋ 温泉を追加</button></header>
-<section class="hero"><h1>行きたい温泉を探そう</h1><p>全国の温泉施設を、みんなで記録・共有。</p><input id="search" placeholder="温泉名・地域で検索"></section>
-<main><div class="title"><h2>温泉一覧</h2><span id="count"></span></div><div id="cards"></div></main>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>温泉データベース</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="brand"><span>♨</span><div><b>温泉データベース</b><small>みんなでつくる温泉情報</small></div></div>
+  <button id="add" type="button">＋ 温泉を追加</button>
+</header>
+<section class="hero">
+  <h1>行きたい温泉を探そう</h1>
+  <p>全国の温泉施設を、みんなで記録・共有。</p>
+  <input id="search" placeholder="温泉名・地域で検索" autocomplete="off">
+</section>
+<main>
+  <div class="title"><h2>温泉一覧</h2><span id="count"></span></div>
+  <div id="status" class="status"></div>
+  <div id="cards"></div>
+</main>
 <div id="modal" class="hidden" aria-hidden="true">
-<div class="dialog" role="dialog" aria-modal="true"><button id="close" class="close" type="button">×</button>
-<div class="modal-head"><span class="modal-icon">♨</span><div><h2>温泉を追加</h2><p>分かる項目だけ入力できます。</p></div></div>
+<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<button id="close" class="close" type="button" aria-label="閉じる">×</button>
+<div class="modal-head"><span class="modal-icon">♨</span><div><h2 id="modalTitle">温泉を追加</h2><p>分かる項目だけ入力できます。</p></div></div>
 <form id="form">
 <section class="form-section"><h3>基本情報</h3><div class="grid two">
 <label class="full">温泉名 <em>必須</em><input id="name" required maxlength="100" placeholder="例：○○温泉"></label>
-<label>都道府県<select id="prefecture"><option value="">選択してください</option><option>北海道</option><option>青森県</option><option>岩手県</option><option>宮城県</option><option>秋田県</option><option>山形県</option><option>福島県</option><option>茨城県</option><option>栃木県</option><option>群馬県</option><option>埼玉県</option><option>千葉県</option><option>東京都</option><option>神奈川県</option><option>新潟県</option><option>富山県</option><option>石川県</option><option>福井県</option><option>山梨県</option><option>長野県</option><option>岐阜県</option><option>静岡県</option><option>愛知県</option><option>三重県</option><option>滋賀県</option><option>京都府</option><option>大阪府</option><option>兵庫県</option><option>奈良県</option><option>和歌山県</option><option>鳥取県</option><option>島根県</option><option>岡山県</option><option>広島県</option><option>山口県</option><option>徳島県</option><option>香川県</option><option>愛媛県</option><option>高知県</option><option>福岡県</option><option>佐賀県</option><option>長崎県</option><option>熊本県</option><option>大分県</option><option>宮崎県</option><option>鹿児島県</option><option>沖縄県</option></select></label>
+<label>都道府県<select id="prefecture"><option value="">選択してください</option><option>北海道</option><option>青森県</option><option>岩手県</option><option>宮城県</option><option>秋田県</option><option>山形県</option><option>福島県</option><option>茨城県</option><option>栃木県</option><option>群馬県</option><option>埼玉県</option><option>千葉県</option><option>東京都</option><option>神奈川県</option><option>新潟県</option><option>富山県</option><option>石川県</option><option>福井県</option><option>山梨県</option><option>長野県</option><option>岐阜県</option><option>静岡県</option><option>愛知県</option><option>三重県</option><option>滋賀県</option><option>京都府</option><option>大阪府</option><option>兵庫県</option><option>奈良県</option><option>和歌山県</option><option>鳥取県</option><option>島根県</option><option>岡山県</option><option>広島県</option><option>山口県</option><option>徳島県</option><option>香川県</option><option>愛媛県</option><option>高知県</option><option>福岡県</option><option>佐賀県</option><option>長崎県</option><option>熊本県</option><option>大分県</option><option>宮崎県</option><option>鹿児島県</option><option>沖縄県</select></label>
 <label>市区町村・地域<input id="area" placeholder="例：草津町"></label>
 <label class="full">住所<input id="address" placeholder="例：○○県○○町○○1-2-3"></label>
 <label>施設業態<select id="businessType"><option value="">選択してください</option><option>温泉旅館</option><option>日帰り温泉</option><option>銭湯・公衆浴場</option><option>ホテル</option><option>スーパー銭湯</option><option>その他</option></select></label>
-<label>電話番号<input id="phone" type="tel" placeholder="例：0279-00-0000"></label></div></section><section class="form-section"><h3>営業時間・定休日</h3><div class="grid two">
-<label>営業時間（開始）<input id="openTime" type="time"></label>
-<label>営業時間（終了）<input id="closeTime" type="time"></label>
-<label>最終受付<input id="lastEntry" type="time"></label>
-<label>定休日<input id="closedDays" maxlength="100" placeholder="例：毎週火曜日"></label>
-<label class="full">営業時間の補足<textarea id="hoursNote" rows="2" maxlength="300" placeholder="例：季節により変更"></textarea></label>
+<label>電話番号<input id="phone" type="tel"></label>
 </div></section>
-<section class="form-section"><h3>利用・料金</h3><div class="grid two"><fieldset class="full"><legend>利用条件</legend><div class="checks"><label><input type="checkbox" name="usage" value="日帰り入浴">日帰り入浴</label><label><input type="checkbox" name="usage" value="宿泊">宿泊</label><label><input type="checkbox" name="usage" value="貸切風呂">貸切風呂</label><label><input type="checkbox" name="usage" value="家族風呂">家族風呂</label><label><input type="checkbox" name="usage" value="立ち寄り">立ち寄り</label></div></fieldset>
-<label>大人料金（円）<input id="price" type="number" min="0" step="1" inputmode="numeric" placeholder="例：800"></label>
-<label>子ども料金（円）<input id="childPrice" type="number" min="0" step="1" inputmode="numeric" placeholder="例：400"></label>
-<label>その他料金（円）<input id="otherPrice" type="number" min="0" step="1" inputmode="numeric" placeholder="例：1200"></label>
-<label>料金区分<select id="priceType"><option value="">選択してください</option><option>入浴のみ</option><option>入浴＋サウナ</option><option>入浴＋タオル</option><option>その他</option></select></label>
-<label class="full">料金の補足<textarea id="priceNote" rows="2" maxlength="300" placeholder="例：大人平日。タオル別料金"></textarea></label>
-<fieldset class="full"><legend>決済方法</legend><div class="checks"><label><input type="checkbox" name="payment" value="現金">現金</label><label><input type="checkbox" name="payment" value="クレジットカード">クレジットカード</label><label><input type="checkbox" name="payment" value="電子マネー">電子マネー</label><label><input type="checkbox" name="payment" value="QRコード決済">QRコード決済</label><label><input type="checkbox" name="payment" value="その他">その他</label></div></fieldset></div></section>
+<section class="form-section"><h3>営業時間・定休日</h3><div class="grid two">
+<label>営業時間（開始）<input id="openTime" type="time"></label><label>営業時間（終了）<input id="closeTime" type="time"></label>
+<label>最終受付<input id="lastEntry" type="time"></label><label>定休日<input id="closedDays"></label>
+<label class="full">営業時間の補足<textarea id="hoursNote" rows="2"></textarea></label>
+</div></section>
+<section class="form-section"><h3>利用・料金</h3><div class="grid two">
+<fieldset class="full"><legend>利用条件</legend><div class="checks">
+<label><input type="checkbox" name="usage" value="日帰り入浴">日帰り入浴</label><label><input type="checkbox" name="usage" value="宿泊">宿泊</label><label><input type="checkbox" name="usage" value="貸切風呂">貸切風呂</label><label><input type="checkbox" name="usage" value="家族風呂">家族風呂</label><label><input type="checkbox" name="usage" value="立ち寄り">立ち寄り</label>
+</div></fieldset>
+<label>大人料金（円）<input id="price" type="number" min="0"></label><label>子ども料金（円）<input id="childPrice" type="number" min="0"></label>
+<label>その他料金（円）<input id="otherPrice" type="number" min="0"></label><label>料金区分<select id="priceType"><option value="">選択してください</option><option>入浴のみ</option><option>入浴＋サウナ</option><option>入浴＋タオル</option><option>その他</option></select></label>
+<label class="full">料金の補足<textarea id="priceNote" rows="2"></textarea></label>
+<fieldset class="full"><legend>決済方法</legend><div class="checks"><label><input type="checkbox" name="payment" value="現金">現金</label><label><input type="checkbox" name="payment" value="クレジットカード">クレジットカード</label><label><input type="checkbox" name="payment" value="電子マネー">電子マネー</label><label><input type="checkbox" name="payment" value="QRコード決済">QRコード決済</label></div></fieldset>
+</div></section>
 <section class="form-section"><h3>公式情報・SNS</h3><div class="grid two">
-<label>公式サイト<input id="website" type="url" placeholder="https://example.com"></label><label>Instagram<input id="instagram" type="url" placeholder="https://instagram.com/..."></label><label>X（旧Twitter）<input id="twitter" type="url" placeholder="https://x.com/..."></label><label>Facebook<input id="facebook" type="url" placeholder="https://facebook.com/..."></label></div></section>
-<section class="form-section"><h3>浴場・サウナ</h3><fieldset><legend>お風呂の種類</legend><div class="checks"><label><input type="checkbox" name="bath" value="内湯">内湯</label><label><input type="checkbox" name="bath" value="露天風呂">露天風呂</label><label><input type="checkbox" name="bath" value="寝湯">寝湯</label><label><input type="checkbox" name="bath" value="壺湯">壺湯</label><label><input type="checkbox" name="bath" value="炭酸泉">炭酸泉</label><label><input type="checkbox" name="bath" value="電気風呂">電気風呂</label><label><input type="checkbox" name="bath" value="ジェットバス">ジェットバス</label>
-            <label><input type="checkbox" name="bath" value="打たせ湯">打たせ湯</label>
-            <label><input type="checkbox" name="bath" value="高温湯">高温湯</label>
-            <label><input type="checkbox" name="bath" value="ぬる湯">ぬる湯</label><label><input type="checkbox" name="bath" value="水風呂">水風呂</label></div></fieldset>
-<div class="grid two compact-top">
-          <label>サウナ・水風呂の補足
-            <input id="saunaNote" maxlength="300" placeholder="例：セルフロウリュ可、水風呂15℃前後">
-          </label>
-          <label>泉質の補足
-            <input id="springNote" maxlength="300" placeholder="例：源泉かけ流し、加温あり">
-          </label><fieldset><legend>サウナの種類（複数選択）</legend><div class="checks">
-<label><input type="checkbox" name="sauna" value="ドライサウナ">ドライサウナ</label><label><input type="checkbox" name="sauna" value="フィンランド式">フィンランド式</label>
-<label><input type="checkbox" name="sauna" value="ロウリュ">ロウリュ</label><label><input type="checkbox" name="sauna" value="オートロウリュ">オートロウリュ</label>
-<label><input type="checkbox" name="sauna" value="セルフロウリュ">セルフロウリュ</label><label><input type="checkbox" name="sauna" value="塩サウナ">塩サウナ</label>
-<label><input type="checkbox" name="sauna" value="スチームサウナ">スチームサウナ</label><label><input type="checkbox" name="sauna" value="ミストサウナ">ミストサウナ</label>
-<label><input type="checkbox" name="sauna" value="遠赤外線サウナ">遠赤外線サウナ</label><label><input type="checkbox" name="sauna" value="その他">その他</label>
+<label>公式サイト<input id="website" type="url"></label><label>Instagram<input id="instagram" type="url"></label><label>X（旧Twitter）<input id="twitter" type="url"></label><label>Facebook<input id="facebook" type="url"></label>
+</div></section>
+<section class="form-section"><h3>お風呂・サウナ</h3>
+<fieldset><legend>お風呂の種類</legend><div class="checks">
+<label><input type="checkbox" name="bath" value="内湯">内湯</label><label><input type="checkbox" name="bath" value="露天風呂">露天風呂</label><label><input type="checkbox" name="bath" value="寝湯">寝湯</label><label><input type="checkbox" name="bath" value="壺湯">壺湯</label><label><input type="checkbox" name="bath" value="炭酸泉">炭酸泉</label><label><input type="checkbox" name="bath" value="電気風呂">電気風呂</label><label><input type="checkbox" name="bath" value="ジェットバス">ジェットバス</label><label><input type="checkbox" name="bath" value="打たせ湯">打たせ湯</label><label><input type="checkbox" name="bath" value="高温湯">高温湯</label><label><input type="checkbox" name="bath" value="ぬる湯">ぬる湯</label><label><input type="checkbox" name="bath" value="水風呂">水風呂</label>
+</div></fieldset>
+<div class="grid two compact-top"><label>サウナ・水風呂の補足<input id="saunaNote"></label><label>浴場の補足<input id="bathNote"></label></div>
+<fieldset class="compact-top"><legend>サウナの種類</legend><div class="checks">
+<label><input type="checkbox" name="sauna" value="ドライサウナ">ドライサウナ</label><label><input type="checkbox" name="sauna" value="フィンランド式">フィンランド式</label><label><input type="checkbox" name="sauna" value="ロウリュ">ロウリュ</label><label><input type="checkbox" name="sauna" value="オートロウリュ">オートロウリュ</label><label><input type="checkbox" name="sauna" value="セルフロウリュ">セルフロウリュ</label><label><input type="checkbox" name="sauna" value="塩サウナ">塩サウナ</label><label><input type="checkbox" name="sauna" value="スチームサウナ">スチームサウナ</label><label><input type="checkbox" name="sauna" value="ミストサウナ">ミストサウナ</label><label><input type="checkbox" name="sauna" value="遠赤外線サウナ">遠赤外線サウナ</label><label><input type="checkbox" name="sauna" value="その他">その他</label>
 </div></fieldset>
 <div class="grid two compact-top">
-<label>サウナ <select id="saunaStatus"><option>不明</option><option>あり</option><option>なし</option></select></label>
-<label>サウナ温度（℃）<input id="saunaTemp" type="number" min="0" max="150" step="1" inputmode="numeric" placeholder="例：90"></label>
-<label>水風呂 <select id="coldBathStatus"><option>不明</option><option>あり</option><option>なし</option></select></label>
-<label>水風呂温度（℃）<input id="coldBathTemp" type="number" min="0" max="50" step="1" inputmode="numeric" placeholder="例：16"></label>
+<label>サウナ<select id="saunaStatus"><option>不明</option><option>あり</option><option>なし</option></select></label><label>サウナ温度（℃）<input id="saunaTemp" type="number"></label>
+<label>水風呂<select id="coldBathStatus"><option>不明</option><option>あり</option><option>なし</option></select></label><label>水風呂温度（℃）<input id="coldBathTemp" type="number"></label>
 </div>
-<fieldset><legend>設備の有無</legend><div class="status-list"><div><span>外気浴</span><label><input type="radio" name="outdoor" value="あり">あり</label><label><input type="radio" name="outdoor" value="なし">なし</label><label><input type="radio" name="outdoor" value="不明" checked>不明</label></div><div><span>休憩スペース</span><label><input type="radio" name="rest" value="あり">あり</label><label><input type="radio" name="rest" value="なし">なし</label><label><input type="radio" name="rest" value="不明" checked>不明</label></div><div><span>シャンプー等</span><label><input type="radio" name="amenities" value="あり">あり</label><label><input type="radio" name="amenities" value="なし">なし</label><label><input type="radio" name="amenities" value="不明" checked>不明</label></div><div><span>ドライヤー</span><label><input type="radio" name="dryer" value="あり">あり</label><label><input type="radio" name="dryer" value="なし">なし</label><label><input type="radio" name="dryer" value="不明" checked>不明</label></div><div><span>Wi-Fi</span><label><input type="radio" name="wifi" value="あり">あり</label><label><input type="radio" name="wifi" value="なし">なし</label><label><input type="radio" name="wifi" value="不明" checked>不明</label></div><div><span>駐車場</span><label><input type="radio" name="parking" value="あり">あり</label><label><input type="radio" name="parking" value="なし">なし</label><label><input type="radio" name="parking" value="不明" checked>不明</label></div>
+<fieldset class="compact-top"><legend>設備の有無</legend><div class="status-list">
+<div><span>外気浴</span><label><input type="radio" name="outdoor" value="あり">あり</label><label><input type="radio" name="outdoor" value="なし">なし</label><label><input type="radio" name="outdoor" value="不明" checked>不明</label></div>
+<div><span>休憩スペース</span><label><input type="radio" name="rest" value="あり">あり</label><label><input type="radio" name="rest" value="なし">なし</label><label><input type="radio" name="rest" value="不明" checked>不明</label></div>
+<div><span>シャンプー等</span><label><input type="radio" name="amenities" value="あり">あり</label><label><input type="radio" name="amenities" value="なし">なし</label><label><input type="radio" name="amenities" value="不明" checked>不明</label></div>
+<div><span>ドライヤー</span><label><input type="radio" name="dryer" value="あり">あり</label><label><input type="radio" name="dryer" value="なし">なし</label><label><input type="radio" name="dryer" value="不明" checked>不明</label></div>
+<div><span>Wi-Fi</span><label><input type="radio" name="wifi" value="あり">あり</label><label><input type="radio" name="wifi" value="なし">なし</label><label><input type="radio" name="wifi" value="不明" checked>不明</label></div>
+<div><span>駐車場</span><label><input type="radio" name="parking" value="あり">あり</label><label><input type="radio" name="parking" value="なし">なし</label><label><input type="radio" name="parking" value="不明" checked>不明</label></div>
 <div><span>貴重品ロッカー</span><label><input type="radio" name="locker" value="あり">あり</label><label><input type="radio" name="locker" value="なし">なし</label><label><input type="radio" name="locker" value="不明" checked>不明</label></div>
 <div><span>食事処</span><label><input type="radio" name="restaurant" value="あり">あり</label><label><input type="radio" name="restaurant" value="なし">なし</label><label><input type="radio" name="restaurant" value="不明" checked>不明</label></div>
-<div><span>バリアフリー</span><label><input type="radio" name="barrierFree" value="あり">あり</label><label><input type="radio" name="barrierFree" value="なし">なし</label><label><input type="radio" name="barrierFree" value="不明" checked>不明</label></div></div></fieldset></div></section>
-<section class="form-section"><h3>泉質・レンタル</h3><div class="grid two"><label>泉質<select id="springType"><option value="">選択してください</option><option>単純温泉</option><option>塩化物泉</option><option>炭酸水素塩泉</option><option>硫酸塩泉</option><option>二酸化炭素泉</option><option>含鉄泉</option><option>酸性泉</option><option>含よう素泉</option><option>硫黄泉</option><option>放射能泉</option><option>その他</option></select></label><label>泉温（℃）<input id="temperature" type="number" min="0" max="100" step="0.1" placeholder="例：42"></label>
-<label>源泉温度（℃）<input id="sourceTemp" type="number" min="0" max="150" step="0.1" inputmode="decimal" placeholder="例：48.5"></label>
-<label>加温<select id="heating"><option>不明</option><option>あり</option><option>なし</option></select></label>
-<label>加水<select id="dilution"><option>不明</option><option>あり</option><option>なし</option></select></label>
-<label>循環<select id="circulation"><option>不明</option><option>あり</option><option>なし</option></select></label>
-<label>消毒<select id="disinfection"><option>不明</option><option>あり</option><option>なし</option></select></label>
-<label class="full">泉質の補足<input id="springNote" maxlength="500" placeholder="例：源泉かけ流し、硫黄の香りあり"></label></div>
-<fieldset class="compact-top"><legend>レンタル品</legend><div id="rentalRows"></div><button type="button" id="addRental" class="secondary">＋ レンタル品を追加</button></fieldset></section>
-<section class="form-section"><h3>位置情報・メモ</h3><div class="grid two"><label>緯度<input id="lat" type="number" step="any" placeholder="例：36.6208"></label><label>経度<input id="lng" type="number" step="any" placeholder="例：138.5960"></label><label class="full">メモ・施設紹介<textarea id="note" rows="5" maxlength="2000" placeholder="施設の特徴、注意点、営業時間など"></textarea></label></div></section>
+<div><span>バリアフリー</span><label><input type="radio" name="barrierFree" value="あり">あり</label><label><input type="radio" name="barrierFree" value="なし">なし</label><label><input type="radio" name="barrierFree" value="不明" checked>不明</label></div>
+</div></fieldset>
+</section>
+<section class="form-section"><h3>泉質・レンタル</h3><div class="grid two">
+<label>泉質<select id="springType"><option value="">選択してください</option><option>単純温泉</option><option>塩化物泉</option><option>炭酸水素塩泉</option><option>硫酸塩泉</option><option>二酸化炭素泉</option><option>含鉄泉</option><option>酸性泉</option><option>含よう素泉</option><option>硫黄泉</option><option>放射能泉</option><option>その他</option></select></label>
+<label>泉温（℃）<input id="temperature" type="number"></label><label>源泉温度（℃）<input id="sourceTemp" type="number"></label>
+<label>加温<select id="heating"><option>不明</option><option>あり</option><option>なし</option></select></label><label>加水<select id="dilution"><option>不明</option><option>あり</option><option>なし</option></select></label><label>循環<select id="circulation"><option>不明</option><option>あり</option><option>なし</option></select></label><label>消毒<select id="disinfection"><option>不明</option><option>あり</option><option>なし</option></select></label>
+<label class="full">泉質の詳細・補足<textarea id="springDetail" rows="3"></textarea></label>
+</div>
+<fieldset class="compact-top"><legend>レンタル品</legend><div id="rentalRows"></div><button type="button" id="addRental" class="secondary">＋ レンタル品を追加</button></fieldset>
+</section>
+<section class="form-section"><h3>位置情報・メモ</h3><div class="grid two"><label>緯度<input id="lat" type="number" step="any"></label><label>経度<input id="lng" type="number" step="any"></label><label class="full">メモ・施設紹介<textarea id="note" rows="5"></textarea></label></div></section>
 <div class="form-actions"><button type="button" id="cancel" class="secondary">キャンセル</button><button type="submit" class="primary submit">登録する</button></div>
 </form></div></div>
-<script src="app.js"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+</body></html>
