@@ -5,6 +5,7 @@ body.modal-open{overflow:hidden}
 #modal .dialog{max-height:calc(100dvh - 20px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
 @supports (-webkit-touch-callout:none){#modal .dialog{max-height:calc(100svh - 20px);overflow-y:scroll;-webkit-overflow-scrolling:touch}}
 @media(max-width:600px){#modal{padding:10px}#modal .dialog{max-height:calc(100dvh - 20px);padding-bottom:30px}}
+
 /* ========================================
    温泉データベース 基本デザイン
    ここから追加
