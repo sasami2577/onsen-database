@@ -9,6 +9,90 @@ const $ = s => document.querySelector(s);
 const checked = n => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(x=>x.value);
 const radio = n => document.querySelector(`input[name="${n}"]:checked`)?.value || "不明";
 
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+}
+
+function render(){
+  const q=($("#search")?.value || "").trim().toLowerCase();
+  const list=onsenList.filter(x=>{
+    const text=[x.name,x.prefecture,x.area,x.address].filter(Boolean).join(" ").toLowerCase();
+    return text.includes(q);
+  });
+
+  const count=$("#count");
+  const cards=$("#cards");
+  if(count) count.textContent=`${list.length}件`;
+
+  if(!cards) return;
+
+  if(!list.length){
+    cards.innerHTML='<p class="empty">まだ登録されている温泉がありません。</p>';
+    return;
+  }
+
+  cards.innerHTML=list.map(x=>`
+    <article class="card">
+      <span class="badge">♨ 温泉</span>
+      <h3>${esc(x.name)}</h3>
+      <div class="area">📍 ${esc(x.prefecture || x.area || "地域未登録")}${x.area && x.prefecture ? " " + esc(x.area) : ""}</div>
+      <div class="price">${x.price !== "" && x.price != null ? "¥" + Number(x.price).toLocaleString() : "料金不明"} <small>入浴料金</small></div>
+      <div class="note">${esc(x.note || "")}</div>
+      <button type="button" class="detail" data-onsen-id="${esc(x.id)}">詳細を見る</button>
+    </article>
+  `).join("");
+}
+
+function showDetail(id){
+  const x=onsenList.find(v=>String(v.id)===String(id));
+  if(!x) return;
+  alert([
+    x.name,
+    `${x.prefecture||""} ${x.area||""}`.trim(),
+    x.businessType ? `業態：${x.businessType}` : "",
+    x.openTime && x.closeTime ? `営業時間：${x.openTime}〜${x.closeTime}` : "",
+    x.closedDays ? `定休日：${x.closedDays}` : "",
+    x.price !== "" && x.price != null ? `大人料金：¥${Number(x.price).toLocaleString()}` : "",
+    x.springType ? `泉質：${x.springType}` : "",
+    x.sauna?.length ? `サウナ：${x.sauna.join("、")}` : "",
+    x.bath?.length ? `浴場：${x.bath.join("、")}` : "",
+    x.note || ""
+  ].filter(Boolean).join("\n"));
+}
+
+function openModal(){
+  const modal=$("#modal");
+  if(!modal) return;
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden","false");
+  document.body.classList.add("modal-open");
+  setTimeout(()=>$("#name")?.focus({preventScroll:true}),50);
+}
+
+function closeModal(){
+  const modal=$("#modal");
+  if(!modal) return;
+  modal.classList.add("hidden");
+  modal.setAttribute("aria-hidden","true");
+  document.body.classList.remove("modal-open");
+}
+
+$("#search")?.addEventListener("input",render);
+$("#add")?.addEventListener("click",openModal);
+$("#close")?.addEventListener("click",closeModal);
+$("#cancel")?.addEventListener("click",closeModal);
+$("#modal")?.addEventListener("click",e=>{
+  if(e.target.id==="modal") closeModal();
+});
+$("#cards")?.addEventListener("click",e=>{
+  const button=e.target.closest(".detail");
+  if(button) showDetail(button.dataset.onsenId);
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape") closeModal();
+});
+
+
 function collectFormData(){
   const get=id=>$(id)?.value ?? "";
   const rentals=[...document.querySelectorAll(".rental-row")].map(r=>({

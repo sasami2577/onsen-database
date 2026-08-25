@@ -13,6 +13,4 @@ body.modal-open{overflow:visible}.primary{background:#208754;color:#fff}.seconda
 .dialog{max-height:94vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 @media(max-width:600px){.dialog{max-height:calc(100dvh - 20px);padding-bottom:32px}.form-section{scroll-margin-top:12px}}
 
-
-/* モーダルを閉じた状態では確実に非表示 */
 #modal.hidden{display:none}
