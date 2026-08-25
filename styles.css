@@ -5,3 +5,485 @@ body.modal-open{overflow:hidden}
 #modal .dialog{max-height:calc(100dvh - 20px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
 @supports (-webkit-touch-callout:none){#modal .dialog{max-height:calc(100svh - 20px);overflow-y:scroll;-webkit-overflow-scrolling:touch}}
 @media(max-width:600px){#modal{padding:10px}#modal .dialog{max-height:calc(100dvh - 20px);padding-bottom:30px}}
+/* ========================================
+   温泉データベース 基本デザイン
+   ここから追加
+======================================== */
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",
+    "Hiragino Sans","Yu Gothic",YuGothic,Meiryo,sans-serif;
+  color:#263238;
+  background:#f5f8f6;
+  line-height:1.6;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+/* ========================================
+   ヘッダー
+======================================== */
+
+header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 16px;
+  background:rgba(255,255,255,.96);
+  border-bottom:1px solid #dce5e1;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+  font-size:18px;
+  color:#263238;
+}
+
+.brand span{
+  font-size:28px;
+}
+
+.brand b{
+  font-size:18px;
+  white-space:nowrap;
+}
+
+/* ========================================
+   ボタン
+======================================== */
+
+button{
+  border:1px solid #cbd8d3;
+  border-radius:12px;
+  padding:9px 14px;
+  background:#ffffff;
+  color:#263238;
+  transition:.15s ease;
+}
+
+button:hover{
+  background:#eef5f2;
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+#add{
+  background:#ffffff;
+  border-color:#aebfb8;
+  font-weight:600;
+}
+
+/* ========================================
+   ヒーロー部分
+======================================== */
+
+.hero{
+  max-width:1100px;
+  margin:0 auto;
+  padding:42px 20px 28px;
+}
+
+.hero h1{
+  margin:0 0 10px;
+  font-size:clamp(34px,8vw,64px);
+  line-height:1.15;
+  letter-spacing:.02em;
+  color:#1f302a;
+}
+
+.hero p{
+  margin:0 0 20px;
+  font-size:16px;
+  color:#60716b;
+}
+
+/* 検索欄 */
+
+#search{
+  width:100%;
+  max-width:620px;
+  padding:13px 16px;
+  border:1px solid #cbd8d3;
+  border-radius:14px;
+  background:#ffffff;
+  outline:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+#search:focus{
+  border-color:#78a997;
+  box-shadow:0 0 0 3px rgba(120,169,151,.15);
+}
+
+/* ========================================
+   メイン
+======================================== */
+
+main{
+  width:min(1100px,calc(100% - 32px));
+  margin:0 auto;
+  padding-bottom:60px;
+}
+
+.title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.title h2{
+  margin:0;
+  font-size:28px;
+  color:#263238;
+}
+
+.status{
+  color:#6b7b75;
+  font-size:14px;
+}
+
+/* ========================================
+   温泉カード一覧
+======================================== */
+
+#cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:16px;
+}
+
+.card{
+  overflow:hidden;
+  border:1px solid #d9e3df;
+  border-radius:18px;
+  background:#ffffff;
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(0,0,0,.09);
+}
+
+.card-body{
+  padding:18px;
+}
+
+.card h3{
+  margin:0 0 8px;
+  font-size:21px;
+  color:#20352d;
+}
+
+.card p{
+  margin:5px 0;
+  color:#60716b;
+}
+
+.card .meta{
+  font-size:14px;
+  color:#71817b;
+}
+
+/* ========================================
+   モーダル内フォーム
+======================================== */
+
+#modal .dialog{
+  width:min(900px,calc(100% - 24px));
+  margin:12px auto;
+  padding:0;
+  border-radius:20px;
+  background:#ffffff;
+  box-shadow:0 15px 50px rgba(0,0,0,.20);
+}
+
+.modal-head{
+  position:sticky;
+  top:0;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 20px;
+  background:#ffffff;
+  border-bottom:1px solid #e1e9e5;
+}
+
+.modal-head span{
+  font-size:20px;
+  font-weight:700;
+}
+
+.close{
+  width:40px;
+  height:40px;
+  padding:0;
+  border-radius:50%;
+  font-size:24px;
+}
+
+/* ========================================
+   フォーム全体
+======================================== */
+
+#form{
+  padding:20px;
+}
+
+#form section{
+  margin-bottom:28px;
+  padding:20px;
+  border:1px solid #dce5e1;
+  border-radius:16px;
+  background:#fbfdfc;
+}
+
+#form section h3{
+  margin:0 0 18px;
+  font-size:22px;
+  color:#294238;
+}
+
+/* ========================================
+   ラベル
+======================================== */
+
+#form label{
+  display:block;
+  margin-bottom:14px;
+  color:#344740;
+  font-weight:600;
+}
+
+#form label em{
+  margin-left:5px;
+  font-size:12px;
+  color:#c85c5c;
+  font-style:normal;
+}
+
+/* ========================================
+   入力欄
+======================================== */
+
+#form input[type="text"],
+#form input[type="number"],
+#form input[type="tel"],
+#form input[type="url"],
+#form input[type="time"],
+#form select,
+#form textarea{
+  width:100%;
+  margin-top:6px;
+  padding:11px 13px;
+  border:1px solid #cbd8d3;
+  border-radius:11px;
+  background:#ffffff;
+  color:#263238;
+  outline:none;
+}
+
+#form textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+#form input:focus,
+#form select:focus,
+#form textarea:focus{
+  border-color:#78a997;
+  box-shadow:0 0 0 3px rgba(120,169,151,.14);
+}
+
+/* ========================================
+   チェックボックス・ラジオボタン
+======================================== */
+
+#form input[type="checkbox"],
+#form input[type="radio"]{
+  width:20px;
+  height:20px;
+  margin-right:6px;
+  vertical-align:-4px;
+  accent-color:#5f9a83;
+}
+
+/* ========================================
+   レンタル用品
+======================================== */
+
+.rental-row{
+  display:grid;
+  grid-template-columns:1fr 110px 42px;
+  gap:8px;
+  align-items:center;
+  margin-bottom:8px;
+}
+
+.rental-row input{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #cbd8d3;
+  border-radius:10px;
+}
+
+.remove-rental{
+  width:42px;
+  height:42px;
+  padding:0;
+  border-radius:10px;
+  color:#b84e4e;
+}
+
+/* ========================================
+   登録ボタン
+======================================== */
+
+#form button[type="submit"],
+.submit{
+  width:100%;
+  margin-top:8px;
+  padding:14px 18px;
+  border:none;
+  border-radius:13px;
+  background:#5f9a83;
+  color:#ffffff;
+  font-weight:700;
+  font-size:17px;
+}
+
+#form button[type="submit"]:hover,
+.submit:hover{
+  background:#4f896f;
+}
+
+#form button[type="submit"]:disabled,
+.submit:disabled{
+  opacity:.6;
+  cursor:wait;
+}
+
+/* ========================================
+   スマホ表示
+======================================== */
+
+@media (max-width:600px){
+
+  header{
+    padding:10px 12px;
+  }
+
+  .brand b{
+    font-size:16px;
+  }
+
+  .brand span{
+    font-size:24px;
+  }
+
+  #add{
+    padding:8px 11px;
+    font-size:14px;
+  }
+
+  .hero{
+    padding:30px 16px 22px;
+  }
+
+  .hero h1{
+    font-size:38px;
+  }
+
+  .hero p{
+    font-size:15px;
+  }
+
+  main{
+    width:calc(100% - 20px);
+  }
+
+  .title{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .title h2{
+    font-size:24px;
+  }
+
+  #cards{
+    grid-template-columns:1fr;
+  }
+
+  #form{
+    padding:12px;
+  }
+
+  #form section{
+    padding:15px;
+  }
+
+  #form section h3{
+    font-size:20px;
+  }
+
+  .rental-row{
+    grid-template-columns:1fr 90px 40px;
+  }
+
+}
+
+/* ========================================
+   小さいスマホ
+======================================== */
+
+@media (max-width:380px){
+
+  .brand b{
+    font-size:14px;
+  }
+
+  #add{
+    font-size:13px;
+  }
+
+  .hero h1{
+    font-size:34px;
+  }
+
+  .rental-row{
+    grid-template-columns:1fr;
+  }
+
+  .remove-rental{
+    width:100%;
+  }
+
+}
