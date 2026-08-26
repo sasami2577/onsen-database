@@ -34,3 +34,5 @@ body.modal-open{overflow:visible}.primary{background:#208754;color:#fff}.seconda
 .detail-row dd{margin:0;word-break:break-word}
 .detail-row a{color:#5d2a9d;word-break:break-all}
 @media(max-width:600px){.detail-page{padding:18px 16px 40px}.detail-card{padding:18px}.detail-name{font-size:24px}.detail-row{grid-template-columns:1fr;gap:4px}.detail-row dt{font-size:13px}}
+
+.list-search{width:100%;padding:14px 16px;margin:4px 0 18px;border:1px solid #d7e3dc;border-radius:14px;font-size:16px;background:#fff;color:#17221c}.onsen-card{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}.onsen-card:active{transform:scale(.99)}.onsen-card:focus{outline:2px solid #208754;outline-offset:2px}

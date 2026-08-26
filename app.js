@@ -451,24 +451,22 @@
         setStatus("温泉を登録しました。", "ok");
         resetForm();
 
-        // 保存直後に再読込 → 一覧へ即反映
-        await loadAll();
-        closeModal();
-
+        // 登録成功後は追加画面を閉じ、一覧画面を確実に再表示
         alert(`「${saved?.name || item.name}」を登録しました。`);
+        window.location.replace("index.html");
       } else {
         // Supabase未設定でも、登録内容を失わない
         addLocalData(item);
 
         resetForm();
-        await loadAll();
-        closeModal();
 
+        // 登録成功後は追加画面を閉じ、一覧画面を確実に再表示
         alert(
           "温泉を登録しました。\n\n" +
           "現在はSupabaseのURL・anon keyが未設定なので、" +
           "この端末に保存しています。"
         );
+        window.location.replace("index.html");
       }
     } catch (error) {
       console.error(error);
