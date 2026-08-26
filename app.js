@@ -461,6 +461,7 @@
 
         resetForm();
         await loadAll();
+        closeModal();
 
         alert(
           "温泉を登録しました。\n\n" +
