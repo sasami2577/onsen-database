@@ -453,6 +453,7 @@
 
         // 保存直後に再読込 → 一覧へ即反映
         await loadAll();
+        closeModal();
 
         alert(`「${saved?.name || item.name}」を登録しました。`);
       } else {
