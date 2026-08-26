@@ -321,7 +321,13 @@
         const detailId = item.id ?? item.name ?? "";
 
         return `
-          <article class="card onsen-card" data-detail-id="${escapeHtml(detailId)}" role="link" tabindex="0" aria-label="${escapeHtml(item.name || "温泉詳細を見る")}">
+          <article
+            class="card onsen-card"
+            data-detail-id="${escapeHtml(detailId)}"
+            role="link"
+            tabindex="0"
+            aria-label="${escapeHtml(item.name || "温泉詳細を見る")}"
+          >
             <div class="card-head">
               <h3>${escapeHtml(item.name || "名称未設定")}</h3>
             </div>
@@ -451,22 +457,22 @@
         setStatus("温泉を登録しました。", "ok");
         resetForm();
 
-        // 登録成功後は追加画面を閉じ、一覧画面を確実に再表示
+        // 保存直後に再読込 → 一覧へ即反映
+        await loadAll();
+
         alert(`「${saved?.name || item.name}」を登録しました。`);
-        window.location.replace("index.html");
       } else {
         // Supabase未設定でも、登録内容を失わない
         addLocalData(item);
 
         resetForm();
+        await loadAll();
 
-        // 登録成功後は追加画面を閉じ、一覧画面を確実に再表示
         alert(
           "温泉を登録しました。\n\n" +
           "現在はSupabaseのURL・anon keyが未設定なので、" +
           "この端末に保存しています。"
         );
-        window.location.replace("index.html");
       }
     } catch (error) {
       console.error(error);
@@ -524,34 +530,6 @@
       }
     });
 
-    // 温泉一覧のカードをタップすると詳細ページへ移動
-    $("cards")?.addEventListener("click", (event) => {
-      // 公式サイトなど、カード内のリンクを押した場合はそちらを優先
-      if (event.target.closest("a")) return;
-
-      const card = event.target.closest(".onsen-card");
-      if (!card) return;
-
-      const id = card.dataset.detailId;
-      if (!id) return;
-
-      location.href = `onsen-detail.html?id=${encodeURIComponent(id)}`;
-    });
-
-    $("cards")?.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      if (event.target.closest("a")) return;
-
-      const card = event.target.closest(".onsen-card");
-      if (!card) return;
-
-      event.preventDefault();
-      const id = card.dataset.detailId;
-      if (!id) return;
-
-      location.href = `onsen-detail.html?id=${encodeURIComponent(id)}`;
-    });
-
     $("add")?.addEventListener("click", () => {
       const modal = $("modal");
       if (!modal) return;
@@ -567,6 +545,35 @@
       if (event.target === $("modal")) {
         closeModal();
       }
+    });
+
+    // 一覧の温泉カードをタップすると詳細ページへ移動
+    $("cards")?.addEventListener("click", (event) => {
+      // カード内の「公式サイト」リンクを押した場合は、詳細ページへ移動させない
+      if (event.target.closest("a")) return;
+
+      const card = event.target.closest(".onsen-card");
+      if (!card) return;
+
+      const id = card.dataset.detailId;
+      if (!id) return;
+
+      location.href = `onsen-detail.html?id=${encodeURIComponent(id)}`;
+    });
+
+    // キーボード操作にも対応
+    $("cards")?.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+
+      const card = event.target.closest(".onsen-card");
+      if (!card) return;
+
+      event.preventDefault();
+
+      const id = card.dataset.detailId;
+      if (!id) return;
+
+      location.href = `onsen-detail.html?id=${encodeURIComponent(id)}`;
     });
   }
 
