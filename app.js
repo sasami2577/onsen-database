@@ -318,9 +318,10 @@
             : ""
         ].filter(Boolean);
 
+        const detailId = item.id ?? item.name ?? "";
+
         return `
-          <a class="onsen-card-link" href="onsen-detail.html?id=${encodeURIComponent(item.id || item.name || "")}">
-            <article class="card">
+          <article class="card onsen-card" data-detail-id="${escapeHtml(detailId)}" role="link" tabindex="0" aria-label="${escapeHtml(item.name || "温泉詳細を見る")}">
             <div class="card-head">
               <h3>${escapeHtml(item.name || "名称未設定")}</h3>
             </div>
@@ -361,7 +362,6 @@
                 : ""
             }
           </article>
-          </a>
         `;
       })
       .join("");
@@ -522,6 +522,34 @@
       } else {
         renderCards(getLocalData());
       }
+    });
+
+    // 温泉一覧のカードをタップすると詳細ページへ移動
+    $("cards")?.addEventListener("click", (event) => {
+      // 公式サイトなど、カード内のリンクを押した場合はそちらを優先
+      if (event.target.closest("a")) return;
+
+      const card = event.target.closest(".onsen-card");
+      if (!card) return;
+
+      const id = card.dataset.detailId;
+      if (!id) return;
+
+      location.href = `onsen-detail.html?id=${encodeURIComponent(id)}`;
+    });
+
+    $("cards")?.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      if (event.target.closest("a")) return;
+
+      const card = event.target.closest(".onsen-card");
+      if (!card) return;
+
+      event.preventDefault();
+      const id = card.dataset.detailId;
+      if (!id) return;
+
+      location.href = `onsen-detail.html?id=${encodeURIComponent(id)}`;
     });
 
     $("add")?.addEventListener("click", () => {
