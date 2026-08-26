@@ -319,7 +319,8 @@
         ].filter(Boolean);
 
         return `
-          <article class="card">
+          <a class="onsen-card-link" href="onsen-detail.html?id=${encodeURIComponent(item.id || item.name || "")}">
+            <article class="card">
             <div class="card-head">
               <h3>${escapeHtml(item.name || "名称未設定")}</h3>
             </div>
@@ -360,6 +361,7 @@
                 : ""
             }
           </article>
+          </a>
         `;
       })
       .join("");

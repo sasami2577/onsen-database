@@ -13,4 +13,94 @@ body.modal-open{overflow:visible}.primary{background:#208754;color:#fff}.seconda
 .dialog{max-height:94vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 @media(max-width:600px){.dialog{max-height:calc(100dvh - 20px);padding-bottom:32px}.form-section{scroll-margin-top:12px}}
 
-#modal.hidden{display:none}
+/* =========================================================
+   温泉一覧 → 詳細ページ
+   ========================================================= */
+
+.onsen-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.onsen-card-link:hover,
+.onsen-card-link:focus {
+  color: inherit;
+  text-decoration: none;
+}
+
+.detail-page {
+  width: min(900px, 100%);
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+  box-sizing: border-box;
+}
+
+.detail-header {
+  margin-bottom: 18px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 12px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.detail-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.detail-badge {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.detail-name {
+  margin: 0 0 20px;
+}
+
+.detail-section {
+  margin: 18px 0;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.detail-section h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+.detail-section dl {
+  margin: 0;
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.35fr) 1fr;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.detail-row:last-child {
+  border-bottom: 0;
+}
+
+.detail-row dt {
+  font-weight: 700;
+}
+
+.detail-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .detail-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
