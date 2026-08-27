@@ -1,258 +1,142 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>温泉詳細 | 温泉データベース</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>温泉詳細 - 温泉データベース</title>
+<link rel="stylesheet" href="styles.css">
 </head>
+<body class="detail-page">
+<header>
+  <div class="brand">
+    <span>♨</span>
+    <div><b>温泉データベース</b><small>みんなでつくる温泉情報</small></div>
+  </div>
+</header>
+<main class="detail-main">
+  <a class="detail-back" href="index.html">← 温泉一覧へ戻る</a>
+  <div id="detailContent" class="detail-loading">温泉詳細を読み込んでいます…</div>
+</main>
 
-<body>
-  <main class="detail-page">
-    <header class="detail-header">
-      <a class="back-link" href="index.html">← 温泉一覧に戻る</a>
-      <h1 id="detailTitle">温泉詳細</h1>
-    </header>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+(() => {
+  "use strict";
+  const TABLE_NAME="onsen_database";
+  const LOCAL_KEY="onsen_database_local_v1";
+  const id=new URLSearchParams(location.search).get("id");
+  const content=document.getElementById("detailContent");
+  const config=window.ONSEN_SUPABASE_CONFIG||{};
+  const SUPABASE_URL=config.url||"";
+  const SUPABASE_ANON_KEY=config.anonKey||"";
 
-    <section id="detailContent">
-      <p>温泉情報を読み込んでいます…</p>
-    </section>
-  </main>
+  function esc(v){
+    return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;")
+      .replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+  function has(v){return v!==null&&v!==undefined&&String(v).trim()!==""}
+  function disp(v){
+    if(Array.isArray(v)) return v.length?v.map(esc).join("、"):"未登録";
+    return has(v)?esc(v):"未登録";
+  }
+  function local(){
+    try{
+      const d=JSON.parse(localStorage.getItem(LOCAL_KEY)||"[]");
+      return Array.isArray(d)?d:[];
+    }catch(_){return []}
+  }
+  async function supabaseItem(){
+    if(!SUPABASE_URL||!SUPABASE_ANON_KEY||!window.supabase?.createClient)return null;
+    try{
+      const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+      const {data,error}=await client.from(TABLE_NAME).select("*").eq("id",id).maybeSingle();
+      if(error){console.error(error);return null}
+      return data;
+    }catch(error){console.error(error);return null}
+  }
+  function row(label,v){
+    return `<div class="detail-item"><span class="detail-label">${esc(label)}</span><div class="detail-value">${disp(v)}</div></div>`;
+  }
+  function render(item){
+    if(!item){
+      content.className="detail-error";
+      content.innerHTML="<h2>温泉が見つかりませんでした</h2><p>一覧画面に戻って、もう一度お試しください。</p>";
+      return;
+    }
+    document.title=`${item.name||"温泉詳細"} - 温泉データベース`;
+    const place=[item.prefecture,item.area,item.address].filter(Boolean).join(" ");
+    const links=[];
+    if(item.website)links.push(`<a href="${esc(item.website)}" target="_blank" rel="noopener">公式サイト</a>`);
+    if(item.instagram)links.push(`<a href="${esc(item.instagram)}" target="_blank" rel="noopener">Instagram</a>`);
+    content.className="detail-card";
+    content.innerHTML=`
+      <span class="badge">♨ 温泉</span>
+      <h1 class="detail-title">${disp(item.name)}</h1>
+      ${place?`<p class="detail-place">📍 ${esc(place)}</p>`:""}
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
+      <section class="detail-section"><h2>基本情報</h2><div class="detail-grid">
+        ${row("都道府県",item.prefecture)}${row("市区町村・地域",item.area)}
+        ${row("住所",item.address)}${row("施設業態",item.business_type)}
+        ${row("電話番号",item.phone)}
+      </div></section>
 
-  <script>
-    (() => {
-      "use strict";
+      <section class="detail-section"><h2>営業時間・定休日</h2><div class="detail-grid">
+        ${row("営業時間",has(item.open_time)||has(item.close_time)?`${item.open_time||""}〜${item.close_time||""}`:"")}
+        ${row("最終受付",item.last_entry)}${row("定休日",item.closed_days)}
+        ${row("営業時間の補足",item.hours_note)}
+      </div></section>
 
-      const TABLE_NAME = "onsen_database";
-      const LOCAL_KEY = "onsen_database_local_v1";
-      const requestedId = new URLSearchParams(location.search).get("id");
+      <section class="detail-section"><h2>利用・料金</h2><div class="detail-grid">
+        ${row("利用条件",item.usage)}${row("大人料金",has(item.price)?`${item.price}円`:"")}
+        ${row("子ども料金",has(item.child_price)?`${item.child_price}円`:"")}
+        ${row("その他料金",has(item.other_price)?`${item.other_price}円`:"")}
+        ${row("料金区分",item.price_category||item.priceType)}
+        ${row("料金の補足",item.price_note)}${row("決済方法",item.payment)}
+      </div></section>
 
-      const titleEl = document.getElementById("detailTitle");
-      const contentEl = document.getElementById("detailContent");
+      <section class="detail-section"><h2>お風呂・サウナ</h2><div class="detail-grid">
+        ${row("お風呂の種類",item.bath)}${row("浴場の補足",item.bath_note)}
+        ${row("サウナの種類",item.sauna)}${row("サウナ",item.sauna_status)}
+        ${row("サウナ温度",has(item.sauna_temp)?`${item.sauna_temp}℃`:"")}
+        ${row("サウナ・水風呂の補足",item.sauna_note)}
+        ${row("水風呂",item.cold_bath_status)}
+        ${row("水風呂温度",has(item.cold_bath_temp)?`${item.cold_bath_temp}℃`:"")}
+        ${row("外気浴",item.outdoor)}${row("休憩スペース",item.rest)}
+        ${row("シャンプー等",item.amenities)}${row("ドライヤー",item.dryer)}
+        ${row("Wi-Fi",item.wifi)}${row("駐車場",item.parking)}
+        ${row("貴重品ロッカー",item.locker)}${row("食事処",item.restaurant)}
+        ${row("バリアフリー",item.barrier_free||item.barrierFree)}
+      </div></section>
 
-      const esc = (value) => String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+      <section class="detail-section"><h2>泉質・温泉情報</h2><div class="detail-grid">
+        ${row("泉質",item.spring_type)}
+        ${row("泉温",has(item.temperature)?`${item.temperature}℃`:"")}
+        ${row("源泉温度",has(item.source_temperature)?`${item.source_temperature}℃`:"")}
+        ${row("加温",item.heating)}${row("加水",item.dilution)}
+        ${row("循環",item.circulation)}${row("消毒",item.disinfection)}
+        ${row("泉質の詳細・補足",item.spring_detail)}
+      </div></section>
 
-      const first = (...values) =>
-        values.find((v) => v !== undefined && v !== null && String(v).trim() !== "");
+      <section class="detail-section"><h2>レンタル品</h2>${row("レンタル品",item.rental_items)}</section>
 
-      function getLocalData() {
-        try {
-          const raw = localStorage.getItem(LOCAL_KEY);
-          if (!raw) return [];
-          const data = JSON.parse(raw);
-          return Array.isArray(data) ? data : [];
-        } catch (error) {
-          console.error("LocalStorage読込エラー:", error);
-          return [];
-        }
-      }
+      <section class="detail-section"><h2>公式情報・SNS</h2>
+        <div class="detail-links">${links.length?links.join(""):"<span>未登録</span>"}</div>
+      </section>
 
-      function getSupabaseConfig() {
-        const config = window.ONSEN_SUPABASE_CONFIG;
-        return {
-          url: config?.url || "",
-          anonKey: config?.anonKey || ""
-        };
-      }
-
-      async function loadData() {
-        const localData = getLocalData();
-        const { url, anonKey } = getSupabaseConfig();
-
-        if (!url || !anonKey || !window.supabase?.createClient) {
-          return localData;
-        }
-
-        try {
-          const client = window.supabase.createClient(url, anonKey);
-
-          const { data, error } = await client
-            .from(TABLE_NAME)
-            .select("*")
-            .order("created_at", { ascending: false });
-
-          if (error) throw error;
-
-          return Array.isArray(data) ? data : localData;
-        } catch (error) {
-          console.warn("Supabaseから詳細情報を取得できなかったため端末保存を使用します:", error);
-          return localData;
-        }
-      }
-
-      function getItemFromRow(row) {
-        if (!row) return null;
-
-        // Supabaseの現在の構造にも、ローカル保存にも対応
-        if (row.data && typeof row.data === "object" && !Array.isArray(row.data)) {
-          return {
-            ...row.data,
-            _dbId: row.id,
-            _createdAt: row.created_at
-          };
-        }
-
-        return row;
-      }
-
-      function findItem(list) {
-        return list
-          .map(getItemFromRow)
-          .find((item) =>
-            String(item?.id ?? "") === String(requestedId) ||
-            String(item?.name ?? "") === String(requestedId)
-          );
-      }
-
-      function row(label, value) {
-        if (value === undefined || value === null || String(value).trim() === "") {
-          return "";
-        }
-
-        const text = Array.isArray(value)
-          ? value.filter(Boolean).join("、")
-          : value;
-
-        return `
-          <div class="detail-row">
-            <dt>${esc(label)}</dt>
-            <dd>${esc(text)}</dd>
-          </div>
-        `;
-      }
-
-      function linkRow(label, value) {
-        if (!value) return "";
-
-        return `
-          <div class="detail-row">
-            <dt>${esc(label)}</dt>
-            <dd>
-              <a href="${esc(value)}" target="_blank" rel="noopener noreferrer">
-                ${esc(value)}
-              </a>
-            </dd>
-          </div>
-        `;
-      }
-
-      function section(title, rows) {
-        const body = rows.filter(Boolean).join("");
-        if (!body) return "";
-
-        return `
-          <section class="detail-section">
-            <h2>${esc(title)}</h2>
-            <dl>${body}</dl>
-          </section>
-        `;
-      }
-
-      function render(item) {
-        const name = first(item.name, "名称未設定");
-        titleEl.textContent = name;
-
-        contentEl.innerHTML = `
-          <article class="detail-card">
-            <div class="detail-badge">♨ 温泉</div>
-            <h2 class="detail-name">${esc(name)}</h2>
-
-            ${section("基本情報", [
-              row("都道府県", item.prefecture),
-              row("地域", item.area),
-              row("住所", item.address),
-              row("施設業態", item.business_type),
-              row("電話番号", item.phone)
-            ])}
-
-            ${section("営業時間・料金", [
-              row(
-                "営業時間",
-                [item.open_time, item.close_time].filter(Boolean).join("〜")
-              ),
-              row("最終受付", item.last_entry),
-              row("定休日", item.closed_days),
-              row("営業時間メモ", item.hours_note),
-              row("利用条件", item.usage),
-              row("大人料金", item.price !== null && item.price !== undefined ? `${item.price}円` : ""),
-              row("子ども料金", item.child_price !== null && item.child_price !== undefined ? `${item.child_price}円` : ""),
-              row("その他料金", item.other_price !== null && item.other_price !== undefined ? `${item.other_price}円` : ""),
-              row("料金区分", item.price_category),
-              row("料金メモ", item.price_note),
-              row("支払い方法", item.payment)
-            ])}
-
-            ${section("公式サイト・SNS", [
-              linkRow("公式サイト", item.website),
-              linkRow("Instagram", item.instagram)
-            ])}
-
-            ${section("お風呂・サウナ", [
-              row("浴場", item.bath),
-              row("サウナ", item.sauna),
-              row("サウナメモ", item.sauna_note),
-              row("サウナ状態", item.sauna_status),
-              row("水風呂", item.cold_bath_status),
-              row("露天風呂", item.outdoor),
-              row("休憩スペース", item.rest)
-            ])}
-
-            ${section("設備", [
-              row("アメニティ", item.amenities),
-              row("ドライヤー", item.dryer),
-              row("Wi-Fi", item.wifi),
-              row("駐車場", item.parking),
-              row("ロッカー", item.locker),
-              row("飲食施設", item.restaurant),
-              row("バリアフリー", item.barrier_free)
-            ])}
-
-            ${section("温泉情報", [
-              row("泉質", item.spring_type),
-              row("温泉温度", item.temperature !== null && item.temperature !== undefined ? `${item.temperature}℃` : ""),
-              row("源泉温度", item.source_temperature !== null && item.source_temperature !== undefined ? `${item.source_temperature}℃` : ""),
-              row("加温", item.heating),
-              row("泉質詳細", item.spring_detail)
-            ])}
-
-            ${section("レンタル品", [
-              row("レンタル", item.rental_items)
-            ])}
-
-            ${section("メモ", [
-              row("メモ", item.note)
-            ])}
-          </article>
-        `;
-      }
-
-      async function start() {
-        if (!requestedId) {
-          contentEl.innerHTML = "<p>温泉情報を指定できませんでした。</p>";
-          return;
-        }
-
-        const list = await loadData();
-        const item = findItem(list);
-
-        if (!item) {
-          contentEl.innerHTML = "<p>この温泉の情報が見つかりませんでした。</p>";
-          return;
-        }
-
-        render(item);
-      }
-
-      start();
-    })();
-  </script>
+      <section class="detail-section"><h2>位置情報・メモ</h2><div class="detail-grid">
+        ${row("緯度",item.lat)}${row("経度",item.lng)}
+      </div>${row("メモ・施設紹介",item.note)}</section>
+    `;
+  }
+  async function start(){
+    if(!id){render(null);return}
+    const localItem=local().find(x=>String(x.id)===String(id));
+    if(localItem){render(localItem);return}
+    render(await supabaseItem());
+  }
+  start();
+})();
+</script>
 </body>
 </html>
