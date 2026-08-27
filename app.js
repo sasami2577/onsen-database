@@ -571,32 +571,10 @@
       location.href = `onsen-detail.html?id=${encodeURIComponent(id)}`;
     });
 
-    $("add")?.addEventListener("click", () => {
-      const modal = $("modal");
-      if (!modal) return;
 
-      modal.classList.remove("hidden");
-      modal.setAttribute("aria-hidden", "false");
-    });
-
-    $("close")?.addEventListener("click", closeModal);
-    $("cancel")?.addEventListener("click", closeModal);
-
-    $("modal")?.addEventListener("click", (event) => {
-      if (event.target === $("modal")) {
-        closeModal();
-      }
-    });
   }
 
-  function closeModal() {
-    const modal = $("modal");
-    if (!modal) return;
-
-    modal.classList.add("hidden");
-    modal.setAttribute("aria-hidden", "true");
-  }
-
+  
   // renderCardsをデータ保持にも対応させる
   const originalRenderCards = renderCards;
 
