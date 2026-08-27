@@ -13,26 +13,4 @@ body.modal-open{overflow:visible}.primary{background:#208754;color:#fff}.seconda
 .dialog{max-height:94vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 @media(max-width:600px){.dialog{max-height:calc(100dvh - 20px);padding-bottom:32px}.form-section{scroll-margin-top:12px}}
 
-
-/* 温泉一覧 → 詳細ページ */
-.onsen-card{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
-.onsen-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px #163a2418}
-.onsen-card:focus{outline:3px solid #b9e4cc;outline-offset:2px}
-
-.detail-page{max-width:900px;margin:auto;padding:24px 20px 50px}
-.detail-header{display:block;position:static;padding:0 0 18px;background:transparent;border-bottom:0}
-.back-link{display:inline-block;color:#177144;text-decoration:none;font-weight:700;margin-bottom:14px}
-.detail-header h1{margin:0;font-size:28px}
-.detail-card{background:#fff;border:1px solid #e0e8e3;border-radius:20px;padding:22px;box-shadow:0 5px 18px #163a2410}
-.detail-badge{display:inline-block;color:#177144;background:#e5f5ec;border-radius:99px;padding:6px 10px;font-size:12px;font-weight:700}
-.detail-name{font-size:28px;margin:14px 0 22px}
-.detail-section{border-top:1px solid #e3eae6;padding-top:18px;margin-top:22px}
-.detail-section h2{font-size:19px;margin:0 0 12px}
-.detail-section dl{margin:0}
-.detail-row{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid #eef2ef}
-.detail-row dt{font-weight:700;color:#536159}
-.detail-row dd{margin:0;word-break:break-word}
-.detail-row a{color:#5d2a9d;word-break:break-all}
-@media(max-width:600px){.detail-page{padding:18px 16px 40px}.detail-card{padding:18px}.detail-name{font-size:24px}.detail-row{grid-template-columns:1fr;gap:4px}.detail-row dt{font-size:13px}}
-
-.list-search{width:100%;padding:14px 16px;margin:4px 0 18px;border:1px solid #d7e3dc;border-radius:14px;font-size:16px;background:#fff;color:#17221c}.onsen-card{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}.onsen-card:active{transform:scale(.99)}.onsen-card:focus{outline:2px solid #208754;outline-offset:2px}
+#modal.hidden{display:none}
