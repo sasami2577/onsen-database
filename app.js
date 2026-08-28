@@ -446,8 +446,52 @@
     return `<h4 class="detail-subhead">${escapeHtml(title)}</h4>`;
   }
 
+  function getOpenStatus(item) {
+    // 将来的なフラグ（閉鎖・臨時休業）に対応
+    if (item.is_closed) {
+      return { label: "閉鎖中", className: "status-closed-permanently" };
+    }
+    if (item.is_temp_closed) {
+      return { label: "臨時休業中", className: "status-temp-closed" };
+    }
+
+    const weekdayChars = ["日", "月", "火", "水", "木", "金", "土"];
+    const now = new Date();
+    const todayChar = weekdayChars[now.getDay()];
+
+    // 定休日の文字列に今日の曜日が含まれていれば定休日と判定（簡易判定）
+    if (item.closed_days && item.closed_days.includes(todayChar)) {
+      return { label: "定休日", className: "status-holiday" };
+    }
+
+    if (!item.open_time || !item.close_time) return null;
+
+    const toMinutes = (t) => {
+      const [h, m] = t.split(":").map(Number);
+      if (Number.isNaN(h) || Number.isNaN(m)) return null;
+      return h * 60 + m;
+    };
+
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    const openMinutes = toMinutes(item.open_time);
+    const closeMinutes = toMinutes(item.close_time);
+    if (openMinutes == null || closeMinutes == null) return null;
+
+    let isOpen;
+    if (closeMinutes > openMinutes) {
+      isOpen = nowMinutes >= openMinutes && nowMinutes < closeMinutes;
+    } else {
+      // 閉店時刻が開店時刻より前＝日をまたぐ営業
+      isOpen = nowMinutes >= openMinutes || nowMinutes < closeMinutes;
+    }
+
+    return isOpen
+      ? { label: "現在 営業中", className: "status-open" }
+      : { label: "営業時間外", className: "status-closed-hours" };
+  }
+
   function renderDetailHTML(item) {
-    const place = [item.prefecture, item.area, item.address]
+    const place = [item.prefecture, item.area]
       .filter(Boolean)
       .join(" ");
 
@@ -463,13 +507,20 @@
       item.facebook ? { label: "Facebook", url: item.facebook } : null
     ].filter(Boolean);
 
+    const status = getOpenStatus(item);
+
     return `
-      <div class="detail-top">
+      <div class="detail-toolbar">
         <button type="button" id="detailBack" class="detail-back">← 一覧に戻る</button>
-        <div class="detail-heading">
-          <h2>${escapeHtml(item.name || "名称未設定")}</h2>
-          ${place ? `<p class="area">${escapeHtml(place)}</p>` : ""}
+        <div class="detail-toolbar-actions">
+          <button type="button" id="detailEdit" class="detail-action">✏️ 情報を編集する</button>
+          <button type="button" id="detailShare" class="detail-action">↗️ 共有する</button>
         </div>
+      </div>
+      <div class="detail-heading-block">
+        ${place ? `<p class="detail-location">📍 ${escapeHtml(place)}</p>` : ""}
+        <h2>${escapeHtml(item.name || "名称未設定")}</h2>
+        ${status ? `<span class="status-badge ${status.className}">${escapeHtml(status.label)}</span>` : ""}
       </div>
       <div class="detail-body">
 
@@ -649,8 +700,37 @@
     }
 
     detailView.innerHTML = renderDetailHTML(item);
+
     $("detailBack")?.addEventListener("click", () => {
       location.hash = "";
+    });
+
+    $("detailEdit")?.addEventListener("click", () => {
+      alert("編集機能は現在準備中です。もうしばらくお待ちください。");
+    });
+
+    $("detailShare")?.addEventListener("click", async () => {
+      const shareData = {
+        title: item.name || "温泉データベース",
+        text: `${item.name || "温泉情報"}の詳細ページ`,
+        url: location.href
+      };
+
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+        } catch (error) {
+          // ユーザーによるキャンセル等は無視
+        }
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(location.href);
+        alert("リンクをコピーしました。");
+      } catch (error) {
+        console.error("共有リンクのコピーに失敗:", error);
+      }
     });
   }
 

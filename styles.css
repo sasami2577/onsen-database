@@ -20,10 +20,19 @@ body.modal-open{overflow:visible}.primary{background:#208754;color:#fff}.seconda
 .card:hover{transform:translateY(-2px);box-shadow:0 8px 22px #163a2418}
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 #detailView{background:#fff;border:1px solid #e0e8e3;border-radius:20px;padding:0;overflow:hidden}
-.detail-top{padding:20px 22px;border-bottom:1px solid #eef2ef;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#e3f5eb,#fafcfb)}
+.detail-toolbar{padding:14px 22px;border-bottom:1px solid #eef2ef;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .detail-back{background:#fff;color:#208754;border:1px solid #cfe1d6;padding:9px 14px;font-weight:700;white-space:nowrap}
-.detail-heading h2{margin:0 0 6px;font-size:26px}
-.detail-heading .area{font-size:14px}
+.detail-toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.detail-action{background:#f4faf6;color:#177144;border:1px solid #cfe1d6;padding:9px 13px;font-weight:700;font-size:13px;white-space:nowrap}
+.detail-heading-block{padding:20px 22px 24px;background:linear-gradient(135deg,#e3f5eb,#fafcfb)}
+.detail-location{margin:0 0 6px;font-size:13px;color:#4c5951;font-weight:700}
+.detail-heading-block h2{margin:0 0 12px;font-size:26px}
+.status-badge{display:inline-block;padding:6px 13px;border-radius:99px;font-size:13px;font-weight:700;border:1px solid transparent}
+.status-open{background:#e5f5ec;color:#177144;border-color:#b9e4cc}
+.status-closed-hours{background:#fff7e0;color:#8a6d1a;border-color:#f0dfa0}
+.status-holiday{background:#fdecea;color:#b5473c;border-color:#f0c9c5}
+.status-temp-closed{background:#fdecea;color:#b5473c;border-color:#f0c9c5}
+.status-closed-permanently{background:#2a2f2c;color:#fff;border-color:#2a2f2c}
 .detail-body{padding:22px}
 .detail-section{border-top:1px solid #eef2ef;padding:18px 0}
 .detail-section:first-child{border-top:0;padding-top:0}
@@ -41,4 +50,5 @@ body.modal-open{overflow:visible}.primary{background:#208754;color:#fff}.seconda
 .detail-empty{color:#8a968f;text-align:center;padding:60px 20px}
 .rental-list{display:flex;flex-wrap:wrap;gap:8px}
 .rental-list li{list-style:none;background:#f4faf6;color:#177144;border:1px solid #cfe1d6;border-radius:99px;padding:6px 12px;font-size:13px}
-@media(max-width:600px){.detail-top{padding:16px}.detail-heading h2{font-size:21px}.detail-body{padding:16px}}
+@media(max-width:600px){.detail-toolbar{padding:12px 16px}.detail-action{font-size:12px;padding:8px 10px}.detail-heading-block{padding:16px}.detail-heading-block h2{font-size:21px}.detail-body{padding:16px}}
+
