@@ -96,8 +96,29 @@
 
   // ---------------------------------------------------------
   // レンタル品
-  // index.html の #rentalRows にある入力欄を自動取得
+  // #rentalRows に行を動的に追加・削除できるようにする
   // ---------------------------------------------------------
+
+  let rentalRowSeq = 0;
+
+  function addRentalRow(name = "", price = "") {
+    const rows = $("rentalRows");
+    if (!rows) return;
+
+    const rowId = `rental-${++rentalRowSeq}`;
+    const row = document.createElement("div");
+    row.className = "rental-row";
+    row.dataset.rowId = rowId;
+
+    row.innerHTML = `
+      <input type="text" class="rental-name" placeholder="例：タオル" maxlength="60" value="${escapeHtml(name)}">
+      <input type="number" class="rental-price" placeholder="料金（円）" min="0" value="${escapeHtml(price)}">
+      <button type="button" class="remove-rental" aria-label="このレンタル品を削除">×</button>
+    `;
+
+    rows.appendChild(row);
+    row.querySelector(".rental-name")?.focus();
+  }
 
   function collectRentalItems() {
     const rows = $("rentalRows");
@@ -105,9 +126,13 @@
 
     const result = [];
 
-    rows.querySelectorAll("input, textarea").forEach((el) => {
-      const text = el.value.trim();
-      if (text) result.push(text);
+    rows.querySelectorAll(".rental-row").forEach((row) => {
+      const name = row.querySelector(".rental-name")?.value.trim() || "";
+      const price = row.querySelector(".rental-price")?.value.trim() || "";
+
+      if (!name && !price) return;
+
+      result.push(price ? `${name || "レンタル品"}（${price}円）` : name);
     });
 
     return result;
@@ -772,6 +797,21 @@
 
       modal.classList.remove("hidden");
       modal.setAttribute("aria-hidden", "false");
+
+      // レンタル品欄が空なら、まず1行用意しておく
+      const rentalRows = $("rentalRows");
+      if (rentalRows && !rentalRows.children.length) {
+        addRentalRow();
+      }
+    });
+
+    $("addRental")?.addEventListener("click", () => addRentalRow());
+
+    $("rentalRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+
+      button.closest(".rental-row")?.remove();
     });
 
     $("close")?.addEventListener("click", closeModal);
