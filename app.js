@@ -77,6 +77,11 @@
     return el ? el.value : "";
   }
 
+  function checkedBool(id) {
+    const el = $(id);
+    return !!el?.checked;
+  }
+
   function setStatus(message, type = "") {
     const el = $("status");
     if (!el) return;
@@ -154,7 +159,9 @@
       open_time: value("openTime"),
       close_time: value("closeTime"),
       last_entry: value("lastEntry"),
-      closed_days: value("closedDays"),
+      closed_days: checkedValues("closedDay"),
+      is_temp_closed: checkedBool("tempClosed"),
+      is_closed: checkedBool("closedPermanently"),
       hours_note: value("hoursNote"),
 
       usage: checkedValues("usage"),
@@ -459,8 +466,8 @@
     const now = new Date();
     const todayChar = weekdayChars[now.getDay()];
 
-    // 定休日の文字列に今日の曜日が含まれていれば定休日と判定（簡易判定）
-    if (item.closed_days && item.closed_days.includes(todayChar)) {
+    // 定休日（曜日の複数選択）に今日が含まれていれば定休日と判定
+    if (Array.isArray(item.closed_days) && item.closed_days.includes(todayChar)) {
       return { label: "定休日", className: "status-holiday" };
     }
 
@@ -534,12 +541,30 @@
           </div>
           ${detailTags(item.usage)}
 
+          <div class="detail-gap"></div>
+
           ${detailSubhead("営業時間")}
           <div class="detail-grid">
             ${detailField("営業時間", hours)}
             ${detailField("最終受付", item.last_entry)}
-            ${detailField("定休日", item.closed_days)}
           </div>
+          ${
+            Array.isArray(item.closed_days) && item.closed_days.length
+              ? `<p class="field-title">定休日</p>${detailTags(
+                  item.closed_days.map((d) => `${d}曜日`)
+                )}`
+              : ""
+          }
+          ${
+            item.is_temp_closed || item.is_closed
+              ? detailTags(
+                  [
+                    item.is_temp_closed ? "臨時休業中" : null,
+                    item.is_closed ? "閉鎖済み" : null
+                  ].filter(Boolean)
+                )
+              : ""
+          }
           ${item.hours_note ? `<p class="detail-note">${escapeHtml(item.hours_note)}</p>` : ""}
 
           ${

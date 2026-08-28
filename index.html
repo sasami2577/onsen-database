@@ -38,8 +38,21 @@
 <label>電話番号<input id="phone" type="tel"></label>
 </div></section>
 <section class="form-section"><h3>営業時間・定休日</h3><div class="grid two">
-<label>営業時間（開始）<input id="openTime" type="time"></label><label>営業時間（終了）<input id="closeTime" type="time"></label>
-<label>最終受付<input id="lastEntry" type="time"></label><label>定休日<input id="closedDays"></label>
+<label>営業時間（開始）<input id="openTime" type="time" step="300"></label><label>営業時間（終了）<input id="closeTime" type="time" step="300"></label>
+<label>最終受付<input id="lastEntry" type="time" step="300"></label>
+<fieldset class="full"><legend>定休日</legend><div class="checks">
+<label><input type="checkbox" name="closedDay" value="日">日曜日</label>
+<label><input type="checkbox" name="closedDay" value="月">月曜日</label>
+<label><input type="checkbox" name="closedDay" value="火">火曜日</label>
+<label><input type="checkbox" name="closedDay" value="水">水曜日</label>
+<label><input type="checkbox" name="closedDay" value="木">木曜日</label>
+<label><input type="checkbox" name="closedDay" value="金">金曜日</label>
+<label><input type="checkbox" name="closedDay" value="土">土曜日</label>
+</div></fieldset>
+<fieldset class="full compact-top"><legend>営業状態フラグ</legend><div class="checks">
+<label><input type="checkbox" id="tempClosed">臨時休業中</label>
+<label><input type="checkbox" id="closedPermanently">閉鎖済み</label>
+</div></fieldset>
 <label class="full">営業時間の補足<textarea id="hoursNote" rows="2"></textarea></label>
 </div></section>
 <section class="form-section"><h3>利用・料金</h3><div class="grid two">
