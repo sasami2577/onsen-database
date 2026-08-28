@@ -442,6 +442,10 @@
     `;
   }
 
+  function detailSubhead(title) {
+    return `<h4 class="detail-subhead">${escapeHtml(title)}</h4>`;
+  }
+
   function renderDetailHTML(item) {
     const place = [item.prefecture, item.area, item.address]
       .filter(Boolean)
@@ -469,6 +473,7 @@
       </div>
       <div class="detail-body">
 
+        <!-- 基本情報（営業時間・料金・公式SNS・メモを含む） -->
         <section class="detail-section">
           <h3>基本情報</h3>
           <div class="detail-grid">
@@ -477,18 +482,42 @@
             ${detailField("住所", item.address)}
           </div>
           ${detailTags(item.usage)}
-        </section>
 
-        <section class="detail-section">
-          <h3>営業時間</h3>
+          ${detailSubhead("営業時間")}
           <div class="detail-grid">
             ${detailField("営業時間", hours)}
             ${detailField("最終受付", item.last_entry)}
             ${detailField("定休日", item.closed_days)}
           </div>
           ${item.hours_note ? `<p class="detail-note">${escapeHtml(item.hours_note)}</p>` : ""}
+
+          ${
+            links.length
+              ? `
+                ${detailSubhead("公式情報・SNS")}
+                <div class="detail-links">
+                  ${links
+                    .map(
+                      (l) =>
+                        `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.label)}</a>`
+                    )
+                    .join("")}
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            item.note
+              ? `
+                ${detailSubhead("メモ・施設紹介")}
+                <p class="detail-note">${escapeHtml(item.note)}</p>
+              `
+              : ""
+          }
         </section>
 
+        <!-- 料金（各種料金＋決済方法） -->
         <section class="detail-section">
           <h3>料金</h3>
           <div class="detail-grid">
@@ -497,25 +526,23 @@
             ${detailField("その他料金", item.other_price != null ? `${item.other_price}円` : "")}
             ${detailField("料金区分", item.price_category)}
           </div>
-          ${detailTags(item.payment)}
           ${item.price_note ? `<p class="detail-note">${escapeHtml(item.price_note)}</p>` : ""}
+
+          ${detailSubhead("決済方法")}
+          ${
+            detailTags(item.payment) ||
+            `<p class="detail-note">情報がありません。</p>`
+          }
         </section>
 
+        <!-- 施設情報（浴場・アメニティ） -->
         <section class="detail-section">
-          <h3>お風呂・サウナ</h3>
-          <div class="detail-grid">
-            ${detailField("サウナ", item.sauna_status)}
-            ${detailField("水風呂", item.cold_bath_status)}
-            ${detailField("外気浴", item.outdoor)}
-            ${detailField("休憩スペース", item.rest)}
-          </div>
-          ${detailTags(item.bath)}
-          ${detailTags(item.sauna)}
-          ${item.sauna_note ? `<p class="detail-note">${escapeHtml(item.sauna_note)}</p>` : ""}
-        </section>
+          <h3>施設情報</h3>
 
-        <section class="detail-section">
-          <h3>設備</h3>
+          ${detailSubhead("浴場")}
+          ${detailTags(item.bath) || `<p class="detail-note">情報がありません。</p>`}
+
+          ${detailSubhead("アメニティ")}
           <div class="detail-grid">
             ${detailField("シャンプー等", item.amenities)}
             ${detailField("ドライヤー", item.dryer)}
@@ -525,10 +552,23 @@
             ${detailField("食事処", item.restaurant)}
             ${detailField("バリアフリー", item.barrier_free)}
           </div>
+          ${
+            Array.isArray(item.rental_items) && item.rental_items.length
+              ? `
+                <p class="field-title">レンタル品</p>
+                <ul class="rental-list">
+                  ${item.rental_items.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}
+                </ul>
+              `
+              : ""
+          }
         </section>
 
+        <!-- 温泉情報（泉質） -->
         <section class="detail-section">
-          <h3>泉質</h3>
+          <h3>温泉情報</h3>
+
+          ${detailSubhead("泉質")}
           <div class="detail-grid">
             ${detailField("泉質", item.spring_type)}
             ${detailField("泉温", item.temperature != null ? `${item.temperature}℃` : "")}
@@ -538,43 +578,42 @@
           ${item.spring_detail ? `<p class="detail-note">${escapeHtml(item.spring_detail)}</p>` : ""}
         </section>
 
-        ${
-          Array.isArray(item.rental_items) && item.rental_items.length
-            ? `
-              <section class="detail-section">
-                <h3>レンタル品</h3>
-                <ul class="rental-list">
-                  ${item.rental_items.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}
-                </ul>
-              </section>
-            `
-            : ""
-        }
+        <!-- サウナ情報（サウナ本体・水風呂・外気浴） -->
+        <section class="detail-section">
+          <h3>サウナ情報</h3>
 
+          ${detailSubhead("サウナ本体")}
+          <div class="detail-grid">
+            ${detailField("サウナ", item.sauna_status)}
+          </div>
+          ${detailTags(item.sauna)}
+          ${item.sauna_note ? `<p class="detail-note">${escapeHtml(item.sauna_note)}</p>` : ""}
+
+          ${detailSubhead("水風呂")}
+          <div class="detail-grid">
+            ${detailField("水風呂", item.cold_bath_status)}
+          </div>
+
+          ${detailSubhead("外気浴")}
+          <div class="detail-grid">
+            ${detailField("外気浴", item.outdoor)}
+            ${detailField("休憩スペース", item.rest)}
+          </div>
+        </section>
+
+        <!-- 地図情報 -->
         ${
-          links.length
+          item.lat != null && item.lng != null
             ? `
               <section class="detail-section">
-                <h3>公式情報・SNS</h3>
-                <div class="detail-links">
-                  ${links
-                    .map(
-                      (l) =>
-                        `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.label)}</a>`
-                    )
-                    .join("")}
+                <h3>地図情報</h3>
+                <div class="detail-grid">
+                  ${detailField("緯度", item.lat)}
+                  ${detailField("経度", item.lng)}
                 </div>
-              </section>
-            `
-            : ""
-        }
-
-        ${
-          item.note
-            ? `
-              <section class="detail-section">
-                <h3>メモ・施設紹介</h3>
-                <p class="detail-note">${escapeHtml(item.note)}</p>
+                <p class="detail-links">
+                  <a href="https://www.google.com/maps?q=${escapeHtml(item.lat)},${escapeHtml(item.lng)}" target="_blank" rel="noopener">Googleマップで見る</a>
+                </p>
               </section>
             `
             : ""

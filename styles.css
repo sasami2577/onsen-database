@@ -28,6 +28,8 @@ body.modal-open{overflow:visible}.primary{background:#208754;color:#fff}.seconda
 .detail-section{border-top:1px solid #eef2ef;padding:18px 0}
 .detail-section:first-child{border-top:0;padding-top:0}
 .detail-section h3{margin:0 0 12px;font-size:16px;color:#177144}
+.detail-subhead{margin:18px 0 8px;font-size:14px;color:#3b453f;font-weight:700;border-left:3px solid #b9e4cc;padding-left:8px}
+.detail-subhead:first-of-type{margin-top:0}
 .detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 20px}
 .detail-item dt{font-size:12px;color:#77837d;margin:0}
 .detail-item dd{margin:2px 0 0;font-size:15px;font-weight:600}
