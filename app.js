@@ -319,7 +319,7 @@
         ].filter(Boolean);
 
         return `
-          <article class="card">
+          <article class="card" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る">
             <div class="card-head">
               <h3>${escapeHtml(item.name || "名称未設定")}</h3>
             </div>
@@ -359,10 +359,254 @@
                 ? `<p><a href="${escapeHtml(item.website)}" target="_blank" rel="noopener">公式サイト</a></p>`
                 : ""
             }
+
+            <button type="button" class="detail" data-id="${escapeHtml(item.id ?? "")}">詳細を見る</button>
           </article>
         `;
       })
       .join("");
+  }
+
+  // ---------------------------------------------------------
+  // 温泉詳細画面
+  // ---------------------------------------------------------
+
+  function findItemById(id) {
+    return (window.__onsenData || []).find(
+      (item) => String(item.id) === String(id)
+    );
+  }
+
+  async function fetchItemById(id) {
+    const cached = findItemById(id);
+    if (cached) return cached;
+
+    if (supabaseClient) {
+      const { data, error } = await supabaseClient
+        .from(TABLE_NAME)
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("Supabase詳細取得エラー:", error);
+        return null;
+      }
+      return data;
+    }
+
+    return null;
+  }
+
+  function detailField(label, value) {
+    if (value === null || value === undefined || value === "") return "";
+    return `
+      <div class="detail-item">
+        <dt>${escapeHtml(label)}</dt>
+        <dd>${escapeHtml(value)}</dd>
+      </div>
+    `;
+  }
+
+  function detailTags(list) {
+    if (!Array.isArray(list) || !list.length) return "";
+    return `
+      <div class="detail-tags">
+        ${list.map((v) => `<span class="badge">${escapeHtml(v)}</span>`).join("")}
+      </div>
+    `;
+  }
+
+  function renderDetailHTML(item) {
+    const place = [item.prefecture, item.area, item.address]
+      .filter(Boolean)
+      .join(" ");
+
+    const hours =
+      item.open_time || item.close_time
+        ? `${item.open_time || ""}${item.open_time || item.close_time ? "〜" : ""}${item.close_time || ""}`
+        : "";
+
+    const links = [
+      item.website ? { label: "公式サイト", url: item.website } : null,
+      item.instagram ? { label: "Instagram", url: item.instagram } : null,
+      item.twitter ? { label: "X（旧Twitter）", url: item.twitter } : null,
+      item.facebook ? { label: "Facebook", url: item.facebook } : null
+    ].filter(Boolean);
+
+    return `
+      <div class="detail-top">
+        <button type="button" id="detailBack" class="detail-back">← 一覧に戻る</button>
+        <div class="detail-heading">
+          <h2>${escapeHtml(item.name || "名称未設定")}</h2>
+          ${place ? `<p class="area">${escapeHtml(place)}</p>` : ""}
+        </div>
+      </div>
+      <div class="detail-body">
+
+        <section class="detail-section">
+          <h3>基本情報</h3>
+          <div class="detail-grid">
+            ${detailField("施設業態", item.business_type)}
+            ${detailField("電話番号", item.phone)}
+            ${detailField("住所", item.address)}
+          </div>
+          ${detailTags(item.usage)}
+        </section>
+
+        <section class="detail-section">
+          <h3>営業時間</h3>
+          <div class="detail-grid">
+            ${detailField("営業時間", hours)}
+            ${detailField("最終受付", item.last_entry)}
+            ${detailField("定休日", item.closed_days)}
+          </div>
+          ${item.hours_note ? `<p class="detail-note">${escapeHtml(item.hours_note)}</p>` : ""}
+        </section>
+
+        <section class="detail-section">
+          <h3>料金</h3>
+          <div class="detail-grid">
+            ${detailField("大人料金", item.price != null ? `${item.price}円` : "")}
+            ${detailField("子ども料金", item.child_price != null ? `${item.child_price}円` : "")}
+            ${detailField("その他料金", item.other_price != null ? `${item.other_price}円` : "")}
+            ${detailField("料金区分", item.price_category)}
+          </div>
+          ${detailTags(item.payment)}
+          ${item.price_note ? `<p class="detail-note">${escapeHtml(item.price_note)}</p>` : ""}
+        </section>
+
+        <section class="detail-section">
+          <h3>お風呂・サウナ</h3>
+          <div class="detail-grid">
+            ${detailField("サウナ", item.sauna_status)}
+            ${detailField("水風呂", item.cold_bath_status)}
+            ${detailField("外気浴", item.outdoor)}
+            ${detailField("休憩スペース", item.rest)}
+          </div>
+          ${detailTags(item.bath)}
+          ${detailTags(item.sauna)}
+          ${item.sauna_note ? `<p class="detail-note">${escapeHtml(item.sauna_note)}</p>` : ""}
+        </section>
+
+        <section class="detail-section">
+          <h3>設備</h3>
+          <div class="detail-grid">
+            ${detailField("シャンプー等", item.amenities)}
+            ${detailField("ドライヤー", item.dryer)}
+            ${detailField("Wi-Fi", item.wifi)}
+            ${detailField("駐車場", item.parking)}
+            ${detailField("貴重品ロッカー", item.locker)}
+            ${detailField("食事処", item.restaurant)}
+            ${detailField("バリアフリー", item.barrier_free)}
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h3>泉質</h3>
+          <div class="detail-grid">
+            ${detailField("泉質", item.spring_type)}
+            ${detailField("泉温", item.temperature != null ? `${item.temperature}℃` : "")}
+            ${detailField("源泉温度", item.source_temperature != null ? `${item.source_temperature}℃` : "")}
+            ${detailField("加温", item.heating)}
+          </div>
+          ${item.spring_detail ? `<p class="detail-note">${escapeHtml(item.spring_detail)}</p>` : ""}
+        </section>
+
+        ${
+          Array.isArray(item.rental_items) && item.rental_items.length
+            ? `
+              <section class="detail-section">
+                <h3>レンタル品</h3>
+                <ul class="rental-list">
+                  ${item.rental_items.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}
+                </ul>
+              </section>
+            `
+            : ""
+        }
+
+        ${
+          links.length
+            ? `
+              <section class="detail-section">
+                <h3>公式情報・SNS</h3>
+                <div class="detail-links">
+                  ${links
+                    .map(
+                      (l) =>
+                        `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.label)}</a>`
+                    )
+                    .join("")}
+                </div>
+              </section>
+            `
+            : ""
+        }
+
+        ${
+          item.note
+            ? `
+              <section class="detail-section">
+                <h3>メモ・施設紹介</h3>
+                <p class="detail-note">${escapeHtml(item.note)}</p>
+              </section>
+            `
+            : ""
+        }
+
+      </div>
+    `;
+  }
+
+  async function showDetail(id) {
+    const listView = $("listView");
+    const detailView = $("detailView");
+    if (!detailView) return;
+
+    listView?.classList.add("hidden");
+    detailView.classList.remove("hidden");
+    detailView.innerHTML = `<div class="detail-empty">読み込んでいます…</div>`;
+    window.scrollTo(0, 0);
+
+    const item = await fetchItemById(id);
+
+    if (!item) {
+      detailView.innerHTML = `
+        <div class="detail-empty">
+          この温泉は見つかりませんでした。
+          <p><button type="button" id="detailBack" class="detail-back">← 一覧に戻る</button></p>
+        </div>
+      `;
+      $("detailBack")?.addEventListener("click", () => {
+        location.hash = "";
+      });
+      return;
+    }
+
+    detailView.innerHTML = renderDetailHTML(item);
+    $("detailBack")?.addEventListener("click", () => {
+      location.hash = "";
+    });
+  }
+
+  function showList() {
+    const listView = $("listView");
+    const detailView = $("detailView");
+    if (!listView || !detailView) return;
+
+    detailView.classList.add("hidden");
+    detailView.innerHTML = "";
+    listView.classList.remove("hidden");
+  }
+
+  function route() {
+    const match = location.hash.match(/^#detail-(.+)$/);
+    if (match) {
+      showDetail(decodeURIComponent(match[1]));
+    } else {
+      showList();
+    }
   }
 
   // ---------------------------------------------------------
@@ -538,6 +782,30 @@
         closeModal();
       }
     });
+
+    // カードクリック・Enterキーで詳細画面へ
+    $("cards")?.addEventListener("click", (event) => {
+      if (event.target.closest("a")) return; // 外部リンクはそのまま開く
+
+      const card = event.target.closest(".card");
+      if (!card) return;
+
+      const id = card.getAttribute("data-id");
+      if (id) location.hash = `detail-${encodeURIComponent(id)}`;
+    });
+
+    $("cards")?.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+
+      const card = event.target.closest(".card");
+      if (!card) return;
+
+      event.preventDefault();
+      const id = card.getAttribute("data-id");
+      if (id) location.hash = `detail-${encodeURIComponent(id)}`;
+    });
+
+    window.addEventListener("hashchange", route);
   }
 
   function closeModal() {
@@ -620,6 +888,9 @@
         "error"
       );
     }
+
+    // URLに #detail-xxx が含まれていれば詳細画面から開始
+    route();
   }
 
   // DOMContentLoaded後に開始

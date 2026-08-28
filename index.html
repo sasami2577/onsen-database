@@ -17,9 +17,12 @@
   <input id="search" placeholder="温泉名・地域で検索" autocomplete="off">
 </section>
 <main>
-  <div class="title"><h2>温泉一覧</h2><span id="count"></span></div>
-  <div id="status" class="status"></div>
-  <div id="cards"></div>
+  <div id="listView">
+    <div class="title"><h2>温泉一覧</h2><span id="count"></span></div>
+    <div id="status" class="status"></div>
+    <div id="cards"></div>
+  </div>
+  <section id="detailView" class="hidden" aria-live="polite"></section>
 </main>
 <div id="modal" class="hidden" aria-hidden="true">
 <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -87,5 +90,6 @@
 <div class="form-actions"><button type="button" id="cancel" class="secondary">キャンセル</button><button type="submit" class="primary submit">登録する</button></div>
 </form></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script src="app.js"></script>
 </body></html>
