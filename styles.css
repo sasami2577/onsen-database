@@ -10,6 +10,9 @@ body.modal-open{overflow:visible}.primary{background:#208754;color:#fff}.seconda
 .field-title{font-weight:700;margin:14px 0 8px}
 .form-section select{display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #d7e1dc;border-radius:9px;font:inherit;background:#fff}
 .compact-top{margin-top:12px}
+.time-select{display:flex;align-items:center;gap:8px;margin-top:7px}
+.time-select select{width:auto;flex:1;margin-top:0;padding:11px 8px}
+.time-select span{color:#77837d;font-weight:700}
 .dialog{max-height:94vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 @media(max-width:600px){.dialog{max-height:calc(100dvh - 20px);padding-bottom:32px}.form-section{scroll-margin-top:12px}}
 
@@ -43,6 +46,8 @@ body.modal-open{overflow:visible}.primary{background:#208754;color:#fff}.seconda
 .detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 20px}
 .detail-item dt{font-size:12px;color:#77837d;margin:0}
 .detail-item dd{margin:2px 0 0;font-size:15px;font-weight:600}
+.detail-phone{color:#177144;text-decoration:none}
+.detail-phone:hover{text-decoration:underline}
 .detail-tags{display:flex;flex-wrap:wrap;gap:8px}
 .detail-tags .badge{background:#eef7f1}
 .detail-note{white-space:pre-wrap;line-height:1.7;color:#3b453f}

@@ -82,6 +82,13 @@
     return !!el?.checked;
   }
 
+  function timeValue(prefix) {
+    const hour = $(`${prefix}Hour`)?.value || "";
+    const minute = $(`${prefix}Minute`)?.value || "";
+    if (!hour || !minute) return "";
+    return `${hour}:${minute}`;
+  }
+
   function setStatus(message, type = "") {
     const el = $("status");
     if (!el) return;
@@ -106,7 +113,7 @@
 
   let rentalRowSeq = 0;
 
-  function addRentalRow(name = "", price = "") {
+  function addRentalRow(name = "", price = "", { focus = true } = {}) {
     const rows = $("rentalRows");
     if (!rows) return;
 
@@ -122,7 +129,9 @@
     `;
 
     rows.appendChild(row);
-    row.querySelector(".rental-name")?.focus();
+    if (focus) {
+      row.querySelector(".rental-name")?.focus();
+    }
   }
 
   function collectRentalItems() {
@@ -156,9 +165,9 @@
       business_type: value("businessType"),
       phone: value("phone"),
 
-      open_time: value("openTime"),
-      close_time: value("closeTime"),
-      last_entry: value("lastEntry"),
+      open_time: timeValue("openTime"),
+      close_time: timeValue("closeTime"),
+      last_entry: timeValue("lastEntry"),
       closed_days: checkedValues("closedDay"),
       is_temp_closed: checkedBool("tempClosed"),
       is_closed: checkedBool("closedPermanently"),
@@ -440,6 +449,18 @@
     `;
   }
 
+  function detailPhoneField(label, phone) {
+    if (!phone) return "";
+
+    const telHref = phone.replace(/[^0-9+]/g, "");
+    return `
+      <div class="detail-item">
+        <dt>${escapeHtml(label)}</dt>
+        <dd><a class="detail-phone" href="tel:${escapeHtml(telHref)}">${escapeHtml(phone)}</a></dd>
+      </div>
+    `;
+  }
+
   function detailTags(list) {
     if (!Array.isArray(list) || !list.length) return "";
     return `
@@ -536,7 +557,7 @@
           <h3>基本情報</h3>
           <div class="detail-grid">
             ${detailField("施設業態", item.business_type)}
-            ${detailField("電話番号", item.phone)}
+            ${detailPhoneField("電話番号", item.phone)}
             ${detailField("住所", item.address)}
           </div>
           ${detailTags(item.usage)}
@@ -942,11 +963,14 @@
       modal.classList.remove("hidden");
       modal.setAttribute("aria-hidden", "false");
 
-      // レンタル品欄が空なら、まず1行用意しておく
+      // レンタル品欄が空なら、まず1行用意しておく（フォーカスは奪わない）
       const rentalRows = $("rentalRows");
       if (rentalRows && !rentalRows.children.length) {
-        addRentalRow();
+        addRentalRow("", "", { focus: false });
       }
+
+      // モーダルを開いたら温泉名欄にフォーカス
+      setTimeout(() => $("name")?.focus(), 0);
     });
 
     $("addRental")?.addEventListener("click", () => addRentalRow());
