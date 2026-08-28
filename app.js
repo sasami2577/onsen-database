@@ -111,8 +111,8 @@
     row.dataset.rowId = rowId;
 
     row.innerHTML = `
-      <input type="text" class="rental-name" placeholder="例：タオル" maxlength="60" value="${escapeHtml(name)}">
-      <input type="number" class="rental-price" placeholder="料金（円）" min="0" value="${escapeHtml(price)}">
+      <input type="text" class="rental-name" name="rental-name-${rowId}" autocomplete="off" placeholder="例：タオル" maxlength="60" value="${escapeHtml(name)}">
+      <input type="number" class="rental-price" name="rental-price-${rowId}" autocomplete="off" placeholder="料金（円）" min="0" value="${escapeHtml(price)}">
       <button type="button" class="remove-rental" aria-label="このレンタル品を削除">×</button>
     `;
 
