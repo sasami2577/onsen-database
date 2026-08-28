@@ -1,142 +1,96 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>温泉詳細 - 温泉データベース</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>温泉詳細 | 温泉データベース</title>
+  <link rel="stylesheet" href="onsen-detail.css">
 </head>
-<body class="detail-page">
-<header>
+<body>
+
+<header class="site-header">
+  <a class="back-link" href="index.html">← 温泉一覧に戻る</a>
   <div class="brand">
-    <span>♨</span>
-    <div><b>温泉データベース</b><small>みんなでつくる温泉情報</small></div>
+    <span class="brand-icon">♨</span>
+    <div>
+      <b>温泉データベース</b>
+      <small>みんなでつくる温泉情報</small>
+    </div>
   </div>
 </header>
+
 <main class="detail-main">
-  <a class="detail-back" href="index.html">← 温泉一覧へ戻る</a>
-  <div id="detailContent" class="detail-loading">温泉詳細を読み込んでいます…</div>
+  <div id="status" class="status">温泉情報を読み込んでいます…</div>
+
+  <section id="detail" class="detail-card hidden">
+    <div class="detail-top">
+      <div>
+        <span id="businessType" class="badge"></span>
+        <h1 id="name">温泉名</h1>
+        <p id="place" class="place"></p>
+      </div>
+    </div>
+
+    <div id="basicSection" class="detail-section">
+      <h2>基本情報</h2>
+      <div id="basicInfo" class="info-grid"></div>
+    </div>
+
+    <div id="hoursSection" class="detail-section">
+      <h2>営業時間・定休日</h2>
+      <div id="hoursInfo" class="info-grid"></div>
+    </div>
+
+    <div id="priceSection" class="detail-section">
+      <h2>利用・料金</h2>
+      <div id="priceInfo" class="info-grid"></div>
+    </div>
+
+    <div id="officialSection" class="detail-section">
+      <h2>公式情報・SNS</h2>
+      <div id="officialInfo" class="link-list"></div>
+    </div>
+
+    <div id="bathSection" class="detail-section">
+      <h2>お風呂・サウナ</h2>
+      <div id="bathInfo" class="info-grid"></div>
+    </div>
+
+    <div id="equipmentSection" class="detail-section">
+      <h2>設備</h2>
+      <div id="equipmentInfo" class="info-grid"></div>
+    </div>
+
+    <div id="springSection" class="detail-section">
+      <h2>泉質</h2>
+      <div id="springInfo" class="info-grid"></div>
+    </div>
+
+    <div id="rentalSection" class="detail-section">
+      <h2>レンタル品</h2>
+      <div id="rentalInfo" class="tag-list"></div>
+    </div>
+
+    <div id="mapSection" class="detail-section">
+      <h2>位置情報</h2>
+      <div id="mapInfo"></div>
+    </div>
+
+    <div id="noteSection" class="detail-section">
+      <h2>メモ・施設紹介</h2>
+      <p id="note" class="long-text"></p>
+    </div>
+  </section>
+
+  <section id="notFound" class="not-found hidden">
+    <h2>温泉が見つかりませんでした</h2>
+    <p>一覧画面からもう一度温泉を選んでください。</p>
+    <a class="primary-link" href="index.html">温泉一覧に戻る</a>
+  </section>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
-<script>
-(() => {
-  "use strict";
-  const TABLE_NAME="onsen_database";
-  const LOCAL_KEY="onsen_database_local_v1";
-  const id=new URLSearchParams(location.search).get("id");
-  const content=document.getElementById("detailContent");
-  const config=window.ONSEN_SUPABASE_CONFIG||{};
-  const SUPABASE_URL=config.url||"";
-  const SUPABASE_ANON_KEY=config.anonKey||"";
-
-  function esc(v){
-    return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;")
-      .replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
-  }
-  function has(v){return v!==null&&v!==undefined&&String(v).trim()!==""}
-  function disp(v){
-    if(Array.isArray(v)) return v.length?v.map(esc).join("、"):"未登録";
-    return has(v)?esc(v):"未登録";
-  }
-  function local(){
-    try{
-      const d=JSON.parse(localStorage.getItem(LOCAL_KEY)||"[]");
-      return Array.isArray(d)?d:[];
-    }catch(_){return []}
-  }
-  async function supabaseItem(){
-    if(!SUPABASE_URL||!SUPABASE_ANON_KEY||!window.supabase?.createClient)return null;
-    try{
-      const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-      const {data,error}=await client.from(TABLE_NAME).select("*").eq("id",id).maybeSingle();
-      if(error){console.error(error);return null}
-      return data;
-    }catch(error){console.error(error);return null}
-  }
-  function row(label,v){
-    return `<div class="detail-item"><span class="detail-label">${esc(label)}</span><div class="detail-value">${disp(v)}</div></div>`;
-  }
-  function render(item){
-    if(!item){
-      content.className="detail-error";
-      content.innerHTML="<h2>温泉が見つかりませんでした</h2><p>一覧画面に戻って、もう一度お試しください。</p>";
-      return;
-    }
-    document.title=`${item.name||"温泉詳細"} - 温泉データベース`;
-    const place=[item.prefecture,item.area,item.address].filter(Boolean).join(" ");
-    const links=[];
-    if(item.website)links.push(`<a href="${esc(item.website)}" target="_blank" rel="noopener">公式サイト</a>`);
-    if(item.instagram)links.push(`<a href="${esc(item.instagram)}" target="_blank" rel="noopener">Instagram</a>`);
-    content.className="detail-card";
-    content.innerHTML=`
-      <span class="badge">♨ 温泉</span>
-      <h1 class="detail-title">${disp(item.name)}</h1>
-      ${place?`<p class="detail-place">📍 ${esc(place)}</p>`:""}
-
-      <section class="detail-section"><h2>基本情報</h2><div class="detail-grid">
-        ${row("都道府県",item.prefecture)}${row("市区町村・地域",item.area)}
-        ${row("住所",item.address)}${row("施設業態",item.business_type)}
-        ${row("電話番号",item.phone)}
-      </div></section>
-
-      <section class="detail-section"><h2>営業時間・定休日</h2><div class="detail-grid">
-        ${row("営業時間",has(item.open_time)||has(item.close_time)?`${item.open_time||""}〜${item.close_time||""}`:"")}
-        ${row("最終受付",item.last_entry)}${row("定休日",item.closed_days)}
-        ${row("営業時間の補足",item.hours_note)}
-      </div></section>
-
-      <section class="detail-section"><h2>利用・料金</h2><div class="detail-grid">
-        ${row("利用条件",item.usage)}${row("大人料金",has(item.price)?`${item.price}円`:"")}
-        ${row("子ども料金",has(item.child_price)?`${item.child_price}円`:"")}
-        ${row("その他料金",has(item.other_price)?`${item.other_price}円`:"")}
-        ${row("料金区分",item.price_category||item.priceType)}
-        ${row("料金の補足",item.price_note)}${row("決済方法",item.payment)}
-      </div></section>
-
-      <section class="detail-section"><h2>お風呂・サウナ</h2><div class="detail-grid">
-        ${row("お風呂の種類",item.bath)}${row("浴場の補足",item.bath_note)}
-        ${row("サウナの種類",item.sauna)}${row("サウナ",item.sauna_status)}
-        ${row("サウナ温度",has(item.sauna_temp)?`${item.sauna_temp}℃`:"")}
-        ${row("サウナ・水風呂の補足",item.sauna_note)}
-        ${row("水風呂",item.cold_bath_status)}
-        ${row("水風呂温度",has(item.cold_bath_temp)?`${item.cold_bath_temp}℃`:"")}
-        ${row("外気浴",item.outdoor)}${row("休憩スペース",item.rest)}
-        ${row("シャンプー等",item.amenities)}${row("ドライヤー",item.dryer)}
-        ${row("Wi-Fi",item.wifi)}${row("駐車場",item.parking)}
-        ${row("貴重品ロッカー",item.locker)}${row("食事処",item.restaurant)}
-        ${row("バリアフリー",item.barrier_free||item.barrierFree)}
-      </div></section>
-
-      <section class="detail-section"><h2>泉質・温泉情報</h2><div class="detail-grid">
-        ${row("泉質",item.spring_type)}
-        ${row("泉温",has(item.temperature)?`${item.temperature}℃`:"")}
-        ${row("源泉温度",has(item.source_temperature)?`${item.source_temperature}℃`:"")}
-        ${row("加温",item.heating)}${row("加水",item.dilution)}
-        ${row("循環",item.circulation)}${row("消毒",item.disinfection)}
-        ${row("泉質の詳細・補足",item.spring_detail)}
-      </div></section>
-
-      <section class="detail-section"><h2>レンタル品</h2>${row("レンタル品",item.rental_items)}</section>
-
-      <section class="detail-section"><h2>公式情報・SNS</h2>
-        <div class="detail-links">${links.length?links.join(""):"<span>未登録</span>"}</div>
-      </section>
-
-      <section class="detail-section"><h2>位置情報・メモ</h2><div class="detail-grid">
-        ${row("緯度",item.lat)}${row("経度",item.lng)}
-      </div>${row("メモ・施設紹介",item.note)}</section>
-    `;
-  }
-  async function start(){
-    if(!id){render(null);return}
-    const localItem=local().find(x=>String(x.id)===String(id));
-    if(localItem){render(localItem);return}
-    render(await supabaseItem());
-  }
-  start();
-})();
-</script>
+<script src="onsen-detail.js"></script>
 </body>
 </html>
