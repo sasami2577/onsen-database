@@ -42,7 +42,7 @@ body.modal-open{overflow:visible}.primary{background:#875020;color:#fff}.seconda
 .detail-section h3{margin:0 0 12px;font-size:16px;color:#714117}
 .detail-subhead{margin:18px 0 8px;font-size:14px;color:#45403b;font-weight:700;border-left:3px solid #e4cdb9;padding-left:8px}
 .detail-subhead:first-of-type{margin-top:0}
-.detail-gap{height:1.4em}
+.detail-gap{height:0.6em}
 .detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 20px}
 .detail-item dt{font-size:12px;color:#837d77;margin:0}
 .detail-item dd{margin:2px 0 0;font-size:15px;font-weight:600}

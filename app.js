@@ -582,7 +582,7 @@
           ${detailSubhead("🚶‍♀️ アクセス方法")}
           ${
             item.nearest_station
-              ? `<p class="field-title">🚉 最寄り駅</p><p class="detail-note">${escapeHtml(item.nearest_station)}</p>`
+              ? `${detailSubhead("🚉 最寄り駅")}<p class="detail-note">${escapeHtml(item.nearest_station)}</p>`
               : ""
           }
           <p class="detail-note">${item.access_method ? escapeHtml(item.access_method) : "情報がありません。"}</p>
@@ -657,7 +657,9 @@
           </div>
           ${item.price_note ? `<p class="detail-note">${escapeHtml(item.price_note)}</p>` : ""}
 
-          ${detailSubhead("💰 決済方法")}
+          <div class="detail-gap"></div>
+
+          ${detailSubhead("👛 決済方法")}
           ${
             detailTags(item.payment) ||
             `<p class="detail-note">情報がありません。</p>`
