@@ -569,12 +569,22 @@
           <h3>基本情報</h3>
           <div class="detail-grid">
             ${detailField("施設業態", item.business_type)}
-            ${detailPhoneField("電話番号", item.phone)}
+          </div>
+
+          ${detailSubhead("利用条件")}
+          ${detailTags(item.usage) || `<p class="detail-note">情報がありません。</p>`}
+
+          <div class="detail-grid compact-top">
             ${detailField("住所", item.address)}
             ${detailField("最寄り駅", item.nearest_station)}
           </div>
-          ${item.access_method ? `<p class="detail-note">${escapeHtml(item.access_method)}</p>` : ""}
-          ${detailTags(item.usage)}
+
+          ${detailSubhead("アクセス方法")}
+          <p class="detail-note">${item.access_method ? escapeHtml(item.access_method) : "情報がありません。"}</p>
+
+          <div class="detail-grid">
+            ${detailPhoneField("電話番号", item.phone)}
+          </div>
 
           <div class="detail-gap"></div>
 
