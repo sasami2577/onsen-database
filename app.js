@@ -566,39 +566,48 @@
 
         <!-- 基本情報（営業時間・料金・公式SNS・メモを含む） -->
         <section class="detail-section">
-          <h3>基本情報</h3>
-          <div class="detail-grid">
-            ${detailField("施設業態", item.business_type)}
-          </div>
+          <h3>🏷️ 基本情報</h3>
 
-          ${detailSubhead("利用条件")}
-          ${detailTags(item.usage) || `<p class="detail-note">情報がありません。</p>`}
-
-          <div class="detail-grid compact-top">
-            ${detailField("住所", item.address)}
-            ${detailField("最寄り駅", item.nearest_station)}
-          </div>
-
-          ${detailSubhead("アクセス方法")}
-          <p class="detail-note">${item.access_method ? escapeHtml(item.access_method) : "情報がありません。"}</p>
-
-          <div class="detail-grid">
-            ${detailPhoneField("電話番号", item.phone)}
-          </div>
+          ${detailSubhead("🏢 施設業態")}
+          <p class="detail-note">${item.business_type ? escapeHtml(item.business_type) : "情報がありません。"}</p>
 
           <div class="detail-gap"></div>
 
-          ${detailSubhead("営業時間")}
+          ${detailSubhead("📝 利用条件")}
+          ${detailTags(item.usage) || `<p class="detail-note">情報がありません。</p>`}
+
+          ${detailSubhead("📍 住所")}
+          <p class="detail-note">${item.address ? escapeHtml(item.address) : "情報がありません。"}</p>
+
+          ${detailSubhead("🚶‍♀️ アクセス方法")}
+          ${
+            item.nearest_station
+              ? `<p class="field-title">🚉 最寄り駅</p><p class="detail-note">${escapeHtml(item.nearest_station)}</p>`
+              : ""
+          }
+          <p class="detail-note">${item.access_method ? escapeHtml(item.access_method) : "情報がありません。"}</p>
+
+          ${detailSubhead("📞 電話番号")}
+          <p class="detail-note">${
+            item.phone
+              ? `<a class="detail-phone" href="tel:${escapeHtml(item.phone.replace(/[^0-9+]/g, ""))}">${escapeHtml(item.phone)}</a>`
+              : "情報がありません。"
+          }</p>
+
+          <div class="detail-gap"></div>
+
+          ${detailSubhead("🕒 営業時間")}
           <div class="detail-grid">
             ${detailField("営業時間", hours)}
             ${detailField("最終受付", item.last_entry)}
           </div>
+          ${item.hours_note ? `<p class="detail-note">${escapeHtml(item.hours_note)}</p>` : ""}
+
+          ${detailSubhead("🗓 定休日")}
           ${
             Array.isArray(item.closed_days) && item.closed_days.length
-              ? `<p class="field-title">定休日</p>${detailTags(
-                  item.closed_days.map((d) => `${d}曜日`)
-                )}`
-              : ""
+              ? detailTags(item.closed_days.map((d) => `${d}曜日`))
+              : `<p class="detail-note">情報がありません。</p>`
           }
           ${
             item.is_temp_closed || item.is_closed
@@ -610,12 +619,11 @@
                 )
               : ""
           }
-          ${item.hours_note ? `<p class="detail-note">${escapeHtml(item.hours_note)}</p>` : ""}
 
           ${
             links.length
               ? `
-                ${detailSubhead("公式情報・SNS")}
+                ${detailSubhead("📱 公式情報・SNS")}
                 <div class="detail-links">
                   ${links
                     .map(
@@ -640,7 +648,7 @@
 
         <!-- 料金（各種料金＋決済方法） -->
         <section class="detail-section">
-          <h3>料金</h3>
+          <h3>💰 料金</h3>
           <div class="detail-grid">
             ${detailField("大人料金", item.price != null ? `${item.price}円` : "")}
             ${detailField("子ども料金", item.child_price != null ? `${item.child_price}円` : "")}
@@ -649,7 +657,7 @@
           </div>
           ${item.price_note ? `<p class="detail-note">${escapeHtml(item.price_note)}</p>` : ""}
 
-          ${detailSubhead("決済方法")}
+          ${detailSubhead("💰 決済方法")}
           ${
             detailTags(item.payment) ||
             `<p class="detail-note">情報がありません。</p>`
