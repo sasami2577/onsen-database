@@ -51,6 +51,8 @@ body.modal-open{overflow:visible}.primary{background:#875020;color:#fff}.seconda
 .detail-tags{display:flex;flex-wrap:wrap;gap:8px}
 .detail-tags .badge{background:#f7f2ee}
 .detail-note{white-space:pre-wrap;line-height:1.7;color:#45403b}
+.detail-note-tight{margin:6px 0 0;line-height:1.5}
+.type-badge{display:inline-block;padding:6px 14px;border-radius:99px;font-size:14px;font-weight:700}
 .detail-links a{display:inline-block;margin-right:14px;color:#714117;font-weight:700;text-decoration:none}
 .detail-links a:hover{text-decoration:underline}
 .detail-empty{color:#96908a;text-align:center;padding:60px 20px}

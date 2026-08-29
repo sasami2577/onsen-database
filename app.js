@@ -486,6 +486,39 @@
     return `<h4 class="detail-subhead">${escapeHtml(title)}</h4>`;
   }
 
+  const BUSINESS_TYPE_STYLES = {
+    "日帰り温泉": { emoji: "♨️", bg: "#d64545", color: "#fff" },
+    "銭湯・公衆浴場": { emoji: "♨️", bg: "#8b5e3c", color: "#fff" },
+    "スーパー銭湯": { emoji: "♨️", bg: "#e8c300", color: "#4a3b00" },
+    "温泉旅館": { emoji: "🛌", bg: "#7c5cbf", color: "#fff" },
+    "ホテル": { emoji: "🏨", bg: "#7c5cbf", color: "#fff" },
+    "サウナ施設": { emoji: "🧖‍♀️", bg: "#e0761f", color: "#fff" },
+    "スパ施設": { emoji: "💆‍♀️", bg: "#4fb3d9", color: "#fff" },
+    "アウトドア施設": { emoji: "🏕", bg: "#3f9142", color: "#fff" },
+    "スポーツジム": { emoji: "🏃‍♀️", bg: "#3b6fd6", color: "#fff" },
+    "複合施設": { emoji: "🎡", bg: "#e0629c", color: "#fff" }
+  };
+
+  function renderBusinessTypeBadge(businessType) {
+    if (!businessType) {
+      return `<p class="detail-note-tight">情報がありません。</p>`;
+    }
+
+    const style = BUSINESS_TYPE_STYLES[businessType] || {
+      emoji: "🏳️",
+      bg: "#8a968f",
+      color: "#fff"
+    };
+
+    return `
+      <p class="detail-note-tight">
+        <span class="type-badge" style="background:${style.bg};color:${style.color}">
+          ${style.emoji} ${escapeHtml(businessType)}
+        </span>
+      </p>
+    `;
+  }
+
   function getOpenStatus(item) {
     // 将来的なフラグ（閉鎖・臨時休業）に対応
     if (item.is_closed) {
@@ -569,7 +602,7 @@
           <h3>🏷️ 基本情報</h3>
 
           ${detailSubhead("🏢 施設業態")}
-          <p class="detail-note">${item.business_type ? escapeHtml(item.business_type) : "情報がありません。"}</p>
+          ${renderBusinessTypeBadge(item.business_type)}
 
           <div class="detail-gap"></div>
 
