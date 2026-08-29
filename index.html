@@ -33,8 +33,38 @@
 <label class="full">温泉名 <em>必須</em><input id="name" required maxlength="100" placeholder="例：○○温泉"></label>
 <label>都道府県<select id="prefecture"><option value="">選択してください</option><option>北海道</option><option>青森県</option><option>岩手県</option><option>宮城県</option><option>秋田県</option><option>山形県</option><option>福島県</option><option>茨城県</option><option>栃木県</option><option>群馬県</option><option>埼玉県</option><option>千葉県</option><option>東京都</option><option>神奈川県</option><option>新潟県</option><option>富山県</option><option>石川県</option><option>福井県</option><option>山梨県</option><option>長野県</option><option>岐阜県</option><option>静岡県</option><option>愛知県</option><option>三重県</option><option>滋賀県</option><option>京都府</option><option>大阪府</option><option>兵庫県</option><option>奈良県</option><option>和歌山県</option><option>鳥取県</option><option>島根県</option><option>岡山県</option><option>広島県</option><option>山口県</option><option>徳島県</option><option>香川県</option><option>愛媛県</option><option>高知県</option><option>福岡県</option><option>佐賀県</option><option>長崎県</option><option>熊本県</option><option>大分県</option><option>宮崎県</option><option>鹿児島県</option><option>沖縄県</select></label>
 <label>市区町村・地域<input id="area" placeholder="例：草津町"></label>
+
+<label class="full">施設業態 <em>必須</em><select id="businessType" required>
+<option value="">選択してください</option>
+<option>日帰り温泉</option>
+<option>銭湯・公衆浴場</option>
+<option>スーパー銭湯</option>
+<option>温泉旅館</option>
+<option>ホテル</option>
+<option>サウナ施設</option>
+<option>スパ施設</option>
+<option>アウトドア施設</option>
+<option>スポーツジム</option>
+<option>複合施設</option>
+<option>その他</option>
+</select></label>
+<label class="full hidden" id="businessTypeOtherWrap">施設業態（その他の内容）<input id="businessTypeOther" placeholder="例：カプセルホテル"></label>
+
+<fieldset class="full"><legend>利用条件</legend><div class="checks">
+<label><input type="checkbox" name="usage" value="日帰り入浴可">日帰り入浴可</label>
+<label><input type="checkbox" name="usage" value="宿泊者のみ">宿泊者のみ</label>
+<label><input type="checkbox" name="usage" value="会員制">会員制</label>
+<label><input type="checkbox" name="usage" value="要予約">要予約</label>
+<label><input type="checkbox" name="usage" value="要確認">要確認</label>
+<label><input type="checkbox" name="usage" value="男性専用">男性専用</label>
+<label><input type="checkbox" name="usage" value="女性専用">女性専用</label>
+<label><input type="checkbox" name="usage" value="水着着用">水着着用</label>
+<label><input type="checkbox" id="usageOtherCheck">その他</label>
+</div>
+<input type="text" id="usageOther" class="hidden compact-top" placeholder="その他の利用条件を入力">
+</fieldset>
+
 <label class="full">住所<input id="address" placeholder="例：○○県○○町○○1-2-3"></label>
-<label>施設業態<select id="businessType"><option value="">選択してください</option><option>温泉旅館</option><option>日帰り温泉</option><option>銭湯・公衆浴場</option><option>ホテル</option><option>スーパー銭湯</option><option>その他</option></select></label>
 <label>電話番号<input id="phone" type="tel"></label>
 </div></section>
 <section class="form-section"><h3>営業時間・定休日</h3><div class="grid two">
@@ -55,9 +85,6 @@
 <label class="full">営業時間の補足<textarea id="hoursNote" rows="2"></textarea></label>
 </div></section>
 <section class="form-section"><h3>利用・料金</h3><div class="grid two">
-<fieldset class="full"><legend>利用条件</legend><div class="checks">
-<label><input type="checkbox" name="usage" value="日帰り入浴">日帰り入浴</label><label><input type="checkbox" name="usage" value="宿泊">宿泊</label><label><input type="checkbox" name="usage" value="貸切風呂">貸切風呂</label><label><input type="checkbox" name="usage" value="家族風呂">家族風呂</label><label><input type="checkbox" name="usage" value="立ち寄り">立ち寄り</label>
-</div></fieldset>
 <label>大人料金（円）<input id="price" type="number" min="0"></label><label>子ども料金（円）<input id="childPrice" type="number" min="0"></label>
 <label>その他料金（円）<input id="otherPrice" type="number" min="0"></label><label>料金区分<select id="priceType"><option value="">選択してください</option><option>入浴のみ</option><option>入浴＋サウナ</option><option>入浴＋タオル</option><option>その他</option></select></label>
 <label class="full">料金の補足<textarea id="priceNote" rows="2"></textarea></label>
@@ -65,6 +92,10 @@
 </div></section>
 <section class="form-section"><h3>公式情報・SNS</h3><div class="grid two">
 <label>公式サイト<input id="website" type="url"></label><label>Instagram<input id="instagram" type="url"></label><label>X（旧Twitter）<input id="twitter" type="url"></label><label>Facebook<input id="facebook" type="url"></label>
+</div></section>
+<section class="form-section"><h3>アクセス</h3><div class="grid two">
+<label>最寄り駅<input id="nearestStation" placeholder="例：草津温泉バスターミナル"></label>
+<label class="full">アクセス方法<textarea id="accessMethod" rows="2" placeholder="例：JR長野原草津口駅からバスで25分"></textarea></label>
 </div></section>
 <section class="form-section"><h3>お風呂・サウナ</h3>
 <fieldset><legend>お風呂の種類</legend><div class="checks">

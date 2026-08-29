@@ -162,8 +162,13 @@
       prefecture: value("prefecture"),
       area: value("area"),
       address: value("address"),
-      business_type: value("businessType"),
+      business_type:
+        value("businessType") === "その他" && value("businessTypeOther")
+          ? value("businessTypeOther")
+          : value("businessType"),
       phone: value("phone"),
+      nearest_station: value("nearestStation"),
+      access_method: value("accessMethod"),
 
       open_time: timeValue("openTime"),
       close_time: timeValue("closeTime"),
@@ -173,7 +178,12 @@
       is_closed: checkedBool("closedPermanently"),
       hours_note: value("hoursNote"),
 
-      usage: checkedValues("usage"),
+      usage: [
+        ...checkedValues("usage"),
+        ...(checkedBool("usageOtherCheck")
+          ? [value("usageOther") || "その他"]
+          : [])
+      ],
 
       price: numberValue("price"),
       child_price: numberValue("childPrice"),
@@ -184,6 +194,8 @@
 
       website: value("website"),
       instagram: value("instagram"),
+      twitter: value("twitter"),
+      facebook: value("facebook"),
 
       bath: checkedValues("bath"),
       sauna_note: value("saunaNote"),
@@ -559,7 +571,9 @@
             ${detailField("施設業態", item.business_type)}
             ${detailPhoneField("電話番号", item.phone)}
             ${detailField("住所", item.address)}
+            ${detailField("最寄り駅", item.nearest_station)}
           </div>
+          ${item.access_method ? `<p class="detail-note">${escapeHtml(item.access_method)}</p>` : ""}
           ${detailTags(item.usage)}
 
           <div class="detail-gap"></div>
@@ -938,6 +952,10 @@
     if (rentalRows) {
       rentalRows.innerHTML = "";
     }
+
+    // 「その他」の自由記述欄も隠しておく
+    $("businessTypeOtherWrap")?.classList.add("hidden");
+    $("usageOther")?.classList.add("hidden");
   }
 
   // ---------------------------------------------------------
@@ -974,6 +992,20 @@
     });
 
     $("addRental")?.addEventListener("click", () => addRentalRow());
+
+    // 施設業態で「その他」を選んだ時だけ自由記述欄を表示
+    $("businessType")?.addEventListener("change", (event) => {
+      const wrap = $("businessTypeOtherWrap");
+      if (!wrap) return;
+      wrap.classList.toggle("hidden", event.target.value !== "その他");
+    });
+
+    // 利用条件の「その他」にチェックが入った時だけ自由記述欄を表示
+    $("usageOtherCheck")?.addEventListener("change", (event) => {
+      const other = $("usageOther");
+      if (!other) return;
+      other.classList.toggle("hidden", !event.target.checked);
+    });
 
     $("rentalRows")?.addEventListener("click", (event) => {
       const button = event.target.closest(".remove-rental");
