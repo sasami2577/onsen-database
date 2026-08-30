@@ -24,6 +24,7 @@
     window.ONSEN_SUPABASE_CONFIG?.anonKey || "";
 
   let supabaseClient = null;
+  let editingId = null;
 
   function initSupabase() {
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -451,6 +452,322 @@
   }
 
   // ---------------------------------------------------------
+  // 編集用：フォームへの値の書き戻し
+  // ---------------------------------------------------------
+
+  function setValue(id, val) {
+    const el = $(id);
+    if (!el) return;
+    el.value = val ?? "";
+  }
+
+  function setRadioValue(name, val) {
+    if (!val) return;
+    document.querySelectorAll(`input[name="${name}"]`).forEach((el) => {
+      el.checked = el.value === val;
+    });
+  }
+
+  function setCheckboxGroup(name, knownValues, values, otherCheckId, otherInputId) {
+    if (!Array.isArray(values) || !values.length) return;
+
+    const knownSet = new Set(knownValues);
+
+    document.querySelectorAll(`input[name="${name}"]`).forEach((el) => {
+      el.checked = values.includes(el.value);
+    });
+
+    if (!otherCheckId) return;
+
+    const otherValues = values.filter((v) => !knownSet.has(v));
+    const otherCheck = $(otherCheckId);
+    const otherInput = $(otherInputId);
+
+    if (otherCheck && otherValues.length) {
+      otherCheck.checked = true;
+      otherCheck.dispatchEvent(new Event("change"));
+    }
+    if (otherInput && otherValues.length) {
+      otherInput.value = otherValues.join("、");
+    }
+  }
+
+  function setTimeValue(prefix, hhmm) {
+    if (!hhmm) return;
+    const [h, m] = hhmm.split(":");
+    if ($(`${prefix}Hour`)) $(`${prefix}Hour`).value = h || "";
+    if ($(`${prefix}Minute`)) $(`${prefix}Minute`).value = m || "";
+  }
+
+  function setDateValue(prefix, dateStr) {
+    if (!dateStr) return;
+    const [y, m, d] = dateStr.split("-");
+    if ($(`${prefix}Year`)) $(`${prefix}Year`).value = y || "";
+    if ($(`${prefix}Month`)) $(`${prefix}Month`).value = m ? String(Number(m)) : "";
+    if ($(`${prefix}Day`)) $(`${prefix}Day`).value = d ? String(Number(d)) : "";
+  }
+
+  function populateFeeRows(containerId, fees) {
+    const rows = $(containerId);
+    if (!rows) return;
+    rows.innerHTML = "";
+    if (!Array.isArray(fees) || !fees.length) return;
+
+    fees.forEach((f) =>
+      addFeeRow(containerId, f.category || "", f.amount ?? "", { focus: false })
+    );
+  }
+
+  function populateRentalItems(items) {
+    const rows = $("rentalRows");
+    if (!rows) return;
+    rows.innerHTML = "";
+    if (!Array.isArray(items) || !items.length) return;
+
+    items.forEach((entry) => {
+      const match = /^(.*)（(\d+)円）$/.exec(entry);
+      if (match) {
+        addRentalRow(match[1], match[2], { focus: false });
+      } else {
+        addRentalRow(entry, "", { focus: false });
+      }
+    });
+  }
+
+  function populateForm(item) {
+    setValue("name", item.name);
+    setValue("prefecture", item.prefecture);
+    setValue("area", item.area);
+
+    if (item.business_type && !BUSINESS_TYPE_STYLES[item.business_type]) {
+      setValue("businessType", "その他");
+      setValue("businessTypeOther", item.business_type);
+      $("businessTypeOtherWrap")?.classList.remove("hidden");
+    } else {
+      setValue("businessType", item.business_type);
+    }
+
+    setCheckboxGroup(
+      "usage",
+      ["日帰り入浴可", "宿泊者のみ", "会員制", "要予約", "要確認", "男性専用", "女性専用", "水着着用"],
+      item.usage,
+      "usageOtherCheck",
+      "usageOther"
+    );
+
+    setValue("address", item.address);
+    setValue("phone", item.phone);
+    setValue("nearestStation", item.nearest_station);
+    setValue("accessMethod", item.access_method);
+
+    setTimeValue("openTime", item.open_time);
+    setTimeValue("closeTime", item.close_time);
+    setTimeValue("lastEntry", item.last_entry);
+    if (Array.isArray(item.closed_days)) {
+      document.querySelectorAll('input[name="closedDay"]').forEach((el) => {
+        el.checked = item.closed_days.includes(el.value);
+      });
+    }
+    if (item.is_temp_closed) $("tempClosed").checked = true;
+    if (item.is_closed) $("closedPermanently").checked = true;
+    setValue("hoursNote", item.hours_note);
+
+    populateFeeRows("bathFeeRows", item.bath_fees);
+    populateFeeRows("otherFeeRows", item.other_fees);
+
+    if (item.purchase_method === "券売機" || item.purchase_method === "受付購入") {
+      setRadioValue("purchaseMethod", item.purchase_method);
+    } else if (item.purchase_method) {
+      setRadioValue("purchaseMethod", "その他");
+      setValue("purchaseMethodOther", item.purchase_method);
+      $("purchaseMethodOtherWrap")?.classList.remove("hidden");
+    }
+
+    setCheckboxGroup(
+      "payment",
+      ["現金決済", "クレジットカード", "PayPay", "楽天ペイ", "d払い", "au PAY", "QUICPay", "iD", "WAON", "楽天Edy", "交通系電子マネー"],
+      item.payment,
+      "paymentOtherCheck",
+      "paymentOther"
+    );
+
+    setRadioValue("pointCard", item.point_card);
+    setRadioValue("membershipCard", item.membership_card);
+    setRadioValue("wristbandPayment", item.wristband_payment);
+    setValue("priceNote", item.price_note);
+
+    setValue("website", item.website);
+    setValue("instagram", item.instagram);
+    setValue("twitter", item.twitter);
+    setValue("facebook", item.facebook);
+
+    setCheckboxGroup(
+      "bathShape",
+      ["大浴場", "個別風呂", "露天風呂・半露天風呂", "展望風呂", "貸切風呂", "家族風呂", "内湯（宿泊者限定）", "壺湯", "釜風呂", "檜風呂", "岩風呂・石風呂", "寝湯・寝ころび湯", "立ち湯", "腰掛け湯", "洞窟風呂", "海水風呂"],
+      item.bath_shape,
+      "bathShapeOtherCheck",
+      "bathShapeOther"
+    );
+    setCheckboxGroup(
+      "bathFunction",
+      ["炭酸泉・人工炭酸泉", "電気風呂", "ジェットバス", "バイブラバス", "打たせ湯", "薬湯", "香り湯", "源泉掛け流し浴槽", "循環浴槽", "加温浴槽", "高温湯", "ぬるま湯", "水風呂", "冷泉湯", "砂湯", "泥湯"],
+      item.bath_function,
+      "bathFunctionOtherCheck",
+      "bathFunctionOther"
+    );
+    setValue("privateBathDuration", item.private_bath_duration);
+    setValue("privateBathNote", item.private_bath_note);
+    setCheckboxGroup(
+      "bathLocation",
+      ["固定", "日替わり", "週替わり", "隔週", "時間交代制", "男湯のみ", "女湯のみ", "混浴"],
+      item.bath_location,
+      "bathLocationOtherCheck",
+      "bathLocationOther"
+    );
+    setRadioValue("bathHandrail", item.bath_handrail);
+    setRadioValue("toiletryShelf", item.toiletry_shelf);
+    setRadioValue("bathAnteroom", item.bath_anteroom);
+    setRadioValue("bathEvent", item.bath_event);
+    setValue("bathEventDetail", item.bath_event_detail);
+    setRadioValue("bathToys", item.bath_toys);
+    setValue("bathToysDetail", item.bath_toys_detail);
+    setValue("bathNote", item.bath_note);
+
+    setCheckboxGroup(
+      "springTypes",
+      ["単純温泉", "塩化物泉", "炭酸水素塩泉", "硫酸塩泉", "二酸化炭素泉", "含鉄泉", "酸性泉", "含よう素泉", "硫黄泉", "放射能泉"],
+      item.spring_types,
+      "springTypeOtherCheck",
+      "springTypeOther"
+    );
+    if (Array.isArray(item.indications)) {
+      document.querySelectorAll('input[name="indications"]').forEach((el) => {
+        el.checked = item.indications.includes(el.value);
+      });
+      const known = new Set([
+        "筋肉痛", "関節痛", "神経痛", "腰痛", "四十肩・五十肩", "打撲・捻挫",
+        "冷え症", "血行促進", "慢性的な循環器系不全",
+        "疲労回復", "健康増進", "自律神経の調整",
+        "胃腸機能の低下", "食欲不振", "慢性的な消化器症状",
+        "乾燥肌", "やけど", "切り傷、擦り傷", "慢性的な皮膚疾患",
+        "月経に関連する症状", "慢性的な婦人系症状など",
+        "慢性的な呼吸器症状など"
+      ]);
+      const other = item.indications.filter((v) => !known.has(v));
+      setValue("indicationsOther", other.join("、"));
+    }
+    setCheckboxGroup("springColor", ["無色透明", "白濁", "茶褐色"], item.spring_color, "springColorOtherCheck", "springColorOther");
+    setCheckboxGroup("springSmell", ["無臭", "硫黄臭", "鉄臭"], item.spring_smell, "springSmellOtherCheck", "springSmellOther");
+    setCheckboxGroup(
+      "springTexture",
+      ["さらさら", "なめらか", "つるつる", "すべすべ", "しっとり", "やわらかい", "まろやか", "とろみがある", "ぬるぬる", "きしきし", "さっぱり", "刺激がある"],
+      item.spring_texture,
+      "springTextureOtherCheck",
+      "springTextureOther"
+    );
+    setRadioValue("sourceFreeFlow", item.source_free_flow);
+    setRadioValue("springDilution", item.spring_dilution);
+    setRadioValue("springHeating", item.spring_heating);
+    setRadioValue("springCirculation", item.spring_circulation);
+    setRadioValue("springDisinfection", item.spring_disinfection);
+    setValue("springUsageNote", item.spring_usage_note);
+    setValue("springTemperature", item.spring_temperature);
+    setValue("sourceTemperature", item.source_temperature);
+    setValue("springPh", item.spring_ph);
+    setValue("springSourceName", item.spring_source_name);
+    setValue("springOpenYear", item.spring_open_year);
+    setValue("springOpenYearNote", item.spring_open_year_note);
+    setRadioValue("springAnalysis", item.spring_analysis);
+    setDateValue("springAnalysis", item.spring_analysis_date);
+    setRadioValue("legionellaTest", item.legionella_test);
+    setDateValue("legionella", item.legionella_test_date);
+    setRadioValue("legionellaResult", item.legionella_result);
+    setCheckboxGroup(
+      "springInfoSource",
+      ["施設掲示", "温泉成分分析書", "施設公式サイト", "自治体・公的機関"],
+      item.spring_info_source,
+      "springInfoSourceOtherCheck",
+      "springInfoSourceOther"
+    );
+    setDateValue("springInfoCheck", item.spring_info_check_date);
+    setRadioValue("childMixedBathing", item.child_mixed_bathing);
+    setRadioValue("childAgeLimit", item.child_age_limit);
+    setRadioValue("childGenderLimit", item.child_gender_limit);
+    setValue("childBoyAgeLimit", item.child_boy_age_limit);
+    setValue("childGirlAgeLimit", item.child_girl_age_limit);
+    setValue("childMixedBathingNote", item.child_mixed_bathing_note);
+    setCheckboxGroup(
+      "childInfoSource",
+      ["施設掲示", "施設公式サイト", "自治体・公的機関"],
+      item.child_info_source,
+      "childInfoSourceOtherCheck",
+      "childInfoSourceOther"
+    );
+    setDateValue("childInfoCheck", item.child_info_check_date);
+
+    setValue("saunaNote", item.sauna_note);
+    setCheckboxGroup(
+      "sauna",
+      ["ドライサウナ", "フィンランド式", "ロウリュ", "オートロウリュ", "セルフロウリュ", "塩サウナ", "スチームサウナ", "ミストサウナ", "遠赤外線サウナ", "その他"],
+      item.sauna,
+      null,
+      null
+    );
+    setValue("saunaStatus", item.sauna_status);
+    setValue("coldBathStatus", item.cold_bath_status);
+    setRadioValue("outdoor", item.outdoor);
+    setRadioValue("rest", item.rest);
+    setRadioValue("wifi", item.wifi);
+    setRadioValue("parking", item.parking);
+    setRadioValue("locker", item.locker);
+    setRadioValue("restaurant", item.restaurant);
+    setRadioValue("barrierFree", item.barrier_free);
+
+    setValue("showerCount", item.shower_count);
+    setCheckboxGroup("showerType", ["押すタイプ", "レバータイプ", "不明"], item.shower_type, "showerTypeOtherCheck", "showerTypeOther");
+    setValue("showerHeadInfo", item.shower_head_info);
+    setRadioValue("showerFaucet", item.shower_faucet);
+    setRadioValue("showerBooth", item.shower_booth);
+    setRadioValue("washAreaDivider", item.wash_area_divider);
+    setRadioValue("preRinseWater", item.pre_rinse_water);
+    setValue("showerNote", item.shower_note);
+
+    setRadioValue("shampooConditioner", item.shampoo_conditioner);
+    setRadioValue("bodySoap", item.body_soap);
+    setRadioValue("soap", item.soap);
+    setRadioValue("faceWash", item.face_wash);
+    setRadioValue("cleansing", item.cleansing);
+    setRadioValue("basin", item.basin);
+    setRadioValue("bathChair", item.bath_chair);
+    setRadioValue("showerChair", item.shower_chair);
+    populateRentalItems(item.rental_items);
+    setRadioValue("dryerStatus", item.dryer_status);
+    setValue("dryerCount", item.dryer_count);
+    setRadioValue("dryerFee", item.dryer_fee);
+    setValue("dryerBrand", item.dryer_brand);
+    setRadioValue("dryerBringOwn", item.dryer_bring_own);
+    setRadioValue("tissue", item.tissue);
+    setRadioValue("cottonSwab", item.cotton_swab);
+    setRadioValue("cosmetics", item.cosmetics);
+    setRadioValue("hairTie", item.hair_tie);
+    setRadioValue("powderRoom", item.powder_room);
+    setRadioValue("vanity", item.vanity);
+    setRadioValue("waterCooler", item.water_cooler);
+    setRadioValue("fan", item.fan);
+    setRadioValue("scale", item.scale);
+    setRadioValue("bloodPressureMonitor", item.blood_pressure_monitor);
+    setRadioValue("trashBin", item.trash_bin);
+    setRadioValue("lockerRoomChair", item.locker_room_chair);
+    setRadioValue("babyChair", item.baby_chair);
+    setRadioValue("babyBed", item.baby_bed);
+    setValue("amenityNote", item.amenity_note);
+
+    setValue("lat", item.lat);
+    setValue("lng", item.lng);
+    setValue("note", item.note);
+  }
+
+  // ---------------------------------------------------------
   // LocalStorage
   // ---------------------------------------------------------
 
@@ -524,6 +841,60 @@
     }
 
     return data;
+  }
+
+  async function updateSupabaseData(id, item) {
+    if (!supabaseClient) return null;
+
+    const payload = { ...item };
+    delete payload.id;
+
+    const { data, error } = await supabaseClient
+      .from(TABLE_NAME)
+      .update(payload)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Supabase更新エラー:", error);
+      throw error;
+    }
+
+    return data;
+  }
+
+  async function deleteSupabaseData(id) {
+    if (!supabaseClient) return;
+
+    const { error } = await supabaseClient
+      .from(TABLE_NAME)
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Supabase削除エラー:", error);
+      throw error;
+    }
+  }
+
+  function updateLocalData(id, item) {
+    const list = getLocalData();
+    const index = list.findIndex((entry) => String(entry.id) === String(id));
+
+    if (index === -1) return null;
+
+    const updated = { ...item, id };
+    list[index] = updated;
+    saveLocalData(list);
+
+    return updated;
+  }
+
+  function deleteLocalData(id) {
+    const list = getLocalData();
+    const filtered = list.filter((entry) => String(entry.id) !== String(id));
+    saveLocalData(filtered);
   }
 
   // ---------------------------------------------------------
@@ -823,6 +1194,7 @@
         <div class="detail-toolbar-actions">
           <button type="button" id="detailEdit" class="detail-action">✏️ 情報を編集する</button>
           <button type="button" id="detailShare" class="detail-action">↗️ 共有する</button>
+          <button type="button" id="detailDelete" class="detail-action detail-action-danger">🗑 削除する</button>
         </div>
       </div>
       <div class="detail-heading-block">
@@ -1202,7 +1574,22 @@
     });
 
     $("detailEdit")?.addEventListener("click", () => {
-      alert("編集機能は現在準備中です。もうしばらくお待ちください。");
+      editingId = item.id;
+
+      resetForm();
+      populateForm(item);
+
+      const modal = $("modal");
+      if (modal) {
+        modal.classList.remove("hidden");
+        modal.setAttribute("aria-hidden", "false");
+      }
+
+      const titleEl = $("modalTitle");
+      if (titleEl) titleEl.textContent = "温泉を編集";
+
+      const submitButton = document.querySelector('#form button[type="submit"]');
+      if (submitButton) submitButton.textContent = "更新する";
     });
 
     $("detailShare")?.addEventListener("click", async () => {
@@ -1226,6 +1613,31 @@
         alert("リンクをコピーしました。");
       } catch (error) {
         console.error("共有リンクのコピーに失敗:", error);
+      }
+    });
+
+    $("detailDelete")?.addEventListener("click", async () => {
+      const ok = confirm(
+        `「${item.name || "この温泉"}」を削除します。この操作は取り消せません。よろしいですか？`
+      );
+      if (!ok) return;
+
+      try {
+        if (supabaseClient) {
+          await deleteSupabaseData(item.id);
+        } else {
+          deleteLocalData(item.id);
+        }
+
+        location.hash = "";
+        await loadAll();
+        alert("削除しました。");
+      } catch (error) {
+        console.error(error);
+        alert(
+          "削除できませんでした。\n\n" +
+          `詳細：${error.message || "不明なエラー"}`
+        );
       }
     });
   }
@@ -1317,6 +1729,9 @@
       return;
     }
 
+    const isEditing = Boolean(editingId);
+    const targetId = editingId;
+
     const saveButton =
       document.querySelector('#form button[type="submit"]') ||
       document.querySelector('#form button:not(#cancel)');
@@ -1327,45 +1742,70 @@
 
     try {
       if (supabaseClient) {
-        const saved = await insertSupabaseData(item);
+        const saved = isEditing
+          ? await updateSupabaseData(targetId, item)
+          : await insertSupabaseData(item);
 
-        // Supabase保存成功
-        setStatus("温泉を登録しました。", "ok");
+        setStatus(isEditing ? "温泉情報を更新しました。" : "温泉を登録しました。", "ok");
+        editingId = null;
         resetForm();
+        closeModal();
 
-        // 保存直後に再読込 → 一覧へ即反映
+        // 保存直後に再読込 → 一覧・詳細へ即反映
         await loadAll();
 
-        alert(`「${saved?.name || item.name}」を登録しました。`);
-      } else {
-        // Supabase未設定でも、登録内容を失わない
-        addLocalData(item);
-
-        resetForm();
-        await loadAll();
+        if (isEditing) {
+          await showDetail(targetId);
+        }
 
         alert(
-          "温泉を登録しました。\n\n" +
+          isEditing
+            ? `「${saved?.name || item.name}」を更新しました。`
+            : `「${saved?.name || item.name}」を登録しました。`
+        );
+      } else {
+        // Supabase未設定でも、内容を失わない
+        const saved = isEditing
+          ? updateLocalData(targetId, item)
+          : addLocalData(item);
+
+        editingId = null;
+        resetForm();
+        closeModal();
+        await loadAll();
+
+        if (isEditing) {
+          await showDetail(targetId);
+        }
+
+        alert(
+          (isEditing ? "温泉情報を更新しました。\n\n" : "温泉を登録しました。\n\n") +
           "現在はSupabaseのURL・anon keyが未設定なので、" +
           "この端末に保存しています。"
         );
+        void saved;
       }
     } catch (error) {
       console.error(error);
 
-      // Supabase保存に失敗しても、入力内容をローカルへ退避
-      try {
-        addLocalData(item);
-        await loadAll();
-      } catch (_) {}
+      if (!isEditing) {
+        // 新規登録時のみ、失敗しても入力内容をローカルへ退避
+        try {
+          addLocalData(item);
+          await loadAll();
+        } catch (_) {}
+      }
 
       alert(
-        "保存できませんでした。\n\n" +
-        `詳細：${error.message || "Supabaseへの保存に失敗しました。"}\n\n` +
-        "入力内容はこの端末にも保存しました。"
+        (isEditing ? "更新できませんでした。\n\n" : "保存できませんでした。\n\n") +
+        `詳細：${error.message || "Supabaseへの保存に失敗しました。"}` +
+        (isEditing ? "" : "\n\n入力内容はこの端末にも保存しました。")
       );
 
-      setStatus("Supabase保存失敗。端末保存へ切り替えました。", "error");
+      setStatus(
+        isEditing ? "Supabase更新失敗。" : "Supabase保存失敗。端末保存へ切り替えました。",
+        "error"
+      );
     } finally {
       if (saveButton) {
         saveButton.disabled = false;
@@ -1577,6 +2017,14 @@
 
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
+
+    // 編集状態やフォームの内容が残らないよう、閉じるたびに初期状態へ戻す
+    editingId = null;
+    resetForm();
+    const titleEl = $("modalTitle");
+    if (titleEl) titleEl.textContent = "温泉を追加";
+    const submitButton = document.querySelector('#form button[type="submit"]');
+    if (submitButton) submitButton.textContent = "登録する";
   }
 
   // renderCardsをデータ保持にも対応させる
