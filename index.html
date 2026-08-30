@@ -211,6 +211,20 @@
 <input type="text" id="bathLocationOther" class="hidden compact-top" placeholder="その他の浴場の場所を入力">
 </fieldset>
 
+<fieldset class="full compact-top"><legend>🛀 浴場内の手すり</legend>
+<div class="checks">
+<label><input type="radio" name="bathHandrail" value="不明" checked>不明</label>
+<label><input type="radio" name="bathHandrail" value="あり">あり</label>
+<label><input type="radio" name="bathHandrail" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🪣 洗面用具置き</legend>
+<div class="checks">
+<label><input type="radio" name="toiletryShelf" value="不明" checked>不明</label>
+<label><input type="radio" name="toiletryShelf" value="あり">あり</label>
+<label><input type="radio" name="toiletryShelf" value="なし">なし</label>
+</div></fieldset>
+
 <fieldset class="full compact-top"><legend>♨️ 浴場前室</legend>
 <p class="note-inline">※浴場前室：浴場〜更衣室間のスペース・部屋のことです</p>
 <div class="checks">
@@ -241,6 +255,199 @@
 <label class="full compact-top">♨️ その他 浴場・浴槽の補足事項<textarea id="bathNote" rows="3"></textarea></label>
 
 </section>
+<section class="form-section"><h3>♨️ 温泉情報</h3>
+
+<fieldset class="full"><legend>♨️ 泉質</legend>
+<div class="checks">
+<label><input type="checkbox" name="springTypes" value="単純温泉">単純温泉</label>
+<label><input type="checkbox" name="springTypes" value="塩化物泉">塩化物泉</label>
+<label><input type="checkbox" name="springTypes" value="炭酸水素塩泉">炭酸水素塩泉</label>
+<label><input type="checkbox" name="springTypes" value="硫酸塩泉">硫酸塩泉</label>
+<label><input type="checkbox" name="springTypes" value="二酸化炭素泉">二酸化炭素泉</label>
+<label><input type="checkbox" name="springTypes" value="含鉄泉">含鉄泉</label>
+<label><input type="checkbox" name="springTypes" value="酸性泉">酸性泉</label>
+<label><input type="checkbox" name="springTypes" value="含よう素泉">含よう素泉</label>
+<label><input type="checkbox" name="springTypes" value="硫黄泉">硫黄泉</label>
+<label><input type="checkbox" name="springTypes" value="放射能泉">放射能泉</label>
+<label><input type="checkbox" id="springTypeOtherCheck">その他の泉質</label>
+</div>
+<input type="text" id="springTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>✨️ 温泉の適応症・効能</legend>
+<p class="field-title">筋肉・関節等の痛み</p><div class="checks">
+<label><input type="checkbox" name="indications" value="筋肉痛">筋肉痛</label>
+<label><input type="checkbox" name="indications" value="関節痛">関節痛</label>
+<label><input type="checkbox" name="indications" value="神経痛">神経痛</label>
+<label><input type="checkbox" name="indications" value="腰痛">腰痛</label>
+<label><input type="checkbox" name="indications" value="四十肩・五十肩">四十肩・五十肩</label>
+<label><input type="checkbox" name="indications" value="打撲・捻挫">打撲・捻挫</label>
+</div>
+<p class="field-title">冷え・血行</p><div class="checks">
+<label><input type="checkbox" name="indications" value="冷え症">冷え症</label>
+<label><input type="checkbox" name="indications" value="血行促進">血行促進</label>
+<label><input type="checkbox" name="indications" value="慢性的な循環器系不全">慢性的な循環器系不全</label>
+</div>
+<p class="field-title">疲労・ストレス</p><div class="checks">
+<label><input type="checkbox" name="indications" value="疲労回復">疲労回復</label>
+<label><input type="checkbox" name="indications" value="健康増進">健康増進</label>
+<label><input type="checkbox" name="indications" value="自律神経の調整">自律神経の調整</label>
+</div>
+<p class="field-title">消化器系</p><div class="checks">
+<label><input type="checkbox" name="indications" value="胃腸機能の低下">胃腸機能の低下</label>
+<label><input type="checkbox" name="indications" value="食欲不振">食欲不振</label>
+<label><input type="checkbox" name="indications" value="慢性的な消化器症状">慢性的な消化器症状</label>
+</div>
+<p class="field-title">皮膚</p><div class="checks">
+<label><input type="checkbox" name="indications" value="乾燥肌">乾燥肌</label>
+<label><input type="checkbox" name="indications" value="やけど">やけど</label>
+<label><input type="checkbox" name="indications" value="切り傷、擦り傷">切り傷、擦り傷</label>
+<label><input type="checkbox" name="indications" value="慢性的な皮膚疾患">慢性的な皮膚疾患</label>
+</div>
+<p class="field-title">婦人系</p><div class="checks">
+<label><input type="checkbox" name="indications" value="月経に関連する症状">月経に関連する症状</label>
+<label><input type="checkbox" name="indications" value="慢性的な婦人系症状など">慢性的な婦人系症状など</label>
+</div>
+<p class="field-title">呼吸器系</p><div class="checks">
+<label><input type="checkbox" name="indications" value="慢性的な呼吸器症状など">慢性的な呼吸器症状など</label>
+</div>
+<p class="field-title">その他の適応症</p><input type="text" id="indicationsOther" placeholder="自由記載">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>♨️ 温泉の状態・特徴</legend>
+<p class="field-title">💧 温泉の色</p><div class="checks">
+<label><input type="checkbox" name="springColor" value="無色透明">無色透明</label>
+<label><input type="checkbox" name="springColor" value="白濁">白濁</label>
+<label><input type="checkbox" name="springColor" value="茶褐色">茶褐色</label>
+<label><input type="checkbox" id="springColorOtherCheck">その他の色</label>
+</div>
+<input type="text" id="springColorOther" class="hidden compact-top" placeholder="その他の内容を入力">
+<p class="field-title">👃 温泉の匂い</p><div class="checks">
+<label><input type="checkbox" name="springSmell" value="無臭">無臭</label>
+<label><input type="checkbox" name="springSmell" value="硫黄臭">硫黄臭</label>
+<label><input type="checkbox" name="springSmell" value="鉄臭">鉄臭</label>
+<label><input type="checkbox" id="springSmellOtherCheck">その他の匂い</label>
+</div>
+<input type="text" id="springSmellOther" class="hidden compact-top" placeholder="その他の内容を入力">
+<p class="field-title">🫧 温泉の感触・肌触り</p><div class="checks">
+<label><input type="checkbox" name="springTexture" value="さらさら">さらさら</label>
+<label><input type="checkbox" name="springTexture" value="なめらか">なめらか</label>
+<label><input type="checkbox" name="springTexture" value="つるつる">つるつる</label>
+<label><input type="checkbox" name="springTexture" value="すべすべ">すべすべ</label>
+<label><input type="checkbox" name="springTexture" value="しっとり">しっとり</label>
+<label><input type="checkbox" name="springTexture" value="やわらかい">やわらかい</label>
+<label><input type="checkbox" name="springTexture" value="まろやか">まろやか</label>
+<label><input type="checkbox" name="springTexture" value="とろみがある">とろみがある</label>
+<label><input type="checkbox" name="springTexture" value="ぬるぬる">ぬるぬる</label>
+<label><input type="checkbox" name="springTexture" value="きしきし">きしきし</label>
+<label><input type="checkbox" name="springTexture" value="さっぱり">さっぱり</label>
+<label><input type="checkbox" name="springTexture" value="刺激がある">刺激がある</label>
+<label><input type="checkbox" id="springTextureOtherCheck">その他</label>
+</div>
+<input type="text" id="springTextureOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🛀 温泉の利用状況</legend>
+<p class="field-title">源泉掛け流し</p><div class="checks">
+<label><input type="radio" name="sourceFreeFlow" value="不明" checked>不明</label>
+<label><input type="radio" name="sourceFreeFlow" value="あり">あり</label>
+<label><input type="radio" name="sourceFreeFlow" value="なし">なし</label>
+<label><input type="radio" name="sourceFreeFlow" value="浴槽によって異なる">浴槽によって異なる</label>
+</div>
+<p class="field-title">加水</p><div class="checks">
+<label><input type="radio" name="springDilution" value="不明" checked>不明</label>
+<label><input type="radio" name="springDilution" value="あり">あり</label>
+<label><input type="radio" name="springDilution" value="なし">なし</label>
+<label><input type="radio" name="springDilution" value="浴槽によって異なる">浴槽によって異なる</label>
+</div>
+<p class="field-title">加温</p><div class="checks">
+<label><input type="radio" name="springHeating" value="不明" checked>不明</label>
+<label><input type="radio" name="springHeating" value="あり">あり</label>
+<label><input type="radio" name="springHeating" value="なし">なし</label>
+<label><input type="radio" name="springHeating" value="浴槽によって異なる">浴槽によって異なる</label>
+</div>
+<p class="field-title">循環</p><div class="checks">
+<label><input type="radio" name="springCirculation" value="不明" checked>不明</label>
+<label><input type="radio" name="springCirculation" value="あり">あり</label>
+<label><input type="radio" name="springCirculation" value="なし">なし</label>
+<label><input type="radio" name="springCirculation" value="浴槽によって異なる">浴槽によって異なる</label>
+</div>
+<p class="field-title">消毒</p><div class="checks">
+<label><input type="radio" name="springDisinfection" value="不明" checked>不明</label>
+<label><input type="radio" name="springDisinfection" value="あり">あり</label>
+<label><input type="radio" name="springDisinfection" value="なし">なし</label>
+<label><input type="radio" name="springDisinfection" value="浴槽によって異なる">浴槽によって異なる</label>
+</div>
+<p class="field-title">その他</p><input type="text" id="springUsageNote" placeholder="自由記載">
+</fieldset>
+
+<div class="grid two compact-top">
+<label>🌡 泉温（℃）<input id="springTemperature" type="number"></label>
+<label>🌡 源泉温度（℃）<input id="sourceTemperature" type="number"></label>
+<label>🚰 pH<input id="springPh" type="number" step="0.1"></label>
+</div>
+
+<label class="full compact-top">♨️ 源泉名・温泉地名<input id="springSourceName"></label>
+
+<div class="grid two compact-top">
+<label>♨️ 開湯年<input id="springOpenYear" type="number" min="0" placeholder="例：1200"></label>
+</div>
+<label class="full compact-top">開湯年に関する補足<textarea id="springOpenYearNote" rows="2"></textarea></label>
+
+<fieldset class="full compact-top"><legend>🔍 水質検査等の情報</legend>
+<p class="field-title">🧪 温泉成分分析</p><div class="checks">
+<label><input type="radio" name="springAnalysis" value="不明" checked>不明</label>
+<label><input type="radio" name="springAnalysis" value="あり">あり</label>
+<label><input type="radio" name="springAnalysis" value="なし">なし</label>
+</div>
+<p class="field-title">分析年月日</p><div class="grid two compact-top"><label>年<input id="springAnalysisYear" type="number" min="1800" max="2100" placeholder="例：2024"></label><label>月<input id="springAnalysisMonth" type="number" min="1" max="12"></label><label>日<input id="springAnalysisDay" type="number" min="1" max="31"></label></div>
+<p class="field-title">🦠 レジオネラ属菌検査</p><div class="checks">
+<label><input type="radio" name="legionellaTest" value="不明" checked>不明</label>
+<label><input type="radio" name="legionellaTest" value="あり">あり</label>
+<label><input type="radio" name="legionellaTest" value="なし">なし</label>
+</div>
+<p class="field-title">分析年月日</p><div class="grid two compact-top"><label>年<input id="legionellaYear" type="number" min="1800" max="2100" placeholder="例：2024"></label><label>月<input id="legionellaMonth" type="number" min="1" max="12"></label><label>日<input id="legionellaDay" type="number" min="1" max="31"></label></div>
+<p class="field-title">検査結果</p><div class="checks"><label><input type="radio" name="legionellaResult" value="検出なし" checked>検出なし</label><label><input type="radio" name="legionellaResult" value="検出あり">検出あり</label></div>
+<p class="field-title">📃 情報源</p><div class="checks">
+<label><input type="checkbox" name="springInfoSource" value="施設掲示">施設掲示</label>
+<label><input type="checkbox" name="springInfoSource" value="温泉成分分析書">温泉成分分析書</label>
+<label><input type="checkbox" name="springInfoSource" value="施設公式サイト">施設公式サイト</label>
+<label><input type="checkbox" name="springInfoSource" value="自治体・公的機関">自治体・公的機関</label>
+<label><input type="checkbox" id="springInfoSourceOtherCheck">その他</label>
+</div>
+<input type="text" id="springInfoSourceOther" class="hidden compact-top" placeholder="その他の内容を入力">
+<p class="field-title">👀 情報確認日</p><div class="grid two compact-top"><label>年<input id="springInfoCheckYear" type="number" min="1800" max="2100" placeholder="例：2024"></label><label>月<input id="springInfoCheckMonth" type="number" min="1" max="12"></label><label>日<input id="springInfoCheckDay" type="number" min="1" max="31"></label></div>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>👦🏻 子どもの混浴制度</legend>
+<div class="checks">
+<label><input type="radio" name="childMixedBathing" value="不明" checked>不明</label>
+<label><input type="radio" name="childMixedBathing" value="あり">あり</label>
+<label><input type="radio" name="childMixedBathing" value="なし">なし</label>
+</div>
+<p class="field-title">→ 年齢制限</p><div class="checks">
+<label><input type="radio" name="childAgeLimit" value="不明" checked>不明</label>
+<label><input type="radio" name="childAgeLimit" value="あり">あり</label>
+<label><input type="radio" name="childAgeLimit" value="なし">なし</label>
+</div>
+<p class="field-title">→ 性別による制限</p><div class="checks">
+<label><input type="radio" name="childGenderLimit" value="不明" checked>不明</label>
+<label><input type="radio" name="childGenderLimit" value="あり">あり</label>
+<label><input type="radio" name="childGenderLimit" value="なし">なし</label>
+</div>
+<p class="field-title">【制限ありの場合】</p><div class="grid two compact-top"><label>👦🏻 男児（歳以下）<input id="childBoyAgeLimit" type="number" min="0"></label><label>👧🏻 女児（歳以下）<input id="childGirlAgeLimit" type="number" min="0"></label></div>
+<label class="full compact-top">→ 備考<textarea id="childMixedBathingNote" rows="2"></textarea></label>
+<p class="field-title">📃 情報源</p><div class="checks">
+<label><input type="checkbox" name="childInfoSource" value="施設掲示">施設掲示</label>
+<label><input type="checkbox" name="childInfoSource" value="施設公式サイト">施設公式サイト</label>
+<label><input type="checkbox" name="childInfoSource" value="自治体・公的機関">自治体・公的機関</label>
+<label><input type="checkbox" id="childInfoSourceOtherCheck">その他</label>
+</div>
+<input type="text" id="childInfoSourceOther" class="hidden compact-top" placeholder="その他の内容を入力">
+<p class="field-title">👀 情報確認日</p><div class="grid two compact-top"><label>年<input id="childInfoCheckYear" type="number" min="1800" max="2100" placeholder="例：2024"></label><label>月<input id="childInfoCheckMonth" type="number" min="1" max="12"></label><label>日<input id="childInfoCheckDay" type="number" min="1" max="31"></label></div>
+</fieldset>
+
+</section>
 <section class="form-section"><h3>サウナ</h3>
 <fieldset><legend>サウナの種類</legend><div class="checks">
 <label><input type="checkbox" name="sauna" value="ドライサウナ">ドライサウナ</label><label><input type="checkbox" name="sauna" value="フィンランド式">フィンランド式</label><label><input type="checkbox" name="sauna" value="ロウリュ">ロウリュ</label><label><input type="checkbox" name="sauna" value="オートロウリュ">オートロウリュ</label><label><input type="checkbox" name="sauna" value="セルフロウリュ">セルフロウリュ</label><label><input type="checkbox" name="sauna" value="塩サウナ">塩サウナ</label><label><input type="checkbox" name="sauna" value="スチームサウナ">スチームサウナ</label><label><input type="checkbox" name="sauna" value="ミストサウナ">ミストサウナ</label><label><input type="checkbox" name="sauna" value="遠赤外線サウナ">遠赤外線サウナ</label><label><input type="checkbox" name="sauna" value="その他">その他</label>
@@ -253,8 +460,6 @@
 <fieldset class="compact-top"><legend>設備の有無</legend><div class="status-list">
 <div><span>外気浴</span><label><input type="radio" name="outdoor" value="あり">あり</label><label><input type="radio" name="outdoor" value="なし">なし</label><label><input type="radio" name="outdoor" value="不明" checked>不明</label></div>
 <div><span>休憩スペース</span><label><input type="radio" name="rest" value="あり">あり</label><label><input type="radio" name="rest" value="なし">なし</label><label><input type="radio" name="rest" value="不明" checked>不明</label></div>
-<div><span>シャンプー等</span><label><input type="radio" name="amenities" value="あり">あり</label><label><input type="radio" name="amenities" value="なし">なし</label><label><input type="radio" name="amenities" value="不明" checked>不明</label></div>
-<div><span>ドライヤー</span><label><input type="radio" name="dryer" value="あり">あり</label><label><input type="radio" name="dryer" value="なし">なし</label><label><input type="radio" name="dryer" value="不明" checked>不明</label></div>
 <div><span>Wi-Fi</span><label><input type="radio" name="wifi" value="あり">あり</label><label><input type="radio" name="wifi" value="なし">なし</label><label><input type="radio" name="wifi" value="不明" checked>不明</label></div>
 <div><span>駐車場</span><label><input type="radio" name="parking" value="あり">あり</label><label><input type="radio" name="parking" value="なし">なし</label><label><input type="radio" name="parking" value="不明" checked>不明</label></div>
 <div><span>貴重品ロッカー</span><label><input type="radio" name="locker" value="あり">あり</label><label><input type="radio" name="locker" value="なし">なし</label><label><input type="radio" name="locker" value="不明" checked>不明</label></div>
@@ -262,14 +467,253 @@
 <div><span>バリアフリー</span><label><input type="radio" name="barrierFree" value="あり">あり</label><label><input type="radio" name="barrierFree" value="なし">なし</label><label><input type="radio" name="barrierFree" value="不明" checked>不明</label></div>
 </div></fieldset>
 </section>
-<section class="form-section"><h3>泉質・レンタル</h3><div class="grid two">
-<label>泉質<select id="springType"><option value="">選択してください</option><option>単純温泉</option><option>塩化物泉</option><option>炭酸水素塩泉</option><option>硫酸塩泉</option><option>二酸化炭素泉</option><option>含鉄泉</option><option>酸性泉</option><option>含よう素泉</option><option>硫黄泉</option><option>放射能泉</option><option>その他</option></select></label>
-<label>泉温（℃）<input id="temperature" type="number"></label><label>源泉温度（℃）<input id="sourceTemp" type="number"></label>
-<label>加温<select id="heating"><option>不明</option><option>あり</option><option>なし</option></select></label><label>加水<select id="dilution"><option>不明</option><option>あり</option><option>なし</option></select></label><label>循環<select id="circulation"><option>不明</option><option>あり</option><option>なし</option></select></label><label>消毒<select id="disinfection"><option>不明</option><option>あり</option><option>なし</option></select></label>
-<label class="full">泉質の詳細・補足<textarea id="springDetail" rows="3"></textarea></label>
+<section class="form-section"><h3>🚿 シャワー</h3>
+
+<fieldset class="full"><legend>🚿 シャワーの数</legend>
+<select id="showerCount">
+<option value="">選択してください</option>
+<option>不明</option>
+<option>なし</option>
+<option>1〜10個</option>
+<option>11〜20個</option>
+<option>21〜30個</option>
+<option>31個以上</option>
+</select>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🚿 シャワーの種類</legend><div class="checks">
+<label><input type="checkbox" name="showerType" value="押すタイプ">押すタイプ</label>
+<label><input type="checkbox" name="showerType" value="レバータイプ">レバータイプ</label>
+<label><input type="checkbox" id="showerTypeOtherCheck">その他</label>
+<label><input type="checkbox" name="showerType" value="不明">不明</label>
 </div>
-<fieldset class="compact-top"><legend>レンタル品</legend><div id="rentalRows"></div><button type="button" id="addRental" class="secondary">＋ レンタル品を追加</button></fieldset>
+<input type="text" id="showerTypeOther" class="hidden compact-top" placeholder="その他のシャワーの種類を入力">
+</fieldset>
+
+<label class="full compact-top">🚿 シャワーヘッドの種類・メーカー等<input id="showerHeadInfo"></label>
+
+<fieldset class="full compact-top"><legend>🚰 吐水口・カラン</legend>
+<p class="note-inline">※シャワーヘッドとは別に蛇口のような機能です</p>
+<div class="checks">
+<label><input type="radio" name="showerFaucet" value="不明" checked>不明</label>
+<label><input type="radio" name="showerFaucet" value="あり">あり</label>
+<label><input type="radio" name="showerFaucet" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🚿 シャワーブース</legend>
+<div class="checks">
+<label><input type="radio" name="showerBooth" value="不明" checked>不明</label>
+<label><input type="radio" name="showerBooth" value="あり">あり</label>
+<label><input type="radio" name="showerBooth" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🚿 洗い場仕切り</legend>
+<div class="checks">
+<label><input type="radio" name="washAreaDivider" value="不明" checked>不明</label>
+<label><input type="radio" name="washAreaDivider" value="あり">あり</label>
+<label><input type="radio" name="washAreaDivider" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🚿 かけ湯</legend>
+<div class="checks">
+<label><input type="radio" name="preRinseWater" value="不明" checked>不明</label>
+<label><input type="radio" name="preRinseWater" value="あり">あり</label>
+<label><input type="radio" name="preRinseWater" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">🚿 その他 シャワーに関する補足事項<textarea id="showerNote" rows="3"></textarea></label>
+
 </section>
+
+<section class="form-section"><h3>🧴 アメニティ・備品</h3>
+
+<fieldset class="full"><legend>🧴 シャンプー・コンディショナー</legend><div class="checks">
+<label><input type="radio" name="shampooConditioner" value="不明" checked>不明</label>
+<label><input type="radio" name="shampooConditioner" value="シャンプーのみ">シャンプーのみ</label>
+<label><input type="radio" name="shampooConditioner" value="コンディショナーのみ">コンディショナーのみ</label>
+<label><input type="radio" name="shampooConditioner" value="両方別々に設置">両方別々に設置</label>
+<label><input type="radio" name="shampooConditioner" value="リンスインシャンプー">リンスインシャンプー</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🧴 ボディソープ</legend>
+<div class="checks">
+<label><input type="radio" name="bodySoap" value="不明" checked>不明</label>
+<label><input type="radio" name="bodySoap" value="あり">あり</label>
+<label><input type="radio" name="bodySoap" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🧼 石鹸</legend>
+<div class="checks">
+<label><input type="radio" name="soap" value="不明" checked>不明</label>
+<label><input type="radio" name="soap" value="あり">あり</label>
+<label><input type="radio" name="soap" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🧴 洗顔フォーム（浴場内）</legend>
+<div class="checks">
+<label><input type="radio" name="faceWash" value="不明" checked>不明</label>
+<label><input type="radio" name="faceWash" value="あり">あり</label>
+<label><input type="radio" name="faceWash" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🧴 クレンジング（浴場内）</legend>
+<div class="checks">
+<label><input type="radio" name="cleansing" value="不明" checked>不明</label>
+<label><input type="radio" name="cleansing" value="あり">あり</label>
+<label><input type="radio" name="cleansing" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🪣 洗面器・桶</legend>
+<div class="checks">
+<label><input type="radio" name="basin" value="不明" checked>不明</label>
+<label><input type="radio" name="basin" value="あり">あり</label>
+<label><input type="radio" name="basin" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🪑 浴場内の椅子</legend>
+<div class="checks">
+<label><input type="radio" name="bathChair" value="不明" checked>不明</label>
+<label><input type="radio" name="bathChair" value="あり">あり</label>
+<label><input type="radio" name="bathChair" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🪑 シャワーチェア</legend>
+<div class="checks">
+<label><input type="radio" name="showerChair" value="不明" checked>不明</label>
+<label><input type="radio" name="showerChair" value="あり">あり</label>
+<label><input type="radio" name="showerChair" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🧴 レンタル品</legend><div id="rentalRows"></div><button type="button" id="addRental" class="secondary">＋ レンタル品を追加</button></fieldset>
+
+<fieldset class="full compact-top"><legend>🔌 ドライヤー</legend><div class="checks">
+<label><input type="radio" name="dryerStatus" value="不明" checked>不明</label>
+<label><input type="radio" name="dryerStatus" value="あり">あり</label>
+<label><input type="radio" name="dryerStatus" value="なし">なし</label>
+</div>
+<label class="compact-top">個数<select id="dryerCount">
+<option value="">選択してください</option>
+<option>不明</option>
+<option>なし</option>
+<option>1〜5個</option>
+<option>6〜10個</option>
+<option>11個以上</option>
+</select></label>
+<p class="field-title">使用料金</p><div class="checks">
+<label><input type="radio" name="dryerFee" value="不明" checked>不明</label>
+<label><input type="radio" name="dryerFee" value="あり">あり</label>
+<label><input type="radio" name="dryerFee" value="なし">なし</label>
+</div>
+<label class="full compact-top">種類・メーカー<input id="dryerBrand"></label>
+<p class="field-title">持ち込み可能か</p><div class="checks">
+<label><input type="radio" name="dryerBringOwn" value="不明" checked>不明</label>
+<label><input type="radio" name="dryerBringOwn" value="可能">可能</label>
+<label><input type="radio" name="dryerBringOwn" value="禁止">禁止</label>
+</div>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🪥 ティッシュ</legend>
+<div class="checks">
+<label><input type="radio" name="tissue" value="不明" checked>不明</label>
+<label><input type="radio" name="tissue" value="あり">あり</label>
+<label><input type="radio" name="tissue" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🪥 綿棒</legend>
+<div class="checks">
+<label><input type="radio" name="cottonSwab" value="不明" checked>不明</label>
+<label><input type="radio" name="cottonSwab" value="あり">あり</label>
+<label><input type="radio" name="cottonSwab" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🪥 化粧品</legend>
+<div class="checks">
+<label><input type="radio" name="cosmetics" value="不明" checked>不明</label>
+<label><input type="radio" name="cosmetics" value="あり">あり</label>
+<label><input type="radio" name="cosmetics" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🪥 ヘアゴム</legend>
+<div class="checks">
+<label><input type="radio" name="hairTie" value="不明" checked>不明</label>
+<label><input type="radio" name="hairTie" value="あり">あり</label>
+<label><input type="radio" name="hairTie" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>💄 パウダールーム</legend>
+<div class="checks">
+<label><input type="radio" name="powderRoom" value="不明" checked>不明</label>
+<label><input type="radio" name="powderRoom" value="あり">あり</label>
+<label><input type="radio" name="powderRoom" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>💄 洗面台</legend>
+<div class="checks">
+<label><input type="radio" name="vanity" value="不明" checked>不明</label>
+<label><input type="radio" name="vanity" value="あり">あり</label>
+<label><input type="radio" name="vanity" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🚰 冷水機</legend>
+<div class="checks">
+<label><input type="radio" name="waterCooler" value="不明" checked>不明</label>
+<label><input type="radio" name="waterCooler" value="あり">あり</label>
+<label><input type="radio" name="waterCooler" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🔌 扇風機</legend>
+<div class="checks">
+<label><input type="radio" name="fan" value="不明" checked>不明</label>
+<label><input type="radio" name="fan" value="あり">あり</label>
+<label><input type="radio" name="fan" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🌡 体重計・体脂肪計</legend>
+<div class="checks">
+<label><input type="radio" name="scale" value="不明" checked>不明</label>
+<label><input type="radio" name="scale" value="あり">あり</label>
+<label><input type="radio" name="scale" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🌡 血圧計</legend>
+<div class="checks">
+<label><input type="radio" name="bloodPressureMonitor" value="不明" checked>不明</label>
+<label><input type="radio" name="bloodPressureMonitor" value="あり">あり</label>
+<label><input type="radio" name="bloodPressureMonitor" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🗑 ごみ箱</legend>
+<div class="checks">
+<label><input type="radio" name="trashBin" value="不明" checked>不明</label>
+<label><input type="radio" name="trashBin" value="あり">あり</label>
+<label><input type="radio" name="trashBin" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🪑 更衣室内の椅子</legend>
+<div class="checks">
+<label><input type="radio" name="lockerRoomChair" value="不明" checked>不明</label>
+<label><input type="radio" name="lockerRoomChair" value="あり">あり</label>
+<label><input type="radio" name="lockerRoomChair" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>👶🏻 ベビーチェア</legend>
+<div class="checks">
+<label><input type="radio" name="babyChair" value="不明" checked>不明</label>
+<label><input type="radio" name="babyChair" value="あり">あり</label>
+<label><input type="radio" name="babyChair" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>👶🏻 ベビーベッド</legend>
+<div class="checks">
+<label><input type="radio" name="babyBed" value="不明" checked>不明</label>
+<label><input type="radio" name="babyBed" value="あり">あり</label>
+<label><input type="radio" name="babyBed" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">🧼 その他 アメニティ・備品の補足事項<textarea id="amenityNote" rows="3"></textarea></label>
+
+</section>
+
 <section class="form-section"><h3>位置情報・メモ</h3><div class="grid two"><label>緯度<input id="lat" type="number" step="any"></label><label>経度<input id="lng" type="number" step="any"></label><label class="full">メモ・施設紹介<textarea id="note" rows="5"></textarea></label></div></section>
 <div class="form-actions"><button type="button" id="cancel" class="secondary">キャンセル</button><button type="submit" class="primary submit">登録する</button></div>
 <section class="form-section"><h3>公式情報・SNS</h3><div class="grid two">

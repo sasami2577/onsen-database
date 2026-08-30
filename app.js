@@ -89,6 +89,16 @@
     return `${hour}:${minute}`;
   }
 
+  function dateValue(prefix) {
+    const year = $(`${prefix}Year`)?.value || "";
+    const month = $(`${prefix}Month`)?.value || "";
+    const day = $(`${prefix}Day`)?.value || "";
+    if (!year) return "";
+    const mm = month ? String(month).padStart(2, "0") : "";
+    const dd = day ? String(day).padStart(2, "0") : "";
+    return [year, mm, dd].filter(Boolean).join("-");
+  }
+
   function setStatus(message, type = "") {
     const el = $("status");
     if (!el) return;
@@ -296,12 +306,81 @@
           ? [value("bathLocationOther") || "その他"]
           : [])
       ],
+      bath_handrail: radioValue("bathHandrail"),
+      toiletry_shelf: radioValue("toiletryShelf"),
       bath_anteroom: radioValue("bathAnteroom"),
       bath_event: radioValue("bathEvent"),
       bath_event_detail: value("bathEventDetail"),
       bath_toys: radioValue("bathToys"),
       bath_toys_detail: value("bathToysDetail"),
       bath_note: value("bathNote"),
+
+      // ♨️ 温泉情報
+      spring_types: [
+        ...checkedValues("springTypes"),
+        ...(checkedBool("springTypeOtherCheck")
+          ? [value("springTypeOther") || "その他の泉質"]
+          : [])
+      ],
+      indications: [
+        ...checkedValues("indications"),
+        ...(value("indicationsOther") ? [value("indicationsOther")] : [])
+      ],
+      spring_color: [
+        ...checkedValues("springColor"),
+        ...(checkedBool("springColorOtherCheck")
+          ? [value("springColorOther") || "その他の色"]
+          : [])
+      ],
+      spring_smell: [
+        ...checkedValues("springSmell"),
+        ...(checkedBool("springSmellOtherCheck")
+          ? [value("springSmellOther") || "その他の匂い"]
+          : [])
+      ],
+      spring_texture: [
+        ...checkedValues("springTexture"),
+        ...(checkedBool("springTextureOtherCheck")
+          ? [value("springTextureOther") || "その他"]
+          : [])
+      ],
+      source_free_flow: radioValue("sourceFreeFlow"),
+      spring_dilution: radioValue("springDilution"),
+      spring_heating: radioValue("springHeating"),
+      spring_circulation: radioValue("springCirculation"),
+      spring_disinfection: radioValue("springDisinfection"),
+      spring_usage_note: value("springUsageNote"),
+      spring_temperature: numberValue("springTemperature"),
+      source_temperature: numberValue("sourceTemperature"),
+      spring_ph: numberValue("springPh"),
+      spring_source_name: value("springSourceName"),
+      spring_open_year: numberValue("springOpenYear"),
+      spring_open_year_note: value("springOpenYearNote"),
+      spring_analysis: radioValue("springAnalysis"),
+      spring_analysis_date: dateValue("springAnalysis"),
+      legionella_test: radioValue("legionellaTest"),
+      legionella_test_date: dateValue("legionella"),
+      legionella_result: radioValue("legionellaResult"),
+      spring_info_source: [
+        ...checkedValues("springInfoSource"),
+        ...(checkedBool("springInfoSourceOtherCheck")
+          ? [value("springInfoSourceOther") || "その他"]
+          : [])
+      ],
+      spring_info_check_date: dateValue("springInfoCheck"),
+      child_mixed_bathing: radioValue("childMixedBathing"),
+      child_age_limit: radioValue("childAgeLimit"),
+      child_gender_limit: radioValue("childGenderLimit"),
+      child_boy_age_limit: numberValue("childBoyAgeLimit"),
+      child_girl_age_limit: numberValue("childGirlAgeLimit"),
+      child_mixed_bathing_note: value("childMixedBathingNote"),
+      child_info_source: [
+        ...checkedValues("childInfoSource"),
+        ...(checkedBool("childInfoSourceOtherCheck")
+          ? [value("childInfoSourceOther") || "その他"]
+          : [])
+      ],
+      child_info_check_date: dateValue("childInfoCheck"),
 
       sauna_note: value("saunaNote"),
       sauna: checkedValues("sauna"),
@@ -310,21 +389,57 @@
 
       outdoor: radioValue("outdoor"),
       rest: radioValue("rest"),
-      amenities: radioValue("amenities"),
-      dryer: radioValue("dryer"),
       wifi: radioValue("wifi"),
       parking: radioValue("parking"),
       locker: radioValue("locker"),
       restaurant: radioValue("restaurant"),
       barrier_free: radioValue("barrierFree"),
 
-      spring_type: value("springType"),
-      temperature: numberValue("temperature"),
-      source_temperature: numberValue("sourceTemperature"),
-      heating: value("heating"),
-      spring_detail: value("springDetail"),
+      // 🚿 シャワー
+      shower_count: value("showerCount"),
+      shower_type: [
+        ...checkedValues("showerType"),
+        ...(checkedBool("showerTypeOtherCheck")
+          ? [value("showerTypeOther") || "その他"]
+          : [])
+      ],
+      shower_head_info: value("showerHeadInfo"),
+      shower_faucet: radioValue("showerFaucet"),
+      shower_booth: radioValue("showerBooth"),
+      wash_area_divider: radioValue("washAreaDivider"),
+      pre_rinse_water: radioValue("preRinseWater"),
+      shower_note: value("showerNote"),
 
+      // 🧴 アメニティ・備品
+      shampoo_conditioner: radioValue("shampooConditioner"),
+      body_soap: radioValue("bodySoap"),
+      soap: radioValue("soap"),
+      face_wash: radioValue("faceWash"),
+      cleansing: radioValue("cleansing"),
+      basin: radioValue("basin"),
+      bath_chair: radioValue("bathChair"),
+      shower_chair: radioValue("showerChair"),
       rental_items: collectRentalItems(),
+      dryer_status: radioValue("dryerStatus"),
+      dryer_count: value("dryerCount"),
+      dryer_fee: radioValue("dryerFee"),
+      dryer_brand: value("dryerBrand"),
+      dryer_bring_own: radioValue("dryerBringOwn"),
+      tissue: radioValue("tissue"),
+      cotton_swab: radioValue("cottonSwab"),
+      cosmetics: radioValue("cosmetics"),
+      hair_tie: radioValue("hairTie"),
+      powder_room: radioValue("powderRoom"),
+      vanity: radioValue("vanity"),
+      water_cooler: radioValue("waterCooler"),
+      fan: radioValue("fan"),
+      scale: radioValue("scale"),
+      blood_pressure_monitor: radioValue("bloodPressureMonitor"),
+      trash_bin: radioValue("trashBin"),
+      locker_room_chair: radioValue("lockerRoomChair"),
+      baby_chair: radioValue("babyChair"),
+      baby_bed: radioValue("babyBed"),
+      amenity_note: value("amenityNote"),
 
       lat: numberValue("lat"),
       lng: numberValue("lng"),
@@ -432,7 +547,7 @@
         item.area,
         item.address,
         item.business_type,
-        item.spring_type
+        Array.isArray(item.spring_types) ? item.spring_types.join(" ") : ""
       ]
         .filter(Boolean)
         .join(" ")
@@ -470,9 +585,9 @@
 
         const details = [
           item.business_type,
-          item.spring_type,
-          item.temperature != null
-            ? `温泉 ${item.temperature}℃`
+          Array.isArray(item.spring_types) ? item.spring_types.join("・") : "",
+          item.spring_temperature != null
+            ? `温泉 ${item.spring_temperature}℃`
             : ""
         ].filter(Boolean);
 
@@ -857,6 +972,12 @@
           ${detailSubhead("♨️ 浴場の場所")}
           ${detailTags(item.bath_location) || `<p class="detail-note-tight">情報がありません。</p>`}
 
+          ${detailSubhead("🛀 浴場内の手すり")}
+          <p class="detail-note-tight">${escapeHtml(item.bath_handrail || "不明")}</p>
+
+          ${detailSubhead("🪣 洗面用具置き")}
+          <p class="detail-note-tight">${escapeHtml(item.toiletry_shelf || "不明")}</p>
+
           ${detailSubhead("♨️ 浴場前室")}
           <p class="detail-note-tight">${escapeHtml(item.bath_anteroom || "不明")}</p>
 
@@ -875,42 +996,66 @@
           }
         </section>
 
-        <!-- アメニティ -->
+
+        <!-- 温泉情報 -->
         <section class="detail-section">
-          <h3>🧴 アメニティ・備品</h3>
+          <h3>♨️ 温泉情報</h3>
+
+          ${detailSubhead("♨️ 泉質")}
+          ${detailTags(item.spring_types) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          ${detailSubhead("✨️ 温泉の適応症・効能")}
+          ${detailTags(item.indications) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          ${detailSubhead("♨️ 温泉の状態・特徴")}
+          <p class="field-title">💧 温泉の色</p>
+          ${detailTags(item.spring_color) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">👃 温泉の匂い</p>
+          ${detailTags(item.spring_smell) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">🫧 温泉の感触・肌触り</p>
+          ${detailTags(item.spring_texture) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          ${detailSubhead("🛀 温泉の利用状況")}
           <div class="detail-grid">
-            ${detailField("シャンプー等", item.amenities)}
-            ${detailField("ドライヤー", item.dryer)}
-            ${detailField("Wi-Fi", item.wifi)}
-            ${detailField("駐車場", item.parking)}
-            ${detailField("貴重品ロッカー", item.locker)}
-            ${detailField("食事処", item.restaurant)}
-            ${detailField("バリアフリー", item.barrier_free)}
+            ${detailField("源泉掛け流し", item.source_free_flow)}
+            ${detailField("加水", item.spring_dilution)}
+            ${detailField("加温", item.spring_heating)}
+            ${detailField("循環", item.spring_circulation)}
+            ${detailField("消毒", item.spring_disinfection)}
           </div>
-          ${
-            Array.isArray(item.rental_items) && item.rental_items.length
-              ? `
-                <p class="field-title">レンタル品</p>
-                <ul class="rental-list">
-                  ${item.rental_items.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}
-                </ul>
-              `
-              : ""
-          }
-        </section>
+          ${item.spring_usage_note ? `<p class="detail-note">${escapeHtml(item.spring_usage_note)}</p>` : ""}
 
-        <!-- 温泉情報（泉質） -->
-        <section class="detail-section">
-          <h3>温泉情報</h3>
-
-          ${detailSubhead("泉質")}
           <div class="detail-grid">
-            ${detailField("泉質", item.spring_type)}
-            ${detailField("泉温", item.temperature != null ? `${item.temperature}℃` : "")}
+            ${detailField("泉温", item.spring_temperature != null ? `${item.spring_temperature}℃` : "")}
             ${detailField("源泉温度", item.source_temperature != null ? `${item.source_temperature}℃` : "")}
-            ${detailField("加温", item.heating)}
+            ${detailField("pH", item.spring_ph)}
+            ${detailField("源泉名・温泉地名", item.spring_source_name)}
+            ${detailField("開湯年", item.spring_open_year)}
           </div>
-          ${item.spring_detail ? `<p class="detail-note">${escapeHtml(item.spring_detail)}</p>` : ""}
+          ${item.spring_open_year_note ? `<p class="detail-note">${escapeHtml(item.spring_open_year_note)}</p>` : ""}
+
+          ${detailSubhead("🔍 水質検査等の情報")}
+          <div class="detail-grid">
+            ${detailField("温泉成分分析", item.spring_analysis)}
+            ${detailField("分析年月日", item.spring_analysis_date)}
+            ${detailField("レジオネラ属菌検査", item.legionella_test)}
+            ${detailField("分析年月日", item.legionella_test_date)}
+            ${detailField("検査結果", item.legionella_result)}
+          </div>
+          ${detailTags(item.spring_info_source)}
+          <div class="detail-grid">${detailField("情報確認日", item.spring_info_check_date)}</div>
+
+          ${detailSubhead("👦🏻 子どもの混浴制度")}
+          <div class="detail-grid">
+            ${detailField("混浴制度", item.child_mixed_bathing)}
+            ${detailField("年齢制限", item.child_age_limit)}
+            ${detailField("性別による制限", item.child_gender_limit)}
+            ${detailField("男児", item.child_boy_age_limit != null ? `${item.child_boy_age_limit}歳以下` : "")}
+            ${detailField("女児", item.child_girl_age_limit != null ? `${item.child_girl_age_limit}歳以下` : "")}
+          </div>
+          ${item.child_mixed_bathing_note ? `<p class="detail-note">${escapeHtml(item.child_mixed_bathing_note)}</p>` : ""}
+          ${detailTags(item.child_info_source)}
+          <div class="detail-grid">${detailField("情報確認日", item.child_info_check_date)}</div>
         </section>
 
         <!-- サウナ情報（サウナ本体・水風呂・外気浴） -->
@@ -934,6 +1079,73 @@
             ${detailField("外気浴", item.outdoor)}
             ${detailField("休憩スペース", item.rest)}
           </div>
+        </section>
+
+        <!-- シャワー -->
+        <section class="detail-section">
+          <h3>🚿 シャワー</h3>
+          <div class="detail-grid">
+            ${detailField("シャワーの数", item.shower_count)}
+          </div>
+          ${detailTags(item.shower_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-grid">
+            ${detailField("シャワーヘッドの種類・メーカー等", item.shower_head_info)}
+            ${detailField("吐水口・カラン", item.shower_faucet)}
+            ${detailField("シャワーブース", item.shower_booth)}
+            ${detailField("洗い場仕切り", item.wash_area_divider)}
+            ${detailField("かけ湯", item.pre_rinse_water)}
+          </div>
+          ${item.shower_note ? `<p class="detail-note">${escapeHtml(item.shower_note)}</p>` : ""}
+        </section>
+
+        <!-- アメニティ -->
+        <section class="detail-section">
+          <h3>🧴 アメニティ・備品</h3>
+          <div class="detail-grid">
+            ${detailField("シャンプー・コンディショナー", item.shampoo_conditioner)}
+            ${detailField("ボディソープ", item.body_soap)}
+            ${detailField("石鹸", item.soap)}
+            ${detailField("洗顔フォーム（浴場内）", item.face_wash)}
+            ${detailField("クレンジング（浴場内）", item.cleansing)}
+            ${detailField("洗面器・桶", item.basin)}
+            ${detailField("浴場内の椅子", item.bath_chair)}
+            ${detailField("シャワーチェア", item.shower_chair)}
+            ${detailField("ドライヤー", item.dryer_status)}
+            ${detailField("ドライヤーの個数", item.dryer_count)}
+            ${detailField("ドライヤー使用料金", item.dryer_fee)}
+            ${detailField("ドライヤーの種類・メーカー", item.dryer_brand)}
+            ${detailField("ドライヤー持ち込み", item.dryer_bring_own)}
+            ${detailField("ティッシュ", item.tissue)}
+            ${detailField("綿棒", item.cotton_swab)}
+            ${detailField("化粧品", item.cosmetics)}
+            ${detailField("ヘアゴム", item.hair_tie)}
+            ${detailField("パウダールーム", item.powder_room)}
+            ${detailField("洗面台", item.vanity)}
+            ${detailField("冷水機", item.water_cooler)}
+            ${detailField("扇風機", item.fan)}
+            ${detailField("体重計・体脂肪計", item.scale)}
+            ${detailField("血圧計", item.blood_pressure_monitor)}
+            ${detailField("ごみ箱", item.trash_bin)}
+            ${detailField("更衣室内の椅子", item.locker_room_chair)}
+            ${detailField("ベビーチェア", item.baby_chair)}
+            ${detailField("ベビーベッド", item.baby_bed)}
+            ${detailField("Wi-Fi", item.wifi)}
+            ${detailField("駐車場", item.parking)}
+            ${detailField("貴重品ロッカー", item.locker)}
+            ${detailField("食事処", item.restaurant)}
+            ${detailField("バリアフリー", item.barrier_free)}
+          </div>
+          ${
+            Array.isArray(item.rental_items) && item.rental_items.length
+              ? `
+                <p class="field-title">レンタル品</p>
+                <ul class="rental-list">
+                  ${item.rental_items.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}
+                </ul>
+              `
+              : ""
+          }
+          ${item.amenity_note ? `<p class="detail-note">${escapeHtml(item.amenity_note)}</p>` : ""}
         </section>
 
         <!-- 地図情報 -->
@@ -1193,6 +1405,13 @@
     $("bathShapeOther")?.classList.add("hidden");
     $("bathFunctionOther")?.classList.add("hidden");
     $("bathLocationOther")?.classList.add("hidden");
+    $("showerTypeOther")?.classList.add("hidden");
+    $("springTypeOther")?.classList.add("hidden");
+    $("springColorOther")?.classList.add("hidden");
+    $("springSmellOther")?.classList.add("hidden");
+    $("springTextureOther")?.classList.add("hidden");
+    $("springInfoSourceOther")?.classList.add("hidden");
+    $("childInfoSourceOther")?.classList.add("hidden");
   }
 
   // ---------------------------------------------------------
@@ -1281,7 +1500,14 @@
     [
       ["bathShapeOtherCheck", "bathShapeOther"],
       ["bathFunctionOtherCheck", "bathFunctionOther"],
-      ["bathLocationOtherCheck", "bathLocationOther"]
+      ["bathLocationOtherCheck", "bathLocationOther"],
+      ["showerTypeOtherCheck", "showerTypeOther"],
+      ["springTypeOtherCheck", "springTypeOther"],
+      ["springColorOtherCheck", "springColorOther"],
+      ["springSmellOtherCheck", "springSmellOther"],
+      ["springTextureOtherCheck", "springTextureOther"],
+      ["springInfoSourceOtherCheck", "springInfoSourceOther"],
+      ["childInfoSourceOtherCheck", "childInfoSourceOther"]
     ].forEach(([checkId, inputId]) => {
       $(checkId)?.addEventListener("change", (event) => {
         const other = $(inputId);
