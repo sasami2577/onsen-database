@@ -448,24 +448,441 @@
 </fieldset>
 
 </section>
-<section class="form-section"><h3>サウナ</h3>
-<fieldset><legend>サウナの種類</legend><div class="checks">
-<label><input type="checkbox" name="sauna" value="ドライサウナ">ドライサウナ</label><label><input type="checkbox" name="sauna" value="フィンランド式">フィンランド式</label><label><input type="checkbox" name="sauna" value="ロウリュ">ロウリュ</label><label><input type="checkbox" name="sauna" value="オートロウリュ">オートロウリュ</label><label><input type="checkbox" name="sauna" value="セルフロウリュ">セルフロウリュ</label><label><input type="checkbox" name="sauna" value="塩サウナ">塩サウナ</label><label><input type="checkbox" name="sauna" value="スチームサウナ">スチームサウナ</label><label><input type="checkbox" name="sauna" value="ミストサウナ">ミストサウナ</label><label><input type="checkbox" name="sauna" value="遠赤外線サウナ">遠赤外線サウナ</label><label><input type="checkbox" name="sauna" value="その他">その他</label>
-</div></fieldset>
-<div class="grid two compact-top"><label>サウナ・水風呂の補足<input id="saunaNote"></label></div>
-<div class="grid two compact-top">
-<label>サウナ<select id="saunaStatus"><option>不明</option><option>あり</option><option>なし</option></select></label><label>サウナ温度（℃）<input id="saunaTemp" type="number"></label>
-<label>水風呂<select id="coldBathStatus"><option>不明</option><option>あり</option><option>なし</option></select></label><label>水風呂温度（℃）<input id="coldBathTemp" type="number"></label>
+<section class="form-section"><h3>🧖‍♀️ サウナ関連</h3>
+
+<fieldset class="full"><legend>🧖‍♀️ サウナ設備</legend><div class="checks">
+<label><input type="radio" name="saunaFacility" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaFacility" value="あり">あり</label>
+<label><input type="radio" name="saunaFacility" value="なし">なし</label>
 </div>
-<fieldset class="compact-top"><legend>設備の有無</legend><div class="status-list">
-<div><span>外気浴</span><label><input type="radio" name="outdoor" value="あり">あり</label><label><input type="radio" name="outdoor" value="なし">なし</label><label><input type="radio" name="outdoor" value="不明" checked>不明</label></div>
-<div><span>休憩スペース</span><label><input type="radio" name="rest" value="あり">あり</label><label><input type="radio" name="rest" value="なし">なし</label><label><input type="radio" name="rest" value="不明" checked>不明</label></div>
-<div><span>Wi-Fi</span><label><input type="radio" name="wifi" value="あり">あり</label><label><input type="radio" name="wifi" value="なし">なし</label><label><input type="radio" name="wifi" value="不明" checked>不明</label></div>
-<div><span>駐車場</span><label><input type="radio" name="parking" value="あり">あり</label><label><input type="radio" name="parking" value="なし">なし</label><label><input type="radio" name="parking" value="不明" checked>不明</label></div>
-<div><span>貴重品ロッカー</span><label><input type="radio" name="locker" value="あり">あり</label><label><input type="radio" name="locker" value="なし">なし</label><label><input type="radio" name="locker" value="不明" checked>不明</label></div>
-<div><span>食事処</span><label><input type="radio" name="restaurant" value="あり">あり</label><label><input type="radio" name="restaurant" value="なし">なし</label><label><input type="radio" name="restaurant" value="不明" checked>不明</label></div>
-<div><span>バリアフリー</span><label><input type="radio" name="barrierFree" value="あり">あり</label><label><input type="radio" name="barrierFree" value="なし">なし</label><label><input type="radio" name="barrierFree" value="不明" checked>不明</label></div>
+<label class="compact-top"><input type="checkbox" id="saunaFacilitySuspended">⚠️ 現在 休止中</label>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🧖‍♀️ サウナ設備の場所</legend>
+<div class="checks">
+<label><input type="radio" name="saunaFacilityLocation" value="屋内" checked>屋内</label>
+<label><input type="radio" name="saunaFacilityLocation" value="屋外">屋外</label>
+<label><input type="radio" name="saunaFacilityLocation" value="両方設置">両方設置</label>
+<label><input type="radio" name="saunaFacilityLocation" value="その他">その他</label>
+</div>
+<input type="text" id="saunaFacilityLocationOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🧖‍♀️ サウナの種類</legend><div class="checks">
+<label><input type="checkbox" name="saunaTypes" value="遠赤外線サウナ">遠赤外線サウナ</label>
+<label><input type="checkbox" name="saunaTypes" value="ドライサウナ">ドライサウナ</label>
+<label><input type="checkbox" name="saunaTypes" value="スチームサウナ">スチームサウナ</label>
+<label><input type="checkbox" name="saunaTypes" value="ミストサウナ">ミストサウナ</label>
+<label><input type="checkbox" name="saunaTypes" value="フィンランド式サウナ（ロウリュ）">フィンランド式サウナ（ロウリュ）</label>
+<label><input type="checkbox" name="saunaTypes" value="テントサウナ">テントサウナ</label>
+<label><input type="checkbox" name="saunaTypes" value="個室サウナ">個室サウナ</label>
+<label><input type="checkbox" name="saunaTypes" value="塩サウナ">塩サウナ</label>
+<label><input type="checkbox" name="saunaTypes" value="薬草サウナ">薬草サウナ</label>
+<label><input type="checkbox" id="saunaTypesOtherCheck">その他</label>
+</div>
+<input type="text" id="saunaTypesOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<div class="grid two compact-top">
+<label>🌡 サウナ室内の温度（℃・下限）<input id="saunaTempMin" type="number"></label>
+<label>🌡 サウナ室内の温度（℃・上限）<input id="saunaTempMax" type="number"></label>
+<label>💧 サウナ室内の湿度（%・下限）<input id="saunaHumidityMin" type="number"></label>
+<label>💧 サウナ室内の湿度（%・上限）<input id="saunaHumidityMax" type="number"></label>
+</div>
+
+<div class="grid two compact-top">
+<label>👤 サウナ室内の定員（人）<input id="saunaCapacityNumber" type="number" min="0"></label>
+<label>サウナ室内の定員（区分）<select id="saunaCapacityRange">
+<option value="">選択してください</option>
+<option>10人以下</option><option>11〜20人</option><option>21〜30人</option><option>31人以上</option>
+</select></label>
+</div>
+
+<fieldset class="full compact-top"><legend>🌡 温度計・湿度計</legend>
+<div class="checks">
+<label><input type="radio" name="saunaThermometer" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaThermometer" value="あり">あり</label>
+<label><input type="radio" name="saunaThermometer" value="なし">なし</label>
 </div></fieldset>
+
+<fieldset class="full compact-top"><legend>🕒 時計（現在時刻表示）</legend>
+<div class="checks">
+<label><input type="radio" name="saunaClock" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaClock" value="あり">あり</label>
+<label><input type="radio" name="saunaClock" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🕒 12分計</legend>
+<div class="checks">
+<label><input type="radio" name="saunaTwelveMinTimer" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaTwelveMinTimer" value="あり">あり</label>
+<label><input type="radio" name="saunaTwelveMinTimer" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>⏳ 砂時計</legend>
+<div class="checks">
+<label><input type="radio" name="saunaHourglass" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaHourglass" value="あり">あり</label>
+<label><input type="radio" name="saunaHourglass" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>📺 テレビ</legend>
+<div class="checks">
+<label><input type="radio" name="saunaTv" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaTv" value="あり">あり</label>
+<label><input type="radio" name="saunaTv" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>📺 テレビリモコン</legend>
+<div class="checks">
+<label><input type="radio" name="saunaTvRemote" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaTvRemote" value="あり">あり</label>
+<label><input type="radio" name="saunaTvRemote" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🪨 サウナストーン</legend>
+<div class="checks">
+<label><input type="radio" name="saunaStones" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaStones" value="あり">あり</label>
+<label><input type="radio" name="saunaStones" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🔥 ストーブタイプ</legend>
+<div class="checks">
+<label><input type="radio" name="saunaStoveType" value="電気ストーブ" checked>電気ストーブ</label>
+<label><input type="radio" name="saunaStoveType" value="薪ストーブ">薪ストーブ</label>
+<label><input type="radio" name="saunaStoveType" value="ガスストーブ">ガスストーブ</label>
+<label><input type="radio" name="saunaStoveType" value="遠赤外線ストーブ">遠赤外線ストーブ</label>
+<label><input type="radio" name="saunaStoveType" value="ハイブリッド">ハイブリッド</label>
+<label><input type="radio" name="saunaStoveType" value="その他">その他</label>
+</div>
+<input type="text" id="saunaStoveTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<label class="full compact-top">→ ストーブの台数（台）<input id="saunaStoveCount" type="number" min="0"></label>
+
+<label class="full compact-top">→ ストーブの製品名・メーカー<input id="saunaStoveBrand"></label>
+
+<fieldset class="full compact-top"><legend>🧖‍♀️ サウナマットの貸し出し</legend>
+<div class="checks">
+<label><input type="radio" name="saunaMatRental" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaMatRental" value="あり">あり</label>
+<label><input type="radio" name="saunaMatRental" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>→ サウナマットの種類</legend><div class="checks">
+<label><input type="checkbox" name="saunaMatType" value="ビート板タイプ">ビート板タイプ</label>
+<label><input type="checkbox" name="saunaMatType" value="ウレタンタイプ">ウレタンタイプ</label>
+<label><input type="checkbox" name="saunaMatType" value="ジョイントマットタイプ">ジョイントマットタイプ</label>
+<label><input type="checkbox" name="saunaMatType" value="タオル・布製タイプ">タオル・布製タイプ</label>
+<label><input type="checkbox" name="saunaMatType" value="木製・すのこタイプ">木製・すのこタイプ</label>
+<label><input type="checkbox" name="saunaMatType" value="樹脂・ゴム製タイプ">樹脂・ゴム製タイプ</label>
+<label><input type="checkbox" id="saunaMatTypeOtherCheck">その他</label>
+</div>
+<input type="text" id="saunaMatTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>→ サウナマットの設置場所・利用方法</legend><div class="checks">
+<label><input type="checkbox" name="saunaMatPlacement" value="サウナ室内に設置">サウナ室内に設置</label>
+<label><input type="checkbox" name="saunaMatPlacement" value="サウナ室入口前に設置">サウナ室入口前に設置</label>
+<label><input type="checkbox" name="saunaMatPlacement" value="浴場内に設置">浴場内に設置</label>
+<label><input type="checkbox" name="saunaMatPlacement" value="浴場入口に設置">浴場入口に設置</label>
+<label><input type="checkbox" name="saunaMatPlacement" value="自由に利用可能">自由に利用可能</label>
+<label><input type="checkbox" name="saunaMatPlacement" value="個人用貸し出し">個人用貸し出し</label>
+<label><input type="checkbox" name="saunaMatPlacement" value="持参可能">持参可能</label>
+<label><input type="checkbox" name="saunaMatPlacement" value="持参必要">持参必要</label>
+<label><input type="checkbox" name="saunaMatPlacement" value="水洗い場所あり">水洗い場所あり</label>
+<label><input type="checkbox" name="saunaMatPlacement" value="消毒スプレーあり">消毒スプレーあり</label>
+<label><input type="checkbox" id="saunaMatPlacementOtherCheck">その他</label>
+</div>
+<input type="text" id="saunaMatPlacementOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🧖‍♀️ サウナ用品のレンタル</legend>
+<div class="checks">
+<label><input type="radio" name="saunaGoodsRental" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaGoodsRental" value="あり">あり</label>
+<label><input type="radio" name="saunaGoodsRental" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🧖‍♀️ サウナ用品の販売（施設内）</legend>
+<div class="checks">
+<label><input type="radio" name="saunaGoodsSale" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaGoodsSale" value="あり">あり</label>
+<label><input type="radio" name="saunaGoodsSale" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🔥 ロウリュ</legend>
+<div class="checks">
+<label><input type="radio" name="saunaLoyly" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaLoyly" value="あり">あり</label>
+<label><input type="radio" name="saunaLoyly" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>→ ロウリュの種類</legend><div class="checks">
+<label><input type="checkbox" name="saunaLoylyType" value="セルフロウリュ">セルフロウリュ</label>
+<label><input type="checkbox" name="saunaLoylyType" value="スタッフロウリュ">スタッフロウリュ</label>
+<label><input type="checkbox" name="saunaLoylyType" value="オートロウリュ">オートロウリュ</label>
+<label><input type="checkbox" id="saunaLoylyTypeOtherCheck">その他</label>
+</div>
+<input type="text" id="saunaLoylyTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>→ アロマロウリュ</legend>
+<div class="checks">
+<label><input type="radio" name="saunaAromaLoyly" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaAromaLoyly" value="あり">あり</label>
+<label><input type="radio" name="saunaAromaLoyly" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">アロマの種類<input id="saunaAromaType"></label>
+
+<fieldset class="full compact-top"><legend>→ アウフグース・熱波</legend>
+<div class="checks">
+<label><input type="radio" name="saunaAufguss" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaAufguss" value="あり">あり</label>
+<label><input type="radio" name="saunaAufguss" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>→ 開催頻度</legend>
+<div class="checks">
+<label><input type="radio" name="saunaLoylyFrequency" value="毎時" checked>毎時</label>
+<label><input type="radio" name="saunaLoylyFrequency" value="定時">定時</label>
+<label><input type="radio" name="saunaLoylyFrequency" value="不定期">不定期</label>
+</div>
+</fieldset>
+
+<div class="grid two compact-top">
+<label>→ 開催時間（分おき）<input id="saunaLoylyIntervalMinutes" type="number" min="0"></label>
+</div>
+<label class="full compact-top">開催時間の補足<textarea id="saunaLoylyIntervalNote" rows="2"></textarea></label>
+
+<fieldset class="full compact-top"><legend>→ 予約</legend>
+<div class="checks">
+<label><input type="radio" name="saunaLoylyReservation" value="必要" checked>必要</label>
+<label><input type="radio" name="saunaLoylyReservation" value="不要">不要</label>
+</div>
+</fieldset>
+
+<label class="full compact-top">→ 備考<textarea id="saunaLoylyNote" rows="2"></textarea></label>
+
+<fieldset class="full compact-top"><legend>🚪 サウナ室のドア</legend>
+<div class="checks">
+<label><input type="radio" name="saunaDoorType" value="押し引きタイプ" checked>押し引きタイプ</label>
+<label><input type="radio" name="saunaDoorType" value="取っ手を回すタイプ">取っ手を回すタイプ</label>
+<label><input type="radio" name="saunaDoorType" value="その他">その他</label>
+</div>
+<input type="text" id="saunaDoorTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🚪 サウナ室内から出る際</legend>
+<div class="checks">
+<label><input type="radio" name="saunaExitDirection" value="押して出る" checked>押して出る</label>
+<label><input type="radio" name="saunaExitDirection" value="引いて出る">引いて出る</label>
+</div>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>💡 照明の明るさ</legend>
+<div class="checks">
+<label><input type="radio" name="saunaLightBrightness" value="明るい" checked>明るい</label>
+<label><input type="radio" name="saunaLightBrightness" value="暗い">暗い</label>
+</div>
+</fieldset>
+
+<label class="full compact-top">🧖‍♀️ サウナ室の補足事項<textarea id="saunaRoomNote" rows="3"></textarea></label>
+
+<fieldset class="full compact-top"><legend>💧 水風呂</legend>
+<div class="checks">
+<label><input type="radio" name="coldBathAvailability" value="不明" checked>不明</label>
+<label><input type="radio" name="coldBathAvailability" value="あり">あり</label>
+<label><input type="radio" name="coldBathAvailability" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>💧 水風呂の形状</legend><div class="checks">
+<label><input type="checkbox" name="coldBathShape" value="一般的タイプ">一般的タイプ</label>
+<label><input type="checkbox" name="coldBathShape" value="浅めタイプ">浅めタイプ</label>
+<label><input type="checkbox" name="coldBathShape" value="深めタイプ">深めタイプ</label>
+<label><input type="checkbox" name="coldBathShape" value="壺タイプ">壺タイプ</label>
+<label><input type="checkbox" name="coldBathShape" value="1人用タイプ">1人用タイプ</label>
+<label><input type="checkbox" name="coldBathShape" value="大型・プール">大型・プール</label>
+</div>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>💧 水風呂の設置場所</legend><div class="checks">
+<label><input type="checkbox" name="coldBathLocation" value="屋内">屋内</label>
+<label><input type="checkbox" name="coldBathLocation" value="屋外">屋外</label>
+<label><input type="checkbox" name="coldBathLocation" value="両方設置">両方設置</label>
+</div>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>💧 水風呂の水源</legend><div class="checks">
+<label><input type="checkbox" name="coldBathSource" value="水道水">水道水</label>
+<label><input type="checkbox" name="coldBathSource" value="地下水">地下水</label>
+<label><input type="checkbox" name="coldBathSource" value="天然水">天然水</label>
+<label><input type="checkbox" name="coldBathSource" value="井戸水">井戸水</label>
+<label><input type="checkbox" id="coldBathSourceOtherCheck">その他</label>
+<label><input type="checkbox" name="coldBathSource" value="不明">不明</label>
+</div>
+<input type="text" id="coldBathSourceOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>💧 水風呂の冷却方法</legend><div class="checks">
+<label><input type="checkbox" name="coldBathCooling" value="チラー冷却">チラー冷却</label>
+<label><input type="checkbox" name="coldBathCooling" value="自然冷却">自然冷却</label>
+<label><input type="checkbox" id="coldBathCoolingOtherCheck">その他</label>
+<label><input type="checkbox" name="coldBathCooling" value="不明">不明</label>
+</div>
+<input type="text" id="coldBathCoolingOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>💧 水風呂の水流</legend><div class="checks">
+<label><input type="checkbox" name="coldBathFlow" value="なし">なし</label>
+<label><input type="checkbox" name="coldBathFlow" value="バイブラ">バイブラ</label>
+<label><input type="checkbox" name="coldBathFlow" value="ジェット">ジェット</label>
+<label><input type="checkbox" id="coldBathFlowOtherCheck">その他</label>
+<label><input type="checkbox" name="coldBathFlow" value="不明">不明</label>
+</div>
+<input type="text" id="coldBathFlowOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<div class="grid two compact-top">
+<label>🌡 水風呂の温度（℃・下限）<input id="coldBathTempMin" type="number"></label>
+<label>🌡 水風呂の温度（℃・上限）<input id="coldBathTempMax" type="number"></label>
+<label>👤 水風呂の定員（人）<input id="coldBathCapacity" type="number" min="0"></label>
+<label>💧 水風呂の深さ（およそ cm）<input id="coldBathDepth" type="number" min="0"></label>
+</div>
+
+<fieldset class="full compact-top"><legend>🚿 冷水シャワー</legend>
+<div class="checks">
+<label><input type="radio" name="coldShower" value="不明" checked>不明</label>
+<label><input type="radio" name="coldShower" value="あり">あり</label>
+<label><input type="radio" name="coldShower" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">💧 水風呂の補足事項<textarea id="coldBathNote" rows="3"></textarea></label>
+
+<fieldset class="full compact-top"><legend>🌿 外気浴</legend>
+<div class="checks">
+<label><input type="radio" name="outdoor" value="不明" checked>不明</label>
+<label><input type="radio" name="outdoor" value="あり">あり</label>
+<label><input type="radio" name="outdoor" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>→ 外気浴の設置場所</legend><div class="checks">
+<label><input type="checkbox" name="outdoorLocation" value="露天エリア">露天エリア</label>
+<label><input type="checkbox" name="outdoorLocation" value="専用外気浴スペース">専用外気浴スペース</label>
+<label><input type="checkbox" name="outdoorLocation" value="ベランダ・テラス">ベランダ・テラス</label>
+<label><input type="checkbox" id="outdoorLocationOtherCheck">その他</label>
+</div>
+<input type="text" id="outdoorLocationOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🌿 内気浴</legend>
+<div class="checks">
+<label><input type="radio" name="indoorBathing" value="不明" checked>不明</label>
+<label><input type="radio" name="indoorBathing" value="あり">あり</label>
+<label><input type="radio" name="indoorBathing" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>→ 内気浴の設置場所</legend><div class="checks">
+<label><input type="checkbox" name="indoorLocation" value="浴場内エリア">浴場内エリア</label>
+<label><input type="checkbox" name="indoorLocation" value="専用内気浴スペース">専用内気浴スペース</label>
+<label><input type="checkbox" id="indoorLocationOtherCheck">その他</label>
+</div>
+<input type="text" id="indoorLocationOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🪑 ととのい椅子</legend>
+<div class="checks">
+<label><input type="radio" name="toriToiChair" value="不明" checked>不明</label>
+<label><input type="radio" name="toriToiChair" value="あり">あり</label>
+<label><input type="radio" name="toriToiChair" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">→ 椅子の数（脚）<input id="toriToiChairCount" type="number" min="0"></label>
+
+<fieldset class="full compact-top"><legend>🪑 リクライニングチェア</legend>
+<div class="checks">
+<label><input type="radio" name="reclineChair" value="不明" checked>不明</label>
+<label><input type="radio" name="reclineChair" value="あり">あり</label>
+<label><input type="radio" name="reclineChair" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">→ 椅子の数（脚）<input id="reclineChairCount" type="number" min="0"></label>
+
+<fieldset class="full compact-top"><legend>🪑 インフィニティチェア</legend>
+<div class="checks">
+<label><input type="radio" name="infinityChair" value="不明" checked>不明</label>
+<label><input type="radio" name="infinityChair" value="あり">あり</label>
+<label><input type="radio" name="infinityChair" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">→ 椅子の数（脚）<input id="infinityChairCount" type="number" min="0"></label>
+
+<fieldset class="full compact-top"><legend>🪑 ベンチ</legend>
+<div class="checks">
+<label><input type="radio" name="bench" value="不明" checked>不明</label>
+<label><input type="radio" name="bench" value="あり">あり</label>
+<label><input type="radio" name="bench" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">→ 椅子の数（脚）<input id="benchCount" type="number" min="0"></label>
+
+<fieldset class="full compact-top"><legend>🪑 デッキチェア</legend>
+<div class="checks">
+<label><input type="radio" name="deckChair" value="不明" checked>不明</label>
+<label><input type="radio" name="deckChair" value="あり">あり</label>
+<label><input type="radio" name="deckChair" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">→ 椅子の数（脚）<input id="deckChairCount" type="number" min="0"></label>
+
+<fieldset class="full compact-top"><legend>🌿 寝ころびスペース</legend>
+<div class="checks">
+<label><input type="radio" name="layingSpace" value="不明" checked>不明</label>
+<label><input type="radio" name="layingSpace" value="あり">あり</label>
+<label><input type="radio" name="layingSpace" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>→ 材質</legend><div class="checks">
+<label><input type="checkbox" name="layingSpaceMaterial" value="畳">畳</label>
+<label><input type="checkbox" name="layingSpaceMaterial" value="木製">木製</label>
+<label><input type="checkbox" id="layingSpaceMaterialOtherCheck">その他</label>
+</div>
+<input type="text" id="layingSpaceMaterialOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<label class="full compact-top">🌿 その他 ととのい設備<textarea id="toriToiOtherNote" rows="2"></textarea></label>
+
+<fieldset class="full compact-top"><legend>🏠 屋根・雨対策</legend>
+<div class="checks">
+<label><input type="radio" name="roofRainProtection" value="全設置あり" checked>全設置あり</label>
+<label><input type="radio" name="roofRainProtection" value="一部あり">一部あり</label>
+<label><input type="radio" name="roofRainProtection" value="なし">なし</label>
+</div>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>☀️ 日なた・日陰</legend>
+<div class="checks">
+<label><input type="radio" name="sunShade" value="日なた" checked>日なた</label>
+<label><input type="radio" name="sunShade" value="一部日陰">一部日陰</label>
+<label><input type="radio" name="sunShade" value="日陰">日陰</label>
+</div>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🏞️ 景色・景観</legend><div class="checks">
+<label><input type="checkbox" name="scenery" value="山・自然">山・自然</label>
+<label><input type="checkbox" name="scenery" value="海・湖">海・湖</label>
+<label><input type="checkbox" name="scenery" value="街並み">街並み</label>
+<label><input type="checkbox" name="scenery" value="庭園">庭園</label>
+<label><input type="checkbox" name="scenery" value="星空">星空</label>
+<label><input type="checkbox" id="sceneryOtherCheck">その他</label>
+</div>
+<input type="text" id="sceneryOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<label class="full compact-top">🌿 外気浴・内気浴の補足事項<textarea id="outdoorIndoorNote" rows="3"></textarea></label>
+
 </section>
 <section class="form-section"><h3>🚿 シャワー</h3>
 
@@ -512,6 +929,13 @@
 <label><input type="radio" name="washAreaDivider" value="不明" checked>不明</label>
 <label><input type="radio" name="washAreaDivider" value="あり">あり</label>
 <label><input type="radio" name="washAreaDivider" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🗑 くず入れ（浴場内）</legend>
+<div class="checks">
+<label><input type="radio" name="bathTrashBin" value="不明" checked>不明</label>
+<label><input type="radio" name="bathTrashBin" value="あり">あり</label>
+<label><input type="radio" name="bathTrashBin" value="なし">なし</label>
 </div></fieldset>
 
 <fieldset class="full compact-top"><legend>🚿 かけ湯</legend>
@@ -708,6 +1132,15 @@
 <label><input type="radio" name="babyBed" value="不明" checked>不明</label>
 <label><input type="radio" name="babyBed" value="あり">あり</label>
 <label><input type="radio" name="babyBed" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="compact-top"><legend>その他の設備</legend><div class="status-list">
+<div><span>休憩スペース</span><label><input type="radio" name="rest" value="あり">あり</label><label><input type="radio" name="rest" value="なし">なし</label><label><input type="radio" name="rest" value="不明" checked>不明</label></div>
+<div><span>Wi-Fi</span><label><input type="radio" name="wifi" value="あり">あり</label><label><input type="radio" name="wifi" value="なし">なし</label><label><input type="radio" name="wifi" value="不明" checked>不明</label></div>
+<div><span>駐車場</span><label><input type="radio" name="parking" value="あり">あり</label><label><input type="radio" name="parking" value="なし">なし</label><label><input type="radio" name="parking" value="不明" checked>不明</label></div>
+<div><span>貴重品ロッカー</span><label><input type="radio" name="locker" value="あり">あり</label><label><input type="radio" name="locker" value="なし">なし</label><label><input type="radio" name="locker" value="不明" checked>不明</label></div>
+<div><span>食事処</span><label><input type="radio" name="restaurant" value="あり">あり</label><label><input type="radio" name="restaurant" value="なし">なし</label><label><input type="radio" name="restaurant" value="不明" checked>不明</label></div>
+<div><span>バリアフリー</span><label><input type="radio" name="barrierFree" value="あり">あり</label><label><input type="radio" name="barrierFree" value="なし">なし</label><label><input type="radio" name="barrierFree" value="不明" checked>不明</label></div>
 </div></fieldset>
 
 <label class="full compact-top">🧼 その他 アメニティ・備品の補足事項<textarea id="amenityNote" rows="3"></textarea></label>

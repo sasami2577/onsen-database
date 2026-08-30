@@ -383,12 +383,146 @@
       ],
       child_info_check_date: dateValue("childInfoCheck"),
 
-      sauna_note: value("saunaNote"),
-      sauna: checkedValues("sauna"),
-      sauna_status: value("saunaStatus"),
-      cold_bath_status: value("coldBathStatus"),
+      // 🧖‍♀️ サウナ関連
+      sauna_facility: radioValue("saunaFacility"),
+      sauna_facility_suspended: checkedBool("saunaFacilitySuspended"),
+      sauna_facility_location:
+        radioValue("saunaFacilityLocation") === "その他" && value("saunaFacilityLocationOther")
+          ? value("saunaFacilityLocationOther")
+          : radioValue("saunaFacilityLocation"),
+      sauna_types: [
+        ...checkedValues("saunaTypes"),
+        ...(checkedBool("saunaTypesOtherCheck")
+          ? [value("saunaTypesOther") || "その他"]
+          : [])
+      ],
+      sauna_temp_min: numberValue("saunaTempMin"),
+      sauna_temp_max: numberValue("saunaTempMax"),
+      sauna_humidity_min: numberValue("saunaHumidityMin"),
+      sauna_humidity_max: numberValue("saunaHumidityMax"),
+      sauna_capacity_number: numberValue("saunaCapacityNumber"),
+      sauna_capacity_range: value("saunaCapacityRange"),
+      sauna_thermometer: radioValue("saunaThermometer"),
+      sauna_clock: radioValue("saunaClock"),
+      sauna_twelve_min_timer: radioValue("saunaTwelveMinTimer"),
+      sauna_hourglass: radioValue("saunaHourglass"),
+      sauna_tv: radioValue("saunaTv"),
+      sauna_tv_remote: radioValue("saunaTvRemote"),
+      sauna_stones: radioValue("saunaStones"),
+      sauna_stove_type:
+        radioValue("saunaStoveType") === "その他" && value("saunaStoveTypeOther")
+          ? value("saunaStoveTypeOther")
+          : radioValue("saunaStoveType"),
+      sauna_stove_count: numberValue("saunaStoveCount"),
+      sauna_stove_brand: value("saunaStoveBrand"),
+      sauna_mat_rental: radioValue("saunaMatRental"),
+      sauna_mat_type: [
+        ...checkedValues("saunaMatType"),
+        ...(checkedBool("saunaMatTypeOtherCheck")
+          ? [value("saunaMatTypeOther") || "その他"]
+          : [])
+      ],
+      sauna_mat_placement: [
+        ...checkedValues("saunaMatPlacement"),
+        ...(checkedBool("saunaMatPlacementOtherCheck")
+          ? [value("saunaMatPlacementOther") || "その他"]
+          : [])
+      ],
+      sauna_goods_rental: radioValue("saunaGoodsRental"),
+      sauna_goods_sale: radioValue("saunaGoodsSale"),
+      sauna_loyly: radioValue("saunaLoyly"),
+      sauna_loyly_type: [
+        ...checkedValues("saunaLoylyType"),
+        ...(checkedBool("saunaLoylyTypeOtherCheck")
+          ? [value("saunaLoylyTypeOther") || "その他"]
+          : [])
+      ],
+      sauna_aroma_loyly: radioValue("saunaAromaLoyly"),
+      sauna_aroma_type: value("saunaAromaType"),
+      sauna_aufguss: radioValue("saunaAufguss"),
+      sauna_loyly_frequency: radioValue("saunaLoylyFrequency"),
+      sauna_loyly_interval_minutes: numberValue("saunaLoylyIntervalMinutes"),
+      sauna_loyly_interval_note: value("saunaLoylyIntervalNote"),
+      sauna_loyly_reservation: radioValue("saunaLoylyReservation"),
+      sauna_loyly_note: value("saunaLoylyNote"),
+      sauna_door_type:
+        radioValue("saunaDoorType") === "その他" && value("saunaDoorTypeOther")
+          ? value("saunaDoorTypeOther")
+          : radioValue("saunaDoorType"),
+      sauna_exit_direction: radioValue("saunaExitDirection"),
+      sauna_light_brightness: radioValue("saunaLightBrightness"),
+      sauna_room_note: value("saunaRoomNote"),
+
+      cold_bath_availability: radioValue("coldBathAvailability"),
+      cold_bath_shape: checkedValues("coldBathShape"),
+      cold_bath_location: checkedValues("coldBathLocation"),
+      cold_bath_source: [
+        ...checkedValues("coldBathSource"),
+        ...(checkedBool("coldBathSourceOtherCheck")
+          ? [value("coldBathSourceOther") || "その他"]
+          : [])
+      ],
+      cold_bath_cooling: [
+        ...checkedValues("coldBathCooling"),
+        ...(checkedBool("coldBathCoolingOtherCheck")
+          ? [value("coldBathCoolingOther") || "その他"]
+          : [])
+      ],
+      cold_bath_flow: [
+        ...checkedValues("coldBathFlow"),
+        ...(checkedBool("coldBathFlowOtherCheck")
+          ? [value("coldBathFlowOther") || "その他"]
+          : [])
+      ],
+      cold_bath_temp_min: numberValue("coldBathTempMin"),
+      cold_bath_temp_max: numberValue("coldBathTempMax"),
+      cold_bath_capacity: numberValue("coldBathCapacity"),
+      cold_bath_depth: numberValue("coldBathDepth"),
+      cold_shower: radioValue("coldShower"),
+      cold_bath_note: value("coldBathNote"),
 
       outdoor: radioValue("outdoor"),
+      outdoor_location: [
+        ...checkedValues("outdoorLocation"),
+        ...(checkedBool("outdoorLocationOtherCheck")
+          ? [value("outdoorLocationOther") || "その他"]
+          : [])
+      ],
+      indoor_bathing: radioValue("indoorBathing"),
+      indoor_location: [
+        ...checkedValues("indoorLocation"),
+        ...(checkedBool("indoorLocationOtherCheck")
+          ? [value("indoorLocationOther") || "その他"]
+          : [])
+      ],
+      tori_toi_chair: radioValue("toriToiChair"),
+      tori_toi_chair_count: numberValue("toriToiChairCount"),
+      recline_chair: radioValue("reclineChair"),
+      recline_chair_count: numberValue("reclineChairCount"),
+      infinity_chair: radioValue("infinityChair"),
+      infinity_chair_count: numberValue("infinityChairCount"),
+      bench: radioValue("bench"),
+      bench_count: numberValue("benchCount"),
+      deck_chair: radioValue("deckChair"),
+      deck_chair_count: numberValue("deckChairCount"),
+      laying_space: radioValue("layingSpace"),
+      laying_space_material: [
+        ...checkedValues("layingSpaceMaterial"),
+        ...(checkedBool("layingSpaceMaterialOtherCheck")
+          ? [value("layingSpaceMaterialOther") || "その他"]
+          : [])
+      ],
+      tori_toi_other_note: value("toriToiOtherNote"),
+      roof_rain_protection: radioValue("roofRainProtection"),
+      sun_shade: radioValue("sunShade"),
+      scenery: [
+        ...checkedValues("scenery"),
+        ...(checkedBool("sceneryOtherCheck")
+          ? [value("sceneryOther") || "その他"]
+          : [])
+      ],
+      outdoor_indoor_note: value("outdoorIndoorNote"),
+
       rest: radioValue("rest"),
       wifi: radioValue("wifi"),
       parking: radioValue("parking"),
@@ -408,6 +542,7 @@
       shower_faucet: radioValue("showerFaucet"),
       shower_booth: radioValue("showerBooth"),
       wash_area_divider: radioValue("washAreaDivider"),
+      bath_trash_bin: radioValue("bathTrashBin"),
       pre_rinse_water: radioValue("preRinseWater"),
       shower_note: value("showerNote"),
 
@@ -705,17 +840,129 @@
     );
     setDateValue("childInfoCheck", item.child_info_check_date);
 
-    setValue("saunaNote", item.sauna_note);
+    setRadioValue("saunaFacility", item.sauna_facility);
+    if (item.sauna_facility_suspended) $("saunaFacilitySuspended").checked = true;
+
+    if (["屋内", "屋外", "両方設置"].includes(item.sauna_facility_location)) {
+      setRadioValue("saunaFacilityLocation", item.sauna_facility_location);
+    } else if (item.sauna_facility_location) {
+      setRadioValue("saunaFacilityLocation", "その他");
+      setValue("saunaFacilityLocationOther", item.sauna_facility_location);
+      $("saunaFacilityLocationOther")?.classList.remove("hidden");
+    }
+
     setCheckboxGroup(
-      "sauna",
-      ["ドライサウナ", "フィンランド式", "ロウリュ", "オートロウリュ", "セルフロウリュ", "塩サウナ", "スチームサウナ", "ミストサウナ", "遠赤外線サウナ", "その他"],
-      item.sauna,
-      null,
-      null
+      "saunaTypes",
+      ["遠赤外線サウナ", "ドライサウナ", "スチームサウナ", "ミストサウナ", "フィンランド式サウナ（ロウリュ）", "テントサウナ", "個室サウナ", "塩サウナ", "薬草サウナ"],
+      item.sauna_types,
+      "saunaTypesOtherCheck",
+      "saunaTypesOther"
     );
-    setValue("saunaStatus", item.sauna_status);
-    setValue("coldBathStatus", item.cold_bath_status);
+    setValue("saunaTempMin", item.sauna_temp_min);
+    setValue("saunaTempMax", item.sauna_temp_max);
+    setValue("saunaHumidityMin", item.sauna_humidity_min);
+    setValue("saunaHumidityMax", item.sauna_humidity_max);
+    setValue("saunaCapacityNumber", item.sauna_capacity_number);
+    setValue("saunaCapacityRange", item.sauna_capacity_range);
+    setRadioValue("saunaThermometer", item.sauna_thermometer);
+    setRadioValue("saunaClock", item.sauna_clock);
+    setRadioValue("saunaTwelveMinTimer", item.sauna_twelve_min_timer);
+    setRadioValue("saunaHourglass", item.sauna_hourglass);
+    setRadioValue("saunaTv", item.sauna_tv);
+    setRadioValue("saunaTvRemote", item.sauna_tv_remote);
+    setRadioValue("saunaStones", item.sauna_stones);
+
+    if (["電気ストーブ", "薪ストーブ", "ガスストーブ", "遠赤外線ストーブ", "ハイブリッド"].includes(item.sauna_stove_type)) {
+      setRadioValue("saunaStoveType", item.sauna_stove_type);
+    } else if (item.sauna_stove_type) {
+      setRadioValue("saunaStoveType", "その他");
+      setValue("saunaStoveTypeOther", item.sauna_stove_type);
+      $("saunaStoveTypeOther")?.classList.remove("hidden");
+    }
+    setValue("saunaStoveCount", item.sauna_stove_count);
+    setValue("saunaStoveBrand", item.sauna_stove_brand);
+
+    setRadioValue("saunaMatRental", item.sauna_mat_rental);
+    setCheckboxGroup(
+      "saunaMatType",
+      ["ビート板タイプ", "ウレタンタイプ", "ジョイントマットタイプ", "タオル・布製タイプ", "木製・すのこタイプ", "樹脂・ゴム製タイプ"],
+      item.sauna_mat_type,
+      "saunaMatTypeOtherCheck",
+      "saunaMatTypeOther"
+    );
+    setCheckboxGroup(
+      "saunaMatPlacement",
+      ["サウナ室内に設置", "サウナ室入口前に設置", "浴場内に設置", "浴場入口に設置", "自由に利用可能", "個人用貸し出し", "持参可能", "持参必要", "水洗い場所あり", "消毒スプレーあり"],
+      item.sauna_mat_placement,
+      "saunaMatPlacementOtherCheck",
+      "saunaMatPlacementOther"
+    );
+    setRadioValue("saunaGoodsRental", item.sauna_goods_rental);
+    setRadioValue("saunaGoodsSale", item.sauna_goods_sale);
+
+    setRadioValue("saunaLoyly", item.sauna_loyly);
+    setCheckboxGroup(
+      "saunaLoylyType",
+      ["セルフロウリュ", "スタッフロウリュ", "オートロウリュ"],
+      item.sauna_loyly_type,
+      "saunaLoylyTypeOtherCheck",
+      "saunaLoylyTypeOther"
+    );
+    setRadioValue("saunaAromaLoyly", item.sauna_aroma_loyly);
+    setValue("saunaAromaType", item.sauna_aroma_type);
+    setRadioValue("saunaAufguss", item.sauna_aufguss);
+    setRadioValue("saunaLoylyFrequency", item.sauna_loyly_frequency);
+    setValue("saunaLoylyIntervalMinutes", item.sauna_loyly_interval_minutes);
+    setValue("saunaLoylyIntervalNote", item.sauna_loyly_interval_note);
+    setRadioValue("saunaLoylyReservation", item.sauna_loyly_reservation);
+    setValue("saunaLoylyNote", item.sauna_loyly_note);
+
+    if (["押し引きタイプ", "取っ手を回すタイプ"].includes(item.sauna_door_type)) {
+      setRadioValue("saunaDoorType", item.sauna_door_type);
+    } else if (item.sauna_door_type) {
+      setRadioValue("saunaDoorType", "その他");
+      setValue("saunaDoorTypeOther", item.sauna_door_type);
+      $("saunaDoorTypeOther")?.classList.remove("hidden");
+    }
+    setRadioValue("saunaExitDirection", item.sauna_exit_direction);
+    setRadioValue("saunaLightBrightness", item.sauna_light_brightness);
+    setValue("saunaRoomNote", item.sauna_room_note);
+
+    setRadioValue("coldBathAvailability", item.cold_bath_availability);
+    setCheckboxGroup("coldBathShape", ["一般的タイプ", "浅めタイプ", "深めタイプ", "壺タイプ", "1人用タイプ", "大型・プール"], item.cold_bath_shape, null, null);
+    setCheckboxGroup("coldBathLocation", ["屋内", "屋外", "両方設置"], item.cold_bath_location, null, null);
+    setCheckboxGroup("coldBathSource", ["水道水", "地下水", "天然水", "井戸水", "不明"], item.cold_bath_source, "coldBathSourceOtherCheck", "coldBathSourceOther");
+    setCheckboxGroup("coldBathCooling", ["チラー冷却", "自然冷却", "不明"], item.cold_bath_cooling, "coldBathCoolingOtherCheck", "coldBathCoolingOther");
+    setCheckboxGroup("coldBathFlow", ["なし", "バイブラ", "ジェット", "不明"], item.cold_bath_flow, "coldBathFlowOtherCheck", "coldBathFlowOther");
+    setValue("coldBathTempMin", item.cold_bath_temp_min);
+    setValue("coldBathTempMax", item.cold_bath_temp_max);
+    setValue("coldBathCapacity", item.cold_bath_capacity);
+    setValue("coldBathDepth", item.cold_bath_depth);
+    setRadioValue("coldShower", item.cold_shower);
+    setValue("coldBathNote", item.cold_bath_note);
+
     setRadioValue("outdoor", item.outdoor);
+    setCheckboxGroup("outdoorLocation", ["露天エリア", "専用外気浴スペース", "ベランダ・テラス"], item.outdoor_location, "outdoorLocationOtherCheck", "outdoorLocationOther");
+    setRadioValue("indoorBathing", item.indoor_bathing);
+    setCheckboxGroup("indoorLocation", ["浴場内エリア", "専用内気浴スペース"], item.indoor_location, "indoorLocationOtherCheck", "indoorLocationOther");
+    setRadioValue("toriToiChair", item.tori_toi_chair);
+    setValue("toriToiChairCount", item.tori_toi_chair_count);
+    setRadioValue("reclineChair", item.recline_chair);
+    setValue("reclineChairCount", item.recline_chair_count);
+    setRadioValue("infinityChair", item.infinity_chair);
+    setValue("infinityChairCount", item.infinity_chair_count);
+    setRadioValue("bench", item.bench);
+    setValue("benchCount", item.bench_count);
+    setRadioValue("deckChair", item.deck_chair);
+    setValue("deckChairCount", item.deck_chair_count);
+    setRadioValue("layingSpace", item.laying_space);
+    setCheckboxGroup("layingSpaceMaterial", ["畳", "木製"], item.laying_space_material, "layingSpaceMaterialOtherCheck", "layingSpaceMaterialOther");
+    setValue("toriToiOtherNote", item.tori_toi_other_note);
+    setRadioValue("roofRainProtection", item.roof_rain_protection);
+    setRadioValue("sunShade", item.sun_shade);
+    setCheckboxGroup("scenery", ["山・自然", "海・湖", "街並み", "庭園", "星空"], item.scenery, "sceneryOtherCheck", "sceneryOther");
+    setValue("outdoorIndoorNote", item.outdoor_indoor_note);
+
     setRadioValue("rest", item.rest);
     setRadioValue("wifi", item.wifi);
     setRadioValue("parking", item.parking);
@@ -729,6 +976,7 @@
     setRadioValue("showerFaucet", item.shower_faucet);
     setRadioValue("showerBooth", item.shower_booth);
     setRadioValue("washAreaDivider", item.wash_area_divider);
+    setRadioValue("bathTrashBin", item.bath_trash_bin);
     setRadioValue("preRinseWater", item.pre_rinse_water);
     setValue("showerNote", item.shower_note);
 
@@ -1430,27 +1678,131 @@
           <div class="detail-grid">${detailField("情報確認日", item.child_info_check_date)}</div>
         </section>
 
-        <!-- サウナ情報（サウナ本体・水風呂・外気浴） -->
+
+        <!-- サウナ関連 -->
         <section class="detail-section">
-          <h3>サウナ情報</h3>
+          <h3>🧖‍♀️ サウナ関連</h3>
 
-          ${detailSubhead("サウナ本体")}
+          ${detailSubhead("🧖‍♀️ サウナ設備")}
           <div class="detail-grid">
-            ${detailField("サウナ", item.sauna_status)}
+            ${detailField("サウナ設備", item.sauna_facility)}
+            ${detailField("設置場所", item.sauna_facility_location)}
           </div>
-          ${detailTags(item.sauna)}
-          ${item.sauna_note ? `<p class="detail-note">${escapeHtml(item.sauna_note)}</p>` : ""}
+          ${item.sauna_facility_suspended ? `<p class="detail-note">⚠️ 現在休止中</p>` : ""}
+          ${detailTags(item.sauna_types) || `<p class="detail-note-tight">情報がありません。</p>`}
 
-          ${detailSubhead("水風呂")}
+          ${detailSubhead("🌡 サウナ室の仕様")}
           <div class="detail-grid">
-            ${detailField("水風呂", item.cold_bath_status)}
+            ${detailField(
+              "サウナ室内の温度",
+              item.sauna_temp_min != null || item.sauna_temp_max != null
+                ? `${item.sauna_temp_min ?? "?"}℃〜${item.sauna_temp_max ?? "?"}℃`
+                : ""
+            )}
+            ${detailField(
+              "サウナ室内の湿度",
+              item.sauna_humidity_min != null || item.sauna_humidity_max != null
+                ? `${item.sauna_humidity_min ?? "?"}%〜${item.sauna_humidity_max ?? "?"}%`
+                : ""
+            )}
+            ${detailField("サウナ室内の定員", item.sauna_capacity_number != null ? `${item.sauna_capacity_number}人` : "")}
+            ${detailField("定員の目安", item.sauna_capacity_range)}
+            ${detailField("温度計・湿度計", item.sauna_thermometer)}
+            ${detailField("時計（現在時刻表示）", item.sauna_clock)}
+            ${detailField("12分計", item.sauna_twelve_min_timer)}
+            ${detailField("砂時計", item.sauna_hourglass)}
+            ${detailField("テレビ", item.sauna_tv)}
+            ${detailField("テレビリモコン", item.sauna_tv_remote)}
+            ${detailField("サウナストーン", item.sauna_stones)}
+            ${detailField("ストーブタイプ", item.sauna_stove_type)}
+            ${detailField("ストーブの台数", item.sauna_stove_count != null ? `${item.sauna_stove_count}台` : "")}
+            ${detailField("ストーブの製品名・メーカー", item.sauna_stove_brand)}
           </div>
 
-          ${detailSubhead("外気浴")}
+          ${detailSubhead("🧖‍♀️ サウナマット・用品")}
+          <div class="detail-grid">
+            ${detailField("サウナマットの貸し出し", item.sauna_mat_rental)}
+            ${detailField("サウナ用品のレンタル", item.sauna_goods_rental)}
+            ${detailField("サウナ用品の販売（施設内）", item.sauna_goods_sale)}
+          </div>
+          ${detailTags(item.sauna_mat_type)}
+          ${detailTags(item.sauna_mat_placement)}
+
+          ${detailSubhead("🔥 ロウリュ・アウフグース")}
+          <div class="detail-grid">
+            ${detailField("ロウリュ", item.sauna_loyly)}
+            ${detailField("アロマロウリュ", item.sauna_aroma_loyly)}
+            ${detailField("アロマの種類", item.sauna_aroma_type)}
+            ${detailField("アウフグース・熱波", item.sauna_aufguss)}
+            ${detailField("開催頻度", item.sauna_loyly_frequency)}
+            ${detailField("開催時間", item.sauna_loyly_interval_minutes != null ? `${item.sauna_loyly_interval_minutes}分おき` : "")}
+            ${detailField("予約", item.sauna_loyly_reservation)}
+          </div>
+          ${detailTags(item.sauna_loyly_type)}
+          ${item.sauna_loyly_interval_note ? `<p class="detail-note">${escapeHtml(item.sauna_loyly_interval_note)}</p>` : ""}
+          ${item.sauna_loyly_note ? `<p class="detail-note">${escapeHtml(item.sauna_loyly_note)}</p>` : ""}
+
+          ${detailSubhead("🚪 サウナ室の出入り・照明")}
+          <div class="detail-grid">
+            ${detailField("サウナ室のドア", item.sauna_door_type)}
+            ${detailField("サウナ室内から出る際", item.sauna_exit_direction)}
+            ${detailField("照明の明るさ", item.sauna_light_brightness)}
+          </div>
+          ${item.sauna_room_note ? `<p class="detail-note">${escapeHtml(item.sauna_room_note)}</p>` : ""}
+
+          ${detailSubhead("💧 水風呂")}
+          <div class="detail-grid">
+            ${detailField("水風呂", item.cold_bath_availability)}
+            ${detailField(
+              "水風呂の温度",
+              item.cold_bath_temp_min != null || item.cold_bath_temp_max != null
+                ? `${item.cold_bath_temp_min ?? "?"}℃〜${item.cold_bath_temp_max ?? "?"}℃`
+                : ""
+            )}
+            ${detailField("水風呂の定員", item.cold_bath_capacity != null ? `${item.cold_bath_capacity}人` : "")}
+            ${detailField("水風呂の深さ", item.cold_bath_depth != null ? `およそ${item.cold_bath_depth}cm` : "")}
+            ${detailField("冷水シャワー", item.cold_shower)}
+          </div>
+          ${detailTags(item.cold_bath_shape)}
+          ${detailTags(item.cold_bath_location)}
+          ${detailTags(item.cold_bath_source)}
+          ${detailTags(item.cold_bath_cooling)}
+          ${detailTags(item.cold_bath_flow)}
+          ${item.cold_bath_note ? `<p class="detail-note">${escapeHtml(item.cold_bath_note)}</p>` : ""}
+
+          ${detailSubhead("🌿 外気浴・内気浴")}
           <div class="detail-grid">
             ${detailField("外気浴", item.outdoor)}
-            ${detailField("休憩スペース", item.rest)}
+            ${detailField("内気浴", item.indoor_bathing)}
           </div>
+          ${detailTags(item.outdoor_location)}
+          ${detailTags(item.indoor_location)}
+
+          ${detailSubhead("🪑 ととのい椅子・設備")}
+          <div class="detail-grid">
+            ${detailField("ととのい椅子", item.tori_toi_chair)}
+            ${detailField("ととのい椅子の数", item.tori_toi_chair_count != null ? `${item.tori_toi_chair_count}脚` : "")}
+            ${detailField("リクライニングチェア", item.recline_chair)}
+            ${detailField("リクライニングチェアの数", item.recline_chair_count != null ? `${item.recline_chair_count}脚` : "")}
+            ${detailField("インフィニティチェア", item.infinity_chair)}
+            ${detailField("インフィニティチェアの数", item.infinity_chair_count != null ? `${item.infinity_chair_count}脚` : "")}
+            ${detailField("ベンチ", item.bench)}
+            ${detailField("ベンチの数", item.bench_count != null ? `${item.bench_count}脚` : "")}
+            ${detailField("デッキチェア", item.deck_chair)}
+            ${detailField("デッキチェアの数", item.deck_chair_count != null ? `${item.deck_chair_count}脚` : "")}
+            ${detailField("寝ころびスペース", item.laying_space)}
+          </div>
+          ${detailTags(item.laying_space_material)}
+          ${item.tori_toi_other_note ? `<p class="detail-note">${escapeHtml(item.tori_toi_other_note)}</p>` : ""}
+
+          ${detailSubhead("🏠 環境")}
+          <div class="detail-grid">
+            ${detailField("屋根・雨対策", item.roof_rain_protection)}
+            ${detailField("日なた・日陰", item.sun_shade)}
+          </div>
+          ${detailTags(item.scenery)}
+
+          ${item.outdoor_indoor_note ? `<p class="detail-note">${escapeHtml(item.outdoor_indoor_note)}</p>` : ""}
         </section>
 
         <!-- シャワー -->
@@ -1465,6 +1817,7 @@
             ${detailField("吐水口・カラン", item.shower_faucet)}
             ${detailField("シャワーブース", item.shower_booth)}
             ${detailField("洗い場仕切り", item.wash_area_divider)}
+            ${detailField("くず入れ（浴場内）", item.bath_trash_bin)}
             ${detailField("かけ湯", item.pre_rinse_water)}
           </div>
           ${item.shower_note ? `<p class="detail-note">${escapeHtml(item.shower_note)}</p>` : ""}
@@ -1506,6 +1859,7 @@
             ${detailField("貴重品ロッカー", item.locker)}
             ${detailField("食事処", item.restaurant)}
             ${detailField("バリアフリー", item.barrier_free)}
+            ${detailField("休憩スペース", item.rest)}
           </div>
           ${
             Array.isArray(item.rental_items) && item.rental_items.length
@@ -1852,6 +2206,20 @@
     $("springTextureOther")?.classList.add("hidden");
     $("springInfoSourceOther")?.classList.add("hidden");
     $("childInfoSourceOther")?.classList.add("hidden");
+    $("saunaFacilityLocationOther")?.classList.add("hidden");
+    $("saunaTypesOther")?.classList.add("hidden");
+    $("saunaStoveTypeOther")?.classList.add("hidden");
+    $("saunaMatTypeOther")?.classList.add("hidden");
+    $("saunaMatPlacementOther")?.classList.add("hidden");
+    $("saunaLoylyTypeOther")?.classList.add("hidden");
+    $("saunaDoorTypeOther")?.classList.add("hidden");
+    $("coldBathSourceOther")?.classList.add("hidden");
+    $("coldBathCoolingOther")?.classList.add("hidden");
+    $("coldBathFlowOther")?.classList.add("hidden");
+    $("outdoorLocationOther")?.classList.add("hidden");
+    $("indoorLocationOther")?.classList.add("hidden");
+    $("layingSpaceMaterialOther")?.classList.add("hidden");
+    $("sceneryOther")?.classList.add("hidden");
   }
 
   // ---------------------------------------------------------
@@ -1920,12 +2288,19 @@
       other.classList.toggle("hidden", !event.target.checked);
     });
 
-    // 購入方法で「その他」を選んだ時だけ自由記述欄を表示
-    document.querySelectorAll('input[name="purchaseMethod"]').forEach((radio) => {
-      radio.addEventListener("change", () => {
-        const wrap = $("purchaseMethodOtherWrap");
-        if (!wrap) return;
-        wrap.classList.toggle("hidden", radioValue("purchaseMethod") !== "その他");
+    // ラジオボタン方式の「その他」を選んだ時だけ自由記述欄を表示
+    [
+      ["purchaseMethod", "purchaseMethodOtherWrap"],
+      ["saunaFacilityLocation", "saunaFacilityLocationOther"],
+      ["saunaStoveType", "saunaStoveTypeOther"],
+      ["saunaDoorType", "saunaDoorTypeOther"]
+    ].forEach(([groupName, wrapId]) => {
+      document.querySelectorAll(`input[name="${groupName}"]`).forEach((radio) => {
+        radio.addEventListener("change", () => {
+          const wrap = $(wrapId);
+          if (!wrap) return;
+          wrap.classList.toggle("hidden", radioValue(groupName) !== "その他");
+        });
       });
     });
 
@@ -1947,7 +2322,18 @@
       ["springSmellOtherCheck", "springSmellOther"],
       ["springTextureOtherCheck", "springTextureOther"],
       ["springInfoSourceOtherCheck", "springInfoSourceOther"],
-      ["childInfoSourceOtherCheck", "childInfoSourceOther"]
+      ["childInfoSourceOtherCheck", "childInfoSourceOther"],
+      ["saunaTypesOtherCheck", "saunaTypesOther"],
+      ["saunaMatTypeOtherCheck", "saunaMatTypeOther"],
+      ["saunaMatPlacementOtherCheck", "saunaMatPlacementOther"],
+      ["saunaLoylyTypeOtherCheck", "saunaLoylyTypeOther"],
+      ["coldBathSourceOtherCheck", "coldBathSourceOther"],
+      ["coldBathCoolingOtherCheck", "coldBathCoolingOther"],
+      ["coldBathFlowOtherCheck", "coldBathFlowOther"],
+      ["outdoorLocationOtherCheck", "outdoorLocationOther"],
+      ["indoorLocationOtherCheck", "indoorLocationOther"],
+      ["layingSpaceMaterialOtherCheck", "layingSpaceMaterialOther"],
+      ["sceneryOtherCheck", "sceneryOther"]
     ].forEach(([checkId, inputId]) => {
       $(checkId)?.addEventListener("change", (event) => {
         const other = $(inputId);
