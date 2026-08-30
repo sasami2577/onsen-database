@@ -153,6 +153,75 @@
   }
 
   // ---------------------------------------------------------
+  // 料金（入浴料・その他料金区分）
+  // 「区分」「料金」を動的に追加・削除できる汎用の行システム
+  // ---------------------------------------------------------
+
+  let feeRowSeq = 0;
+
+  function addFeeRow(containerId, category = "", amount = "", { focus = true } = {}) {
+    const rows = $(containerId);
+    if (!rows) return;
+
+    const rowId = `fee-${++feeRowSeq}`;
+    const row = document.createElement("div");
+    row.className = "rental-row";
+    row.dataset.rowId = rowId;
+
+    row.innerHTML = `
+      <input type="text" class="fee-category" name="fee-category-${rowId}" autocomplete="off" placeholder="区分（例：大人）" maxlength="40" value="${escapeHtml(category)}">
+      <input type="number" class="fee-amount" name="fee-amount-${rowId}" autocomplete="off" placeholder="料金（円）" min="0" value="${escapeHtml(amount)}">
+      <button type="button" class="remove-rental" aria-label="この項目を削除">×</button>
+    `;
+
+    rows.appendChild(row);
+    if (focus) {
+      row.querySelector(".fee-category")?.focus();
+    }
+  }
+
+  function collectFeeRows(containerId) {
+    const rows = $(containerId);
+    if (!rows) return [];
+
+    const result = [];
+
+    rows.querySelectorAll(".rental-row").forEach((row) => {
+      const category = row.querySelector(".fee-category")?.value.trim() || "";
+      const amount = row.querySelector(".fee-amount")?.value.trim() || "";
+
+      // 料金が未入力の行は保存しない（区分だけの空行を除外）
+      if (!amount) return;
+
+      result.push({ category: category || "料金", amount: Number(amount) });
+    });
+
+    return result;
+  }
+
+  const DEFAULT_BATH_FEE_CATEGORIES = [
+    "大人",
+    "子ども",
+    "小学生",
+    "幼児",
+    "乳幼児",
+    "シニア",
+    "障がい者",
+    "介助者",
+    "その他の料金対象"
+  ];
+
+  const DEFAULT_OTHER_FEE_CATEGORIES = [
+    "貸切風呂",
+    "家族風呂",
+    "サウナ",
+    "岩盤浴",
+    "休憩施設",
+    "会員料",
+    "その他料金区分"
+  ];
+
+  // ---------------------------------------------------------
   // フォーム → 保存データ
   // ---------------------------------------------------------
 
@@ -185,12 +254,22 @@
           : [])
       ],
 
-      price: numberValue("price"),
-      child_price: numberValue("childPrice"),
-      other_price: numberValue("otherPrice"),
-      price_category: value("priceCategory"),
+      bath_fees: collectFeeRows("bathFeeRows"),
+      other_fees: collectFeeRows("otherFeeRows"),
+      purchase_method:
+        value("purchaseMethod") === "その他" && value("purchaseMethodOther")
+          ? value("purchaseMethodOther")
+          : value("purchaseMethod"),
+      payment: [
+        ...checkedValues("payment"),
+        ...(checkedBool("paymentOtherCheck")
+          ? [value("paymentOther") || "その他"]
+          : [])
+      ],
+      point_card: value("pointCard"),
+      membership_card: value("membershipCard"),
+      wristband_payment: value("wristbandPayment"),
       price_note: value("priceNote"),
-      payment: checkedValues("payment"),
 
       website: value("website"),
       instagram: value("instagram"),
@@ -486,6 +565,20 @@
     return `<h4 class="detail-subhead">${escapeHtml(title)}</h4>`;
   }
 
+  function renderFeeList(fees) {
+    if (!Array.isArray(fees) || !fees.length) {
+      return `<p class="detail-note-tight">情報がありません。</p>`;
+    }
+
+    return `
+      <ul class="rental-list">
+        ${fees
+          .map((f) => `<li>${escapeHtml(f.category)}：${f.amount != null ? `${f.amount}円` : "料金不明"}</li>`)
+          .join("")}
+      </ul>
+    `;
+  }
+
   const BUSINESS_TYPE_STYLES = {
     "日帰り温泉": { emoji: "♨️", bg: "#d64545", color: "#fff" },
     "銭湯・公衆浴場": { emoji: "♨️", bg: "#8b5e3c", color: "#fff" },
@@ -679,23 +772,42 @@
           }
         </section>
 
-        <!-- 料金（各種料金＋決済方法） -->
+        <!-- 料金（入浴料・その他料金区分・決済方法など） -->
         <section class="detail-section">
           <h3>💰 料金</h3>
-          <div class="detail-grid">
-            ${detailField("大人料金", item.price != null ? `${item.price}円` : "")}
-            ${detailField("子ども料金", item.child_price != null ? `${item.child_price}円` : "")}
-            ${detailField("その他料金", item.other_price != null ? `${item.other_price}円` : "")}
-            ${detailField("料金区分", item.price_category)}
-          </div>
-          ${item.price_note ? `<p class="detail-note">${escapeHtml(item.price_note)}</p>` : ""}
+
+          ${detailSubhead("♨️ 入浴料")}
+          ${renderFeeList(item.bath_fees)}
 
           <div class="detail-gap"></div>
+
+          ${detailSubhead("🧖‍♀️ その他料金区分")}
+          ${renderFeeList(item.other_fees)}
+
+          <div class="detail-gap"></div>
+
+          ${detailSubhead("💳 購入方法")}
+          <p class="detail-note-tight">${item.purchase_method ? escapeHtml(item.purchase_method) : "情報がありません。"}</p>
 
           ${detailSubhead("👛 決済方法")}
           ${
             detailTags(item.payment) ||
-            `<p class="detail-note">情報がありません。</p>`
+            `<p class="detail-note-tight">情報がありません。</p>`
+          }
+
+          ${detailSubhead("💳 ポイントカード")}
+          <p class="detail-note-tight">${escapeHtml(item.point_card || "不明")}</p>
+
+          ${detailSubhead("🪪 会員証")}
+          <p class="detail-note-tight">${escapeHtml(item.membership_card || "不明")}</p>
+
+          ${detailSubhead("⌚️ リストバンド決済")}
+          <p class="detail-note-tight">${escapeHtml(item.wristband_payment || "不明")}</p>
+
+          ${
+            item.price_note
+              ? `<div class="detail-gap"></div><p class="field-title">補足</p><p class="detail-note">${escapeHtml(item.price_note)}</p>`
+              : ""
           }
         </section>
 
@@ -1000,15 +1112,25 @@
 
     form.reset();
 
-    // 動的なレンタル欄は空に戻す
+    // 動的なレンタル欄・料金欄は空に戻す
     const rentalRows = $("rentalRows");
     if (rentalRows) {
       rentalRows.innerHTML = "";
+    }
+    const bathFeeRows = $("bathFeeRows");
+    if (bathFeeRows) {
+      bathFeeRows.innerHTML = "";
+    }
+    const otherFeeRows = $("otherFeeRows");
+    if (otherFeeRows) {
+      otherFeeRows.innerHTML = "";
     }
 
     // 「その他」の自由記述欄も隠しておく
     $("businessTypeOtherWrap")?.classList.add("hidden");
     $("usageOther")?.classList.add("hidden");
+    $("purchaseMethodOtherWrap")?.classList.add("hidden");
+    $("paymentOther")?.classList.add("hidden");
   }
 
   // ---------------------------------------------------------
@@ -1040,11 +1162,28 @@
         addRentalRow("", "", { focus: false });
       }
 
+      // 入浴料・その他料金区分も、空ならデフォルトの区分名で行を用意しておく
+      const bathFeeRows = $("bathFeeRows");
+      if (bathFeeRows && !bathFeeRows.children.length) {
+        DEFAULT_BATH_FEE_CATEGORIES.forEach((category) =>
+          addFeeRow("bathFeeRows", category, "", { focus: false })
+        );
+      }
+
+      const otherFeeRows = $("otherFeeRows");
+      if (otherFeeRows && !otherFeeRows.children.length) {
+        DEFAULT_OTHER_FEE_CATEGORIES.forEach((category) =>
+          addFeeRow("otherFeeRows", category, "", { focus: false })
+        );
+      }
+
       // モーダルを開いたら温泉名欄にフォーカス
       setTimeout(() => $("name")?.focus(), 0);
     });
 
     $("addRental")?.addEventListener("click", () => addRentalRow());
+    $("addBathFee")?.addEventListener("click", () => addFeeRow("bathFeeRows"));
+    $("addOtherFee")?.addEventListener("click", () => addFeeRow("otherFeeRows"));
 
     // 施設業態で「その他」を選んだ時だけ自由記述欄を表示
     $("businessType")?.addEventListener("change", (event) => {
@@ -1060,7 +1199,35 @@
       other.classList.toggle("hidden", !event.target.checked);
     });
 
+    // 購入方法で「その他」を選んだ時だけ自由記述欄を表示
+    $("purchaseMethod")?.addEventListener("change", (event) => {
+      const wrap = $("purchaseMethodOtherWrap");
+      if (!wrap) return;
+      wrap.classList.toggle("hidden", event.target.value !== "その他");
+    });
+
+    // 決済方法の「その他」にチェックが入った時だけ自由記述欄を表示
+    $("paymentOtherCheck")?.addEventListener("change", (event) => {
+      const other = $("paymentOther");
+      if (!other) return;
+      other.classList.toggle("hidden", !event.target.checked);
+    });
+
     $("rentalRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+
+      button.closest(".rental-row")?.remove();
+    });
+
+    $("bathFeeRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+
+      button.closest(".rental-row")?.remove();
+    });
+
+    $("otherFeeRows")?.addEventListener("click", (event) => {
       const button = event.target.closest(".remove-rental");
       if (!button) return;
 

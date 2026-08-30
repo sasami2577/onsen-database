@@ -84,12 +84,55 @@
 </div></fieldset>
 <label class="full">営業時間の補足<textarea id="hoursNote" rows="2"></textarea></label>
 </div></section>
-<section class="form-section"><h3>利用・料金</h3><div class="grid two">
-<label>大人料金（円）<input id="price" type="number" min="0"></label><label>子ども料金（円）<input id="childPrice" type="number" min="0"></label>
-<label>その他料金（円）<input id="otherPrice" type="number" min="0"></label><label>料金区分<select id="priceType"><option value="">選択してください</option><option>入浴のみ</option><option>入浴＋サウナ</option><option>入浴＋タオル</option><option>その他</option></select></label>
-<label class="full">料金の補足<textarea id="priceNote" rows="2"></textarea></label>
-<fieldset class="full"><legend>決済方法</legend><div class="checks"><label><input type="checkbox" name="payment" value="現金">現金</label><label><input type="checkbox" name="payment" value="クレジットカード">クレジットカード</label><label><input type="checkbox" name="payment" value="電子マネー">電子マネー</label><label><input type="checkbox" name="payment" value="QRコード決済">QRコード決済</label></div></fieldset>
-</div></section>
+<section class="form-section"><h3>💰 料金・決済方法</h3>
+
+<fieldset class="full"><legend>♨️ 入浴料</legend>
+<div id="bathFeeRows"></div>
+<button type="button" id="addBathFee" class="secondary">＋ 追加</button>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🧖‍♀️ その他料金区分</legend>
+<div id="otherFeeRows"></div>
+<button type="button" id="addOtherFee" class="secondary">＋ 追加</button>
+<p class="note-inline">※レンタル品・アメニティ品については、下にスクロールした先の「🧴 アメニティ・備品」欄にご記入ください🙇🏻‍♀️</p>
+</fieldset>
+
+<div class="grid two compact-top">
+<label class="full">💳 購入方法<select id="purchaseMethod">
+<option value="">選択してください</option>
+<option>券売機</option>
+<option>受付購入</option>
+<option>その他</option>
+</select></label>
+<label class="full hidden" id="purchaseMethodOtherWrap">購入方法（その他の内容）<input id="purchaseMethodOther" placeholder="例：LINE決済のみ"></label>
+</div>
+
+<fieldset class="full compact-top"><legend>👛 決済方法</legend><div class="checks">
+<label><input type="checkbox" name="payment" value="現金決済">現金決済</label>
+<label><input type="checkbox" name="payment" value="クレジットカード">クレジットカード</label>
+<label><input type="checkbox" name="payment" value="PayPay">PayPay</label>
+<label><input type="checkbox" name="payment" value="楽天ペイ">楽天ペイ</label>
+<label><input type="checkbox" name="payment" value="d払い">d払い</label>
+<label><input type="checkbox" name="payment" value="au PAY">au PAY</label>
+<label><input type="checkbox" name="payment" value="QUICPay">QUICPay</label>
+<label><input type="checkbox" name="payment" value="iD">iD</label>
+<label><input type="checkbox" name="payment" value="WAON">WAON</label>
+<label><input type="checkbox" name="payment" value="楽天Edy">楽天Edy</label>
+<label><input type="checkbox" name="payment" value="交通系電子マネー">交通系電子マネー</label>
+<label><input type="checkbox" id="paymentOtherCheck">その他</label>
+</div>
+<input type="text" id="paymentOther" class="hidden compact-top" placeholder="その他の決済方法を入力">
+</fieldset>
+
+<div class="grid two compact-top">
+<label>💳 ポイントカード<select id="pointCard"><option>不明</option><option>あり</option><option>なし</option></select></label>
+<label>🪪 会員証<select id="membershipCard"><option>不明</option><option>あり</option><option>なし</option></select></label>
+<label>⌚️ リストバンド決済<select id="wristbandPayment"><option>不明</option><option>あり</option><option>なし</option></select></label>
+</div>
+
+<label class="full compact-top">その他料金・決済方法に関する補足事項<textarea id="priceNote" rows="3"></textarea></label>
+
+</section>
 <section class="form-section"><h3>公式情報・SNS</h3><div class="grid two">
 <label>公式サイト<input id="website" type="url"></label><label>Instagram<input id="instagram" type="url"></label><label>X（旧Twitter）<input id="twitter" type="url"></label><label>Facebook<input id="facebook" type="url"></label>
 </div></section>
