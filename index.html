@@ -84,6 +84,10 @@
 </div></fieldset>
 <label class="full">営業時間の補足<textarea id="hoursNote" rows="2"></textarea></label>
 </div></section>
+<section class="form-section"><h3>アクセス</h3><div class="grid two">
+<label>最寄り駅<input id="nearestStation" placeholder="例：草津温泉バスターミナル"></label>
+<label class="full">アクセス方法<textarea id="accessMethod" rows="2" placeholder="例：JR長野原草津口駅からバスで25分"></textarea></label>
+</div></section>
 <section class="form-section"><h3>💰 料金・決済方法</h3>
 
 <fieldset class="full"><legend>♨️ 入浴料</legend>
@@ -94,18 +98,15 @@
 <fieldset class="full compact-top"><legend>🧖‍♀️ その他料金区分</legend>
 <div id="otherFeeRows"></div>
 <button type="button" id="addOtherFee" class="secondary">＋ 追加</button>
-<p class="note-inline">※レンタル品・アメニティ品については、下にスクロールした先の「🧴 アメニティ・備品」欄にご記入ください🙇🏻‍♀️</p>
+<p class="note-inline">※レンタル品・アメニティ品については、下にスクロールした先の「🧴 アメニティ・備品」欄にご記入ください</p>
 </fieldset>
 
-<div class="grid two compact-top">
-<label class="full">💳 購入方法<select id="purchaseMethod">
-<option value="">選択してください</option>
-<option>券売機</option>
-<option>受付購入</option>
-<option>その他</option>
-</select></label>
+<fieldset class="full compact-top"><legend>💳 購入方法</legend><div class="checks">
+<label><input type="radio" name="purchaseMethod" value="券売機">券売機</label>
+<label><input type="radio" name="purchaseMethod" value="受付購入">受付購入</label>
+<label><input type="radio" name="purchaseMethod" value="その他" id="purchaseMethodOtherRadio">その他</label>
+</div></fieldset>
 <label class="full hidden" id="purchaseMethodOtherWrap">購入方法（その他の内容）<input id="purchaseMethodOther" placeholder="例：LINE決済のみ"></label>
-</div>
 
 <fieldset class="full compact-top"><legend>👛 決済方法</legend><div class="checks">
 <label><input type="checkbox" name="payment" value="現金決済">現金決済</label>
@@ -124,22 +125,25 @@
 <input type="text" id="paymentOther" class="hidden compact-top" placeholder="その他の決済方法を入力">
 </fieldset>
 
-<div class="grid two compact-top">
-<label>💳 ポイントカード<select id="pointCard"><option>不明</option><option>あり</option><option>なし</option></select></label>
-<label>🪪 会員証<select id="membershipCard"><option>不明</option><option>あり</option><option>なし</option></select></label>
-<label>⌚️ リストバンド決済<select id="wristbandPayment"><option>不明</option><option>あり</option><option>なし</option></select></label>
-</div>
+<fieldset class="full compact-top"><legend>💳 ポイントカード</legend><div class="checks">
+<label><input type="radio" name="pointCard" value="不明" checked>不明</label>
+<label><input type="radio" name="pointCard" value="あり">あり</label>
+<label><input type="radio" name="pointCard" value="なし">なし</label>
+</div></fieldset>
+<fieldset class="full compact-top"><legend>🪪 会員証</legend><div class="checks">
+<label><input type="radio" name="membershipCard" value="不明" checked>不明</label>
+<label><input type="radio" name="membershipCard" value="あり">あり</label>
+<label><input type="radio" name="membershipCard" value="なし">なし</label>
+</div></fieldset>
+<fieldset class="full compact-top"><legend>⌚️ リストバンド決済</legend><div class="checks">
+<label><input type="radio" name="wristbandPayment" value="不明" checked>不明</label>
+<label><input type="radio" name="wristbandPayment" value="あり">あり</label>
+<label><input type="radio" name="wristbandPayment" value="なし">なし</label>
+</div></fieldset>
 
 <label class="full compact-top">その他料金・決済方法に関する補足事項<textarea id="priceNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>公式情報・SNS</h3><div class="grid two">
-<label>公式サイト<input id="website" type="url"></label><label>Instagram<input id="instagram" type="url"></label><label>X（旧Twitter）<input id="twitter" type="url"></label><label>Facebook<input id="facebook" type="url"></label>
-</div></section>
-<section class="form-section"><h3>アクセス</h3><div class="grid two">
-<label>最寄り駅<input id="nearestStation" placeholder="例：草津温泉バスターミナル"></label>
-<label class="full">アクセス方法<textarea id="accessMethod" rows="2" placeholder="例：JR長野原草津口駅からバスで25分"></textarea></label>
-</div></section>
 <section class="form-section"><h3>お風呂・サウナ</h3>
 <fieldset><legend>お風呂の種類</legend><div class="checks">
 <label><input type="checkbox" name="bath" value="内湯">内湯</label><label><input type="checkbox" name="bath" value="露天風呂">露天風呂</label><label><input type="checkbox" name="bath" value="寝湯">寝湯</label><label><input type="checkbox" name="bath" value="壺湯">壺湯</label><label><input type="checkbox" name="bath" value="炭酸泉">炭酸泉</label><label><input type="checkbox" name="bath" value="電気風呂">電気風呂</label><label><input type="checkbox" name="bath" value="ジェットバス">ジェットバス</label><label><input type="checkbox" name="bath" value="打たせ湯">打たせ湯</label><label><input type="checkbox" name="bath" value="高温湯">高温湯</label><label><input type="checkbox" name="bath" value="ぬる湯">ぬる湯</label><label><input type="checkbox" name="bath" value="水風呂">水風呂</label>
@@ -174,6 +178,9 @@
 </section>
 <section class="form-section"><h3>位置情報・メモ</h3><div class="grid two"><label>緯度<input id="lat" type="number" step="any"></label><label>経度<input id="lng" type="number" step="any"></label><label class="full">メモ・施設紹介<textarea id="note" rows="5"></textarea></label></div></section>
 <div class="form-actions"><button type="button" id="cancel" class="secondary">キャンセル</button><button type="submit" class="primary submit">登録する</button></div>
+<section class="form-section"><h3>公式情報・SNS</h3><div class="grid two">
+<label>公式サイト<input id="website" type="url"></label><label>Instagram<input id="instagram" type="url"></label><label>X（旧Twitter）<input id="twitter" type="url"></label><label>Facebook<input id="facebook" type="url"></label>
+</div></section>
 </form></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>

@@ -257,18 +257,18 @@
       bath_fees: collectFeeRows("bathFeeRows"),
       other_fees: collectFeeRows("otherFeeRows"),
       purchase_method:
-        value("purchaseMethod") === "その他" && value("purchaseMethodOther")
+        radioValue("purchaseMethod") === "その他" && value("purchaseMethodOther")
           ? value("purchaseMethodOther")
-          : value("purchaseMethod"),
+          : radioValue("purchaseMethod"),
       payment: [
         ...checkedValues("payment"),
         ...(checkedBool("paymentOtherCheck")
           ? [value("paymentOther") || "その他"]
           : [])
       ],
-      point_card: value("pointCard"),
-      membership_card: value("membershipCard"),
-      wristband_payment: value("wristbandPayment"),
+      point_card: radioValue("pointCard"),
+      membership_card: radioValue("membershipCard"),
+      wristband_payment: radioValue("wristbandPayment"),
       price_note: value("priceNote"),
 
       website: value("website"),
@@ -1200,10 +1200,12 @@
     });
 
     // 購入方法で「その他」を選んだ時だけ自由記述欄を表示
-    $("purchaseMethod")?.addEventListener("change", (event) => {
-      const wrap = $("purchaseMethodOtherWrap");
-      if (!wrap) return;
-      wrap.classList.toggle("hidden", event.target.value !== "その他");
+    document.querySelectorAll('input[name="purchaseMethod"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        const wrap = $("purchaseMethodOtherWrap");
+        if (!wrap) return;
+        wrap.classList.toggle("hidden", radioValue("purchaseMethod") !== "その他");
+      });
     });
 
     // 決済方法の「その他」にチェックが入った時だけ自由記述欄を表示
