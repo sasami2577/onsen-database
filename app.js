@@ -276,7 +276,33 @@
       twitter: value("twitter"),
       facebook: value("facebook"),
 
-      bath: checkedValues("bath"),
+      bath_shape: [
+        ...checkedValues("bathShape"),
+        ...(checkedBool("bathShapeOtherCheck")
+          ? [value("bathShapeOther") || "その他の形状"]
+          : [])
+      ],
+      bath_function: [
+        ...checkedValues("bathFunction"),
+        ...(checkedBool("bathFunctionOtherCheck")
+          ? [value("bathFunctionOther") || "その他の機能・種類"]
+          : [])
+      ],
+      private_bath_duration: numberValue("privateBathDuration"),
+      private_bath_note: value("privateBathNote"),
+      bath_location: [
+        ...checkedValues("bathLocation"),
+        ...(checkedBool("bathLocationOtherCheck")
+          ? [value("bathLocationOther") || "その他"]
+          : [])
+      ],
+      bath_anteroom: radioValue("bathAnteroom"),
+      bath_event: radioValue("bathEvent"),
+      bath_event_detail: value("bathEventDetail"),
+      bath_toys: radioValue("bathToys"),
+      bath_toys_detail: value("bathToysDetail"),
+      bath_note: value("bathNote"),
+
       sauna_note: value("saunaNote"),
       sauna: checkedValues("sauna"),
       sauna_status: value("saunaStatus"),
@@ -586,9 +612,10 @@
     "温泉旅館": { emoji: "🛌", bg: "#7c5cbf", color: "#fff" },
     "ホテル": { emoji: "🏨", bg: "#7c5cbf", color: "#fff" },
     "サウナ施設": { emoji: "🧖‍♀️", bg: "#e0761f", color: "#fff" },
-    "スパ施設": { emoji: "💆‍♀️", bg: "#4fb3d9", color: "#fff" },
+    "スパ施設": { emoji: "💆‍♀️", bg: "#6b8e23", color: "#fff" },
+    "プール施設": { emoji: "🏊", bg: "#3b6fd6", color: "#fff" },
     "アウトドア施設": { emoji: "🏕", bg: "#3f9142", color: "#fff" },
-    "スポーツジム": { emoji: "🏃‍♀️", bg: "#3b6fd6", color: "#fff" },
+    "スポーツジム": { emoji: "🏃‍♀️", bg: "#4fb3d9", color: "#fff" },
     "複合施設": { emoji: "🎡", bg: "#e0629c", color: "#fff" }
   };
 
@@ -811,14 +838,46 @@
           }
         </section>
 
-        <!-- 施設情報（浴場・アメニティ） -->
+        <!-- 施設情報（浴場・浴槽） -->
         <section class="detail-section">
-          <h3>施設情報</h3>
+          <h3>🛀 施設情報</h3>
 
-          ${detailSubhead("浴場")}
-          ${detailTags(item.bath) || `<p class="detail-note">情報がありません。</p>`}
+          ${detailSubhead("♨️ 浴場・浴槽の形状")}
+          ${detailTags(item.bath_shape) || `<p class="detail-note-tight">情報がありません。</p>`}
 
-          ${detailSubhead("アメニティ")}
+          ${detailSubhead("🛀 浴槽の機能・種類")}
+          ${detailTags(item.bath_function) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          ${detailSubhead("👨‍👩‍👧‍👦 家族風呂・貸切風呂の詳細情報")}
+          <div class="detail-grid">
+            ${detailField("時間", item.private_bath_duration != null ? `${item.private_bath_duration}分` : "")}
+          </div>
+          ${item.private_bath_note ? `<p class="detail-note">${escapeHtml(item.private_bath_note)}</p>` : ""}
+
+          ${detailSubhead("♨️ 浴場の場所")}
+          ${detailTags(item.bath_location) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          ${detailSubhead("♨️ 浴場前室")}
+          <p class="detail-note-tight">${escapeHtml(item.bath_anteroom || "不明")}</p>
+
+          ${detailSubhead("♨️ 浴場・浴槽内の期間限定イベント")}
+          <p class="detail-note-tight">${escapeHtml(item.bath_event || "不明")}</p>
+          ${item.bath_event_detail ? `<p class="detail-note">${escapeHtml(item.bath_event_detail)}</p>` : ""}
+
+          ${detailSubhead("♨️ 浴槽内の小物（ゆず、あひる等）")}
+          <p class="detail-note-tight">${escapeHtml(item.bath_toys || "不明")}</p>
+          ${item.bath_toys_detail ? `<p class="detail-note">${escapeHtml(item.bath_toys_detail)}</p>` : ""}
+
+          ${
+            item.bath_note
+              ? `${detailSubhead("♨️ その他 浴場・浴槽の補足事項")}<p class="detail-note">${escapeHtml(item.bath_note)}</p>`
+              : ""
+          }
+        </section>
+
+        <!-- アメニティ -->
+        <section class="detail-section">
+          <h3>🧴 アメニティ・備品</h3>
           <div class="detail-grid">
             ${detailField("シャンプー等", item.amenities)}
             ${detailField("ドライヤー", item.dryer)}
@@ -1131,6 +1190,9 @@
     $("usageOther")?.classList.add("hidden");
     $("purchaseMethodOtherWrap")?.classList.add("hidden");
     $("paymentOther")?.classList.add("hidden");
+    $("bathShapeOther")?.classList.add("hidden");
+    $("bathFunctionOther")?.classList.add("hidden");
+    $("bathLocationOther")?.classList.add("hidden");
   }
 
   // ---------------------------------------------------------
@@ -1213,6 +1275,19 @@
       const other = $("paymentOther");
       if (!other) return;
       other.classList.toggle("hidden", !event.target.checked);
+    });
+
+    // 浴場・浴槽関連の「その他」チェックボックスも同様にトグル
+    [
+      ["bathShapeOtherCheck", "bathShapeOther"],
+      ["bathFunctionOtherCheck", "bathFunctionOther"],
+      ["bathLocationOtherCheck", "bathLocationOther"]
+    ].forEach(([checkId, inputId]) => {
+      $(checkId)?.addEventListener("change", (event) => {
+        const other = $(inputId);
+        if (!other) return;
+        other.classList.toggle("hidden", !event.target.checked);
+      });
     });
 
     $("rentalRows")?.addEventListener("click", (event) => {

@@ -43,6 +43,7 @@
 <option>ホテル</option>
 <option>サウナ施設</option>
 <option>スパ施設</option>
+<option>プール施設</option>
 <option>アウトドア施設</option>
 <option>スポーツジム</option>
 <option>複合施設</option>
@@ -144,14 +145,107 @@
 <label class="full compact-top">その他料金・決済方法に関する補足事項<textarea id="priceNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>お風呂・サウナ</h3>
-<fieldset><legend>お風呂の種類</legend><div class="checks">
-<label><input type="checkbox" name="bath" value="内湯">内湯</label><label><input type="checkbox" name="bath" value="露天風呂">露天風呂</label><label><input type="checkbox" name="bath" value="寝湯">寝湯</label><label><input type="checkbox" name="bath" value="壺湯">壺湯</label><label><input type="checkbox" name="bath" value="炭酸泉">炭酸泉</label><label><input type="checkbox" name="bath" value="電気風呂">電気風呂</label><label><input type="checkbox" name="bath" value="ジェットバス">ジェットバス</label><label><input type="checkbox" name="bath" value="打たせ湯">打たせ湯</label><label><input type="checkbox" name="bath" value="高温湯">高温湯</label><label><input type="checkbox" name="bath" value="ぬる湯">ぬる湯</label><label><input type="checkbox" name="bath" value="水風呂">水風呂</label>
-</div></fieldset>
-<div class="grid two compact-top"><label>サウナ・水風呂の補足<input id="saunaNote"></label><label>浴場の補足<input id="bathNote"></label></div>
-<fieldset class="compact-top"><legend>サウナの種類</legend><div class="checks">
+<section class="form-section"><h3>🛀 施設情報</h3>
+
+<fieldset class="full"><legend>♨️ 浴場・浴槽の形状</legend><div class="checks">
+<label><input type="checkbox" name="bathShape" value="大浴場">大浴場</label>
+<label><input type="checkbox" name="bathShape" value="個別風呂">個別風呂</label>
+<label><input type="checkbox" name="bathShape" value="露天風呂・半露天風呂">露天風呂・半露天風呂</label>
+<label><input type="checkbox" name="bathShape" value="展望風呂">展望風呂</label>
+<label><input type="checkbox" name="bathShape" value="貸切風呂">貸切風呂</label>
+<label><input type="checkbox" name="bathShape" value="家族風呂">家族風呂</label>
+<label><input type="checkbox" name="bathShape" value="内湯（宿泊者限定）">内湯（宿泊者限定）</label>
+<label><input type="checkbox" name="bathShape" value="壺湯">壺湯</label>
+<label><input type="checkbox" name="bathShape" value="釜風呂">釜風呂</label>
+<label><input type="checkbox" name="bathShape" value="檜風呂">檜風呂</label>
+<label><input type="checkbox" name="bathShape" value="岩風呂・石風呂">岩風呂・石風呂</label>
+<label><input type="checkbox" name="bathShape" value="寝湯・寝ころび湯">寝湯・寝ころび湯</label>
+<label><input type="checkbox" name="bathShape" value="立ち湯">立ち湯</label>
+<label><input type="checkbox" name="bathShape" value="腰掛け湯">腰掛け湯</label>
+<label><input type="checkbox" name="bathShape" value="洞窟風呂">洞窟風呂</label>
+<label><input type="checkbox" name="bathShape" value="海水風呂">海水風呂</label>
+<label><input type="checkbox" id="bathShapeOtherCheck">その他の形状</label>
+</div>
+<input type="text" id="bathShapeOther" class="hidden compact-top" placeholder="その他の形状を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🛀 浴槽の機能・種類</legend><div class="checks">
+<label><input type="checkbox" name="bathFunction" value="炭酸泉・人工炭酸泉">炭酸泉・人工炭酸泉</label>
+<label><input type="checkbox" name="bathFunction" value="電気風呂">電気風呂</label>
+<label><input type="checkbox" name="bathFunction" value="ジェットバス">ジェットバス</label>
+<label><input type="checkbox" name="bathFunction" value="バイブラバス">バイブラバス</label>
+<label><input type="checkbox" name="bathFunction" value="打たせ湯">打たせ湯</label>
+<label><input type="checkbox" name="bathFunction" value="薬湯">薬湯</label>
+<label><input type="checkbox" name="bathFunction" value="香り湯">香り湯</label>
+<label><input type="checkbox" name="bathFunction" value="源泉掛け流し浴槽">源泉掛け流し浴槽</label>
+<label><input type="checkbox" name="bathFunction" value="循環浴槽">循環浴槽</label>
+<label><input type="checkbox" name="bathFunction" value="加温浴槽">加温浴槽</label>
+<label><input type="checkbox" name="bathFunction" value="高温湯">高温湯</label>
+<label><input type="checkbox" name="bathFunction" value="ぬるま湯">ぬるま湯</label>
+<label><input type="checkbox" name="bathFunction" value="水風呂">水風呂</label>
+<label><input type="checkbox" name="bathFunction" value="冷泉湯">冷泉湯</label>
+<label><input type="checkbox" name="bathFunction" value="砂湯">砂湯</label>
+<label><input type="checkbox" name="bathFunction" value="泥湯">泥湯</label>
+<label><input type="checkbox" id="bathFunctionOtherCheck">その他の機能・種類</label>
+</div>
+<input type="text" id="bathFunctionOther" class="hidden compact-top" placeholder="その他の機能・種類を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>👨‍👩‍👧‍👦 家族風呂・貸切風呂の詳細情報</legend>
+<p class="note-inline">※料金は上記の💰 料金・決済情報をご確認ください</p>
+<label class="compact-top">時間（分）<input id="privateBathDuration" type="number" min="0" placeholder="例：45"></label>
+<label class="full compact-top">その他 特記事項<textarea id="privateBathNote" rows="2"></textarea></label>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>♨️ 浴場の場所</legend><div class="checks">
+<label><input type="checkbox" name="bathLocation" value="固定">固定</label>
+<label><input type="checkbox" name="bathLocation" value="日替わり">日替わり</label>
+<label><input type="checkbox" name="bathLocation" value="週替わり">週替わり</label>
+<label><input type="checkbox" name="bathLocation" value="隔週">隔週</label>
+<label><input type="checkbox" name="bathLocation" value="時間交代制">時間交代制</label>
+<label><input type="checkbox" name="bathLocation" value="男湯のみ">男湯のみ</label>
+<label><input type="checkbox" name="bathLocation" value="女湯のみ">女湯のみ</label>
+<label><input type="checkbox" name="bathLocation" value="混浴">混浴</label>
+<label><input type="checkbox" id="bathLocationOtherCheck">その他</label>
+</div>
+<input type="text" id="bathLocationOther" class="hidden compact-top" placeholder="その他の浴場の場所を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>♨️ 浴場前室</legend>
+<p class="note-inline">※浴場前室：浴場〜更衣室間のスペース・部屋のことです</p>
+<div class="checks">
+<label><input type="radio" name="bathAnteroom" value="不明" checked>不明</label>
+<label><input type="radio" name="bathAnteroom" value="あり">あり</label>
+<label><input type="radio" name="bathAnteroom" value="なし">なし</label>
+</div>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>♨️ 浴場・浴槽内の期間限定イベント</legend>
+<div class="checks">
+<label><input type="radio" name="bathEvent" value="不明" checked>不明</label>
+<label><input type="radio" name="bathEvent" value="あり">あり</label>
+<label><input type="radio" name="bathEvent" value="なし">なし</label>
+</div>
+<label class="full compact-top">詳細情報<textarea id="bathEventDetail" rows="2"></textarea></label>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>♨️ 浴槽内の小物（ゆず、あひる等）</legend>
+<div class="checks">
+<label><input type="radio" name="bathToys" value="不明" checked>不明</label>
+<label><input type="radio" name="bathToys" value="あり">あり</label>
+<label><input type="radio" name="bathToys" value="なし">なし</label>
+</div>
+<label class="full compact-top">詳細情報<textarea id="bathToysDetail" rows="2"></textarea></label>
+</fieldset>
+
+<label class="full compact-top">♨️ その他 浴場・浴槽の補足事項<textarea id="bathNote" rows="3"></textarea></label>
+
+</section>
+<section class="form-section"><h3>サウナ</h3>
+<fieldset><legend>サウナの種類</legend><div class="checks">
 <label><input type="checkbox" name="sauna" value="ドライサウナ">ドライサウナ</label><label><input type="checkbox" name="sauna" value="フィンランド式">フィンランド式</label><label><input type="checkbox" name="sauna" value="ロウリュ">ロウリュ</label><label><input type="checkbox" name="sauna" value="オートロウリュ">オートロウリュ</label><label><input type="checkbox" name="sauna" value="セルフロウリュ">セルフロウリュ</label><label><input type="checkbox" name="sauna" value="塩サウナ">塩サウナ</label><label><input type="checkbox" name="sauna" value="スチームサウナ">スチームサウナ</label><label><input type="checkbox" name="sauna" value="ミストサウナ">ミストサウナ</label><label><input type="checkbox" name="sauna" value="遠赤外線サウナ">遠赤外線サウナ</label><label><input type="checkbox" name="sauna" value="その他">その他</label>
 </div></fieldset>
+<div class="grid two compact-top"><label>サウナ・水風呂の補足<input id="saunaNote"></label></div>
 <div class="grid two compact-top">
 <label>サウナ<select id="saunaStatus"><option>不明</option><option>あり</option><option>なし</option></select></label><label>サウナ温度（℃）<input id="saunaTemp" type="number"></label>
 <label>水風呂<select id="coldBathStatus"><option>不明</option><option>あり</option><option>なし</option></select></label><label>水風呂温度（℃）<input id="coldBathTemp" type="number"></label>
