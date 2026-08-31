@@ -478,6 +478,19 @@
 <input type="text" id="saunaFacilityLocationOther" class="hidden compact-top" placeholder="その他の内容を入力">
 </fieldset>
 
+<fieldset class="full compact-top"><legend>🕒 サウナの利用時間</legend><div class="checks">
+<label><input type="radio" name="saunaHoursType" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaHoursType" value="営業時間と同じ">営業時間と同じ</label>
+<label><input type="radio" name="saunaHoursType" value="利用時間あり" id="saunaHoursTypeCustom">利用時間あり</label>
+</div>
+
+<div class="hidden compact-top" id="saunaHoursWrap">
+<p class="field-title">→ 利用時間</p>
+<div class="grid two">
+<label>平日（開始）<div class="time-select"><select id="saunaHoursWeekdayOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="saunaHoursWeekdayOpenMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>平日（終了）<div class="time-select"><select id="saunaHoursWeekdayCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="saunaHoursWeekdayCloseMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>土曜日（開始）<div class="time-select"><select id="saunaHoursSaturdayOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="saunaHoursSaturdayOpenMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>土曜日（終了）<div class="time-select"><select id="saunaHoursSaturdayCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="saunaHoursSaturdayCloseMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>日曜日（開始）<div class="time-select"><select id="saunaHoursSundayOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="saunaHoursSundayOpenMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>日曜日（終了）<div class="time-select"><select id="saunaHoursSundayCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="saunaHoursSundayCloseMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>祝日（開始）<div class="time-select"><select id="saunaHoursHolidayOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="saunaHoursHolidayOpenMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>祝日（終了）<div class="time-select"><select id="saunaHoursHolidayCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="saunaHoursHolidayCloseMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label></div>
+</div>
+</fieldset>
+
 <fieldset class="full compact-top"><legend>🧖‍♀️ サウナの種類</legend><div class="checks">
 <label><input type="checkbox" name="saunaTypes" value="遠赤外線サウナ">遠赤外線サウナ</label>
 <label><input type="checkbox" name="saunaTypes" value="ドライサウナ">ドライサウナ</label>
@@ -1158,6 +1171,169 @@
 
 </section>
 
+<section class="form-section"><h3>🔐 ロッカー</h3>
+
+<fieldset class="full"><legend>🔐 ロッカー数</legend>
+<select id="lockerCount">
+<option value="">選択してください</option>
+<option>不明</option>
+<option>なし</option>
+<option>1〜50個</option>
+<option>51〜100個</option>
+<option>101〜200個</option>
+<option>201〜300個</option>
+<option>301〜500個</option>
+<option>501個以上</option>
+</select></fieldset>
+
+<fieldset class="full compact-top"><legend>🔐 ロッカーキーの仕組み</legend><div class="checks">
+<label><input type="checkbox" name="lockerKeyType" value="不明">不明</label>
+<label><input type="checkbox" name="lockerKeyType" value="鍵">鍵</label>
+<label><input type="checkbox" name="lockerKeyType" value="リストバンド">リストバンド</label>
+<label><input type="checkbox" name="lockerKeyType" value="靴箱の鍵と交換方式">靴箱の鍵と交換方式</label>
+<label><input type="checkbox" name="lockerKeyType" value="コイン式（有料）">コイン式（有料）</label>
+<label><input type="checkbox" name="lockerKeyType" value="コイン返却式">コイン返却式</label>
+<label><input type="checkbox" name="lockerKeyType" value="IC・電子キー">IC・電子キー</label>
+<label><input type="checkbox" name="lockerKeyType" value="暗証番号">暗証番号</label>
+<label><input type="checkbox" name="lockerKeyType" value="ダイヤル">ダイヤル</label>
+<label><input type="checkbox" name="lockerKeyType" value="施錠なし（カゴ・棚）">施錠なし（カゴ・棚）</label>
+<label><input type="checkbox" id="lockerKeyTypeOtherCheck">その他</label>
+</div>
+<input type="text" id="lockerKeyTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>⌚️ リストバンドの種類</legend><div class="checks">
+<label><input type="checkbox" name="lockerWristbandType" value="不明">不明</label>
+<label><input type="checkbox" name="lockerWristbandType" value="ゴム・シリコン型">ゴム・シリコン型</label>
+<label><input type="checkbox" name="lockerWristbandType" value="スパイラル型">スパイラル型</label>
+<label><input type="checkbox" name="lockerWristbandType" value="マジックテープ型">マジックテープ型</label>
+<label><input type="checkbox" name="lockerWristbandType" value="バックル型">バックル型</label>
+<label><input type="checkbox" id="lockerWristbandTypeOtherCheck">その他</label>
+</div>
+<input type="text" id="lockerWristbandTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>⌚️ リストバンド用途</legend><div class="checks">
+<label><input type="checkbox" name="lockerWristbandUse" value="不明">不明</label>
+<label><input type="checkbox" name="lockerWristbandUse" value="なし">なし</label>
+<label><input type="checkbox" name="lockerWristbandUse" value="ロッカーキー">ロッカーキー</label>
+<label><input type="checkbox" name="lockerWristbandUse" value="館内決済">館内決済</label>
+<label><input type="checkbox" name="lockerWristbandUse" value="入退館管理">入退館管理</label>
+<label><input type="checkbox" id="lockerWristbandUseOtherCheck">その他</label>
+</div>
+<input type="text" id="lockerWristbandUseOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🔐 ロッカーの大きさ</legend><div class="checks">
+<label><input type="checkbox" name="lockerSize" value="正方形タイプ">正方形タイプ</label>
+<label><input type="checkbox" name="lockerSize" value="縦長タイプ">縦長タイプ</label>
+<label><input type="checkbox" name="lockerSize" value="通常型タイプ">通常型タイプ</label>
+<label><input type="checkbox" name="lockerSize" value="小型タイプ">小型タイプ</label>
+<label><input type="checkbox" name="lockerSize" value="大型タイプ">大型タイプ</label>
+<label><input type="checkbox" name="lockerSize" value="キャリーケース対応タイプ">キャリーケース対応タイプ</label>
+<label><input type="checkbox" name="lockerSize" value="かごタイプ">かごタイプ</label>
+<label><input type="checkbox" name="lockerSize" value="棚タイプ">棚タイプ</label>
+<label><input type="checkbox" id="lockerSizeOtherCheck">その他</label>
+</div>
+<input type="text" id="lockerSizeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🔐 ロッカー内の仕切り・2段タイプ</legend>
+<div class="checks">
+<label><input type="radio" name="lockerDivider" value="不明" checked>不明</label>
+<label><input type="radio" name="lockerDivider" value="あり">あり</label>
+<label><input type="radio" name="lockerDivider" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>👕 ロッカー内のハンガー</legend>
+<div class="checks">
+<label><input type="radio" name="lockerHanger" value="不明" checked>不明</label>
+<label><input type="radio" name="lockerHanger" value="あり">あり</label>
+<label><input type="radio" name="lockerHanger" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>📱 ロッカー内の小物入れ</legend>
+<div class="checks">
+<label><input type="radio" name="lockerSmallItemBox" value="不明" checked>不明</label>
+<label><input type="radio" name="lockerSmallItemBox" value="あり">あり</label>
+<label><input type="radio" name="lockerSmallItemBox" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🔑 貴重品預け用ロッカー</legend>
+<div class="checks">
+<label><input type="radio" name="lockerValuables" value="不明" checked>不明</label>
+<label><input type="radio" name="lockerValuables" value="あり">あり</label>
+<label><input type="radio" name="lockerValuables" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🔐 レンタルロッカー</legend>
+<div class="checks">
+<label><input type="radio" name="lockerRental" value="不明" checked>不明</label>
+<label><input type="radio" name="lockerRental" value="あり">あり</label>
+<label><input type="radio" name="lockerRental" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>👜 キャリーケース預け</legend>
+<div class="checks">
+<label><input type="radio" name="lockerSuitcase" value="不明" checked>不明</label>
+<label><input type="radio" name="lockerSuitcase" value="あり">あり</label>
+<label><input type="radio" name="lockerSuitcase" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">🔐 その他のロッカーに関する補足事項<textarea id="lockerNote" rows="3"></textarea></label>
+
+</section>
+<section class="form-section"><h3>👟 靴箱</h3>
+
+<fieldset class="full"><legend>👟 靴箱数</legend>
+<select id="shoeboxCount">
+<option value="">選択してください</option>
+<option>不明</option>
+<option>なし</option>
+<option>1〜50個</option>
+<option>51〜100個</option>
+<option>101〜200個</option>
+<option>201〜300個</option>
+<option>301〜500個</option>
+<option>501個以上</option>
+</select></fieldset>
+
+<fieldset class="full compact-top"><legend>👟 靴箱の仕組み</legend><div class="checks">
+<label><input type="checkbox" name="shoeboxType" value="不明">不明</label>
+<label><input type="checkbox" name="shoeboxType" value="個別靴箱">個別靴箱</label>
+<label><input type="checkbox" name="shoeboxType" value="オープン棚">オープン棚</label>
+<label><input type="checkbox" name="shoeboxType" value="靴カゴ">靴カゴ</label>
+<label><input type="checkbox" name="shoeboxType" value="大型靴箱">大型靴箱</label>
+<label><input type="checkbox" name="shoeboxType" value="車いす・大型荷物対応スペース">車いす・大型荷物対応スペース</label>
+<label><input type="checkbox" id="shoeboxTypeOtherCheck">その他</label>
+</div>
+<input type="text" id="shoeboxTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🔐 鍵の仕組み</legend><div class="checks">
+<label><input type="checkbox" name="shoeboxKeyType" value="不明">不明</label>
+<label><input type="checkbox" name="shoeboxKeyType" value="鍵">鍵</label>
+<label><input type="checkbox" name="shoeboxKeyType" value="リストバンド">リストバンド</label>
+<label><input type="checkbox" name="shoeboxKeyType" value="コイン式">コイン式</label>
+<label><input type="checkbox" name="shoeboxKeyType" value="コイン返却式">コイン返却式</label>
+<label><input type="checkbox" name="shoeboxKeyType" value="IC・電子キー">IC・電子キー</label>
+<label><input type="checkbox" name="shoeboxKeyType" value="暗証番号">暗証番号</label>
+<label><input type="checkbox" name="shoeboxKeyType" value="ダイヤル">ダイヤル</label>
+<label><input type="checkbox" name="shoeboxKeyType" value="施錠なし">施錠なし</label>
+<label><input type="checkbox" id="shoeboxKeyTypeOtherCheck">その他</label>
+</div>
+<input type="text" id="shoeboxKeyTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🪙 利用料金</legend><div class="checks">
+<label><input type="radio" name="shoeboxFee" value="不明" checked>不明</label>
+<label><input type="radio" name="shoeboxFee" value="有料">有料</label>
+<label><input type="radio" name="shoeboxFee" value="無料">無料</label>
+</div></fieldset>
+
+<label class="full compact-top">👟 その他の靴箱に関する補足事項<textarea id="shoeboxNote" rows="3"></textarea></label>
+
+</section>
 <section class="form-section"><h3>位置情報・メモ</h3><div class="grid two"><label>緯度<input id="lat" type="number" step="any"></label><label>経度<input id="lng" type="number" step="any"></label><label class="full">メモ・施設紹介<textarea id="note" rows="5"></textarea></label></div></section>
 <div class="form-actions"><button type="button" id="cancel" class="secondary">キャンセル</button><button type="submit" class="primary submit">登録する</button></div>
 <section class="form-section"><h3>公式情報・SNS</h3><div class="grid two">

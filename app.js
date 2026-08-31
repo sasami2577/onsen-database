@@ -393,6 +393,15 @@
         radioValue("saunaFacilityLocation") === "その他" && value("saunaFacilityLocationOther")
           ? value("saunaFacilityLocationOther")
           : radioValue("saunaFacilityLocation"),
+      sauna_hours_type: radioValue("saunaHoursType"),
+      sauna_hours_weekday_open: timeValue("saunaHoursWeekdayOpen"),
+      sauna_hours_weekday_close: timeValue("saunaHoursWeekdayClose"),
+      sauna_hours_saturday_open: timeValue("saunaHoursSaturdayOpen"),
+      sauna_hours_saturday_close: timeValue("saunaHoursSaturdayClose"),
+      sauna_hours_sunday_open: timeValue("saunaHoursSundayOpen"),
+      sauna_hours_sunday_close: timeValue("saunaHoursSundayClose"),
+      sauna_hours_holiday_open: timeValue("saunaHoursHolidayOpen"),
+      sauna_hours_holiday_close: timeValue("saunaHoursHolidayClose"),
       sauna_types: [
         ...checkedValues("saunaTypes"),
         ...(checkedBool("saunaTypesOtherCheck")
@@ -574,6 +583,57 @@
       baby_chair: radioValue("babyChair"),
       baby_bed: radioValue("babyBed"),
       amenity_note: value("amenityNote"),
+
+      // 🔐 ロッカー
+      locker_count: value("lockerCount"),
+      locker_key_type: [
+        ...checkedValues("lockerKeyType"),
+        ...(checkedBool("lockerKeyTypeOtherCheck")
+          ? [value("lockerKeyTypeOther") || "その他"]
+          : [])
+      ],
+      locker_wristband_type: [
+        ...checkedValues("lockerWristbandType"),
+        ...(checkedBool("lockerWristbandTypeOtherCheck")
+          ? [value("lockerWristbandTypeOther") || "その他"]
+          : [])
+      ],
+      locker_wristband_use: [
+        ...checkedValues("lockerWristbandUse"),
+        ...(checkedBool("lockerWristbandUseOtherCheck")
+          ? [value("lockerWristbandUseOther") || "その他"]
+          : [])
+      ],
+      locker_size: [
+        ...checkedValues("lockerSize"),
+        ...(checkedBool("lockerSizeOtherCheck")
+          ? [value("lockerSizeOther") || "その他"]
+          : [])
+      ],
+      locker_divider: radioValue("lockerDivider"),
+      locker_hanger: radioValue("lockerHanger"),
+      locker_small_item_box: radioValue("lockerSmallItemBox"),
+      locker_valuables: radioValue("lockerValuables"),
+      locker_rental: radioValue("lockerRental"),
+      locker_suitcase: radioValue("lockerSuitcase"),
+      locker_note: value("lockerNote"),
+
+      // 👟 靴箱
+      shoebox_count: value("shoeboxCount"),
+      shoebox_type: [
+        ...checkedValues("shoeboxType"),
+        ...(checkedBool("shoeboxTypeOtherCheck")
+          ? [value("shoeboxTypeOther") || "その他"]
+          : [])
+      ],
+      shoebox_key_type: [
+        ...checkedValues("shoeboxKeyType"),
+        ...(checkedBool("shoeboxKeyTypeOtherCheck")
+          ? [value("shoeboxKeyTypeOther") || "その他"]
+          : [])
+      ],
+      shoebox_fee: radioValue("shoeboxFee"),
+      shoebox_note: value("shoeboxNote"),
 
       lat: numberValue("lat"),
       lng: numberValue("lng"),
@@ -855,6 +915,19 @@
       $("saunaFacilityLocationOther")?.classList.remove("hidden");
     }
 
+    setRadioValue("saunaHoursType", item.sauna_hours_type);
+    if (item.sauna_hours_type === "利用時間あり") {
+      $("saunaHoursWrap")?.classList.remove("hidden");
+    }
+    setTimeValue("saunaHoursWeekdayOpen", item.sauna_hours_weekday_open);
+    setTimeValue("saunaHoursWeekdayClose", item.sauna_hours_weekday_close);
+    setTimeValue("saunaHoursSaturdayOpen", item.sauna_hours_saturday_open);
+    setTimeValue("saunaHoursSaturdayClose", item.sauna_hours_saturday_close);
+    setTimeValue("saunaHoursSundayOpen", item.sauna_hours_sunday_open);
+    setTimeValue("saunaHoursSundayClose", item.sauna_hours_sunday_close);
+    setTimeValue("saunaHoursHolidayOpen", item.sauna_hours_holiday_open);
+    setTimeValue("saunaHoursHolidayClose", item.sauna_hours_holiday_close);
+
     setCheckboxGroup(
       "saunaTypes",
       ["遠赤外線サウナ", "ドライサウナ", "スチームサウナ", "ミストサウナ", "フィンランド式サウナ（ロウリュ）", "テントサウナ", "個室サウナ", "塩サウナ", "薬草サウナ"],
@@ -1015,6 +1088,63 @@
     setRadioValue("babyChair", item.baby_chair);
     setRadioValue("babyBed", item.baby_bed);
     setValue("amenityNote", item.amenity_note);
+
+    // 🔐 ロッカー
+    setValue("lockerCount", item.locker_count);
+    setCheckboxGroup(
+      "lockerKeyType",
+      ["不明", "鍵", "リストバンド", "靴箱の鍵と交換方式", "コイン式（有料）", "コイン返却式", "IC・電子キー", "暗証番号", "ダイヤル", "施錠なし（カゴ・棚）"],
+      item.locker_key_type,
+      "lockerKeyTypeOtherCheck",
+      "lockerKeyTypeOther"
+    );
+    setCheckboxGroup(
+      "lockerWristbandType",
+      ["不明", "ゴム・シリコン型", "スパイラル型", "マジックテープ型", "バックル型"],
+      item.locker_wristband_type,
+      "lockerWristbandTypeOtherCheck",
+      "lockerWristbandTypeOther"
+    );
+    setCheckboxGroup(
+      "lockerWristbandUse",
+      ["不明", "なし", "ロッカーキー", "館内決済", "入退館管理"],
+      item.locker_wristband_use,
+      "lockerWristbandUseOtherCheck",
+      "lockerWristbandUseOther"
+    );
+    setCheckboxGroup(
+      "lockerSize",
+      ["正方形タイプ", "縦長タイプ", "通常型タイプ", "小型タイプ", "大型タイプ", "キャリーケース対応タイプ", "かごタイプ", "棚タイプ"],
+      item.locker_size,
+      "lockerSizeOtherCheck",
+      "lockerSizeOther"
+    );
+    setRadioValue("lockerDivider", item.locker_divider);
+    setRadioValue("lockerHanger", item.locker_hanger);
+    setRadioValue("lockerSmallItemBox", item.locker_small_item_box);
+    setRadioValue("lockerValuables", item.locker_valuables);
+    setRadioValue("lockerRental", item.locker_rental);
+    setRadioValue("lockerSuitcase", item.locker_suitcase);
+    setValue("lockerNote", item.locker_note);
+
+    // 👟 靴箱
+    setValue("shoeboxCount", item.shoebox_count);
+    setCheckboxGroup(
+      "shoeboxType",
+      ["不明", "個別靴箱", "オープン棚", "靴カゴ", "大型靴箱", "車いす・大型荷物対応スペース"],
+      item.shoebox_type,
+      "shoeboxTypeOtherCheck",
+      "shoeboxTypeOther"
+    );
+    setCheckboxGroup(
+      "shoeboxKeyType",
+      ["不明", "鍵", "リストバンド", "コイン式", "コイン返却式", "IC・電子キー", "暗証番号", "ダイヤル", "施錠なし"],
+      item.shoebox_key_type,
+      "shoeboxKeyTypeOtherCheck",
+      "shoeboxKeyTypeOther"
+    );
+    setRadioValue("shoeboxFee", item.shoebox_fee);
+    setValue("shoeboxNote", item.shoebox_note);
 
     setValue("lat", item.lat);
     setValue("lng", item.lng);
@@ -1713,6 +1843,41 @@
           <p class="field-title">🧖‍♀️ サウナの種類</p>
           ${detailTags(item.sauna_types) || `<p class="detail-note-tight">情報がありません。</p>`}
 
+          <p class="field-title">🕒 サウナの利用時間</p>
+          <p class="detail-note-tight">${escapeHtml(item.sauna_hours_type || "不明")}</p>
+          ${
+            item.sauna_hours_type === "利用時間あり"
+              ? `
+                <div class="detail-grid">
+                  ${detailField(
+                    "平日",
+                    item.sauna_hours_weekday_open || item.sauna_hours_weekday_close
+                      ? `${item.sauna_hours_weekday_open || "?"}〜${item.sauna_hours_weekday_close || "?"}`
+                      : ""
+                  )}
+                  ${detailField(
+                    "土曜日",
+                    item.sauna_hours_saturday_open || item.sauna_hours_saturday_close
+                      ? `${item.sauna_hours_saturday_open || "?"}〜${item.sauna_hours_saturday_close || "?"}`
+                      : ""
+                  )}
+                  ${detailField(
+                    "日曜日",
+                    item.sauna_hours_sunday_open || item.sauna_hours_sunday_close
+                      ? `${item.sauna_hours_sunday_open || "?"}〜${item.sauna_hours_sunday_close || "?"}`
+                      : ""
+                  )}
+                  ${detailField(
+                    "祝日",
+                    item.sauna_hours_holiday_open || item.sauna_hours_holiday_close
+                      ? `${item.sauna_hours_holiday_open || "?"}〜${item.sauna_hours_holiday_close || "?"}`
+                      : ""
+                  )}
+                </div>
+              `
+              : ""
+          }
+
           ${detailSubhead("🌡 サウナ室の仕様")}
           <div class="detail-grid">
             ${detailField(
@@ -1908,6 +2073,45 @@
               : ""
           }
           ${item.amenity_note ? `<p class="detail-note">${escapeHtml(item.amenity_note)}</p>` : ""}
+        </section>
+
+        <!-- ロッカー -->
+        <section class="detail-section">
+          <h3>🔐 ロッカー</h3>
+          <div class="detail-grid">
+            ${detailField("🔐 ロッカー数", item.locker_count)}
+          </div>
+          <p class="field-title">🔐 ロッカーキーの仕組み</p>
+          ${detailTags(item.locker_key_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">⌚️ リストバンドの種類</p>
+          ${detailTags(item.locker_wristband_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">⌚️ リストバンド用途</p>
+          ${detailTags(item.locker_wristband_use) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">🔐 ロッカーの大きさ</p>
+          ${detailTags(item.locker_size) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-grid">
+            ${detailField("🔐 ロッカー内の仕切り・2段タイプ", item.locker_divider)}
+            ${detailField("👕 ロッカー内のハンガー", item.locker_hanger)}
+            ${detailField("📱 ロッカー内の小物入れ", item.locker_small_item_box)}
+            ${detailField("🔑 貴重品預け用ロッカー", item.locker_valuables)}
+            ${detailField("🔐 レンタルロッカー", item.locker_rental)}
+            ${detailField("👜 キャリーケース預け", item.locker_suitcase)}
+          </div>
+          ${item.locker_note ? `<p class="detail-note">${escapeHtml(item.locker_note)}</p>` : ""}
+        </section>
+
+        <!-- 靴箱 -->
+        <section class="detail-section">
+          <h3>👟 靴箱</h3>
+          <div class="detail-grid">
+            ${detailField("👟 靴箱数", item.shoebox_count)}
+            ${detailField("🪙 利用料金", item.shoebox_fee)}
+          </div>
+          <p class="field-title">👟 靴箱の仕組み</p>
+          ${detailTags(item.shoebox_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">🔐 鍵の仕組み</p>
+          ${detailTags(item.shoebox_key_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.shoebox_note ? `<p class="detail-note">${escapeHtml(item.shoebox_note)}</p>` : ""}
         </section>
 
         <!-- 地図情報 -->
@@ -2259,6 +2463,13 @@
     $("indoorLocationOther")?.classList.add("hidden");
     $("layingSpaceMaterialOther")?.classList.add("hidden");
     $("sceneryOther")?.classList.add("hidden");
+    $("lockerKeyTypeOther")?.classList.add("hidden");
+    $("lockerWristbandTypeOther")?.classList.add("hidden");
+    $("lockerWristbandUseOther")?.classList.add("hidden");
+    $("lockerSizeOther")?.classList.add("hidden");
+    $("shoeboxTypeOther")?.classList.add("hidden");
+    $("shoeboxKeyTypeOther")?.classList.add("hidden");
+    $("saunaHoursWrap")?.classList.add("hidden");
   }
 
   // ---------------------------------------------------------
@@ -2351,6 +2562,15 @@
     });
 
     // 浴場・浴槽関連の「その他」チェックボックスも同様にトグル
+    // サウナの利用時間：「利用時間あり」を選んだ時だけ時間欄を表示
+    document.querySelectorAll('input[name="saunaHoursType"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        const wrap = $("saunaHoursWrap");
+        if (!wrap) return;
+        wrap.classList.toggle("hidden", radioValue("saunaHoursType") !== "利用時間あり");
+      });
+    });
+
     // 家族風呂・貸切風呂の定員：「人数を指定」を選んだ時だけ人数欄を表示
     document.querySelectorAll('input[name="privateBathCapacityStatus"]').forEach((radio) => {
       radio.addEventListener("change", () => {
@@ -2390,7 +2610,13 @@
       ["outdoorLocationOtherCheck", "outdoorLocationOther"],
       ["indoorLocationOtherCheck", "indoorLocationOther"],
       ["layingSpaceMaterialOtherCheck", "layingSpaceMaterialOther"],
-      ["sceneryOtherCheck", "sceneryOther"]
+      ["sceneryOtherCheck", "sceneryOther"],
+      ["lockerKeyTypeOtherCheck", "lockerKeyTypeOther"],
+      ["lockerWristbandTypeOtherCheck", "lockerWristbandTypeOther"],
+      ["lockerWristbandUseOtherCheck", "lockerWristbandUseOther"],
+      ["lockerSizeOtherCheck", "lockerSizeOther"],
+      ["shoeboxTypeOtherCheck", "shoeboxTypeOther"],
+      ["shoeboxKeyTypeOtherCheck", "shoeboxKeyTypeOther"]
     ].forEach(([checkId, inputId]) => {
       $(checkId)?.addEventListener("change", (event) => {
         const other = $(inputId);
