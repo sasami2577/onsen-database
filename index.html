@@ -78,7 +78,10 @@
 <label><input type="checkbox" name="closedDay" value="木">木曜日</label>
 <label><input type="checkbox" name="closedDay" value="金">金曜日</label>
 <label><input type="checkbox" name="closedDay" value="土">土曜日</label>
+<label><input type="checkbox" name="closedDay" value="祝日">祝日</label>
 </div></fieldset>
+
+<label class="full compact-top">定休日の補足事項<textarea id="closedDaysNote" rows="2"></textarea></label>
 <fieldset class="full compact-top"><legend>営業状態フラグ</legend><div class="checks">
 <label><input type="checkbox" id="tempClosed">臨時休業中</label>
 <label><input type="checkbox" id="closedPermanently">閉鎖済み</label>
@@ -194,6 +197,13 @@
 <fieldset class="full compact-top"><legend>👨‍👩‍👧‍👦 家族風呂・貸切風呂の詳細情報</legend>
 <p class="note-inline">※料金は上記の💰 料金・決済情報をご確認ください</p>
 <label class="compact-top">時間（分）<input id="privateBathDuration" type="number" min="0" placeholder="例：45"></label>
+<p class="field-title">👤 家族風呂・貸切風呂の定員</p>
+<div class="checks">
+<label><input type="radio" name="privateBathCapacityStatus" value="不明" checked>不明</label>
+<label><input type="radio" name="privateBathCapacityStatus" value="人数あり" id="privateBathCapacityStatusNumber">人数を指定</label>
+<label><input type="radio" name="privateBathCapacityStatus" value="定員なし">定員なし</label>
+</div>
+<label class="hidden compact-top" id="privateBathCapacityWrap">定員（人）<input id="privateBathCapacity" type="number" min="0"></label>
 <label class="full compact-top">その他 特記事項<textarea id="privateBathNote" rows="2"></textarea></label>
 </fieldset>
 
@@ -382,8 +392,8 @@
 </fieldset>
 
 <div class="grid two compact-top">
-<label>🌡 泉温（℃）<input id="springTemperature" type="number"></label>
-<label>🌡 源泉温度（℃）<input id="sourceTemperature" type="number"></label>
+<label>🌡 泉温（℃）<input id="springTemperature" type="number" step="0.1"></label>
+<label>🌡 源泉温度（℃）<input id="sourceTemperature" type="number" step="0.1"></label>
 <label>🚰 pH<input id="springPh" type="number" step="0.1"></label>
 </div>
 
@@ -549,7 +559,8 @@
 
 <fieldset class="full compact-top"><legend>🔥 ストーブタイプ</legend>
 <div class="checks">
-<label><input type="radio" name="saunaStoveType" value="電気ストーブ" checked>電気ストーブ</label>
+<label><input type="radio" name="saunaStoveType" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaStoveType" value="電気ストーブ">電気ストーブ</label>
 <label><input type="radio" name="saunaStoveType" value="薪ストーブ">薪ストーブ</label>
 <label><input type="radio" name="saunaStoveType" value="ガスストーブ">ガスストーブ</label>
 <label><input type="radio" name="saunaStoveType" value="遠赤外線ストーブ">遠赤外線ストーブ</label>
@@ -559,7 +570,12 @@
 <input type="text" id="saunaStoveTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
 </fieldset>
 
-<label class="full compact-top">→ ストーブの台数（台）<input id="saunaStoveCount" type="number" min="0"></label>
+<p class="field-title">→ ストーブの台数</p>
+<div class="checks">
+<label><input type="radio" name="saunaStoveCountStatus" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaStoveCountStatus" value="台数あり">台数を指定</label>
+</div>
+<label class="hidden compact-top" id="saunaStoveCountWrap">台数（台）<input id="saunaStoveCount" type="number" min="0"></label>
 
 <label class="full compact-top">→ ストーブの製品名・メーカー<input id="saunaStoveBrand"></label>
 
@@ -646,7 +662,8 @@
 
 <fieldset class="full compact-top"><legend>→ 開催頻度</legend>
 <div class="checks">
-<label><input type="radio" name="saunaLoylyFrequency" value="毎時" checked>毎時</label>
+<label><input type="radio" name="saunaLoylyFrequency" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaLoylyFrequency" value="毎時">毎時</label>
 <label><input type="radio" name="saunaLoylyFrequency" value="定時">定時</label>
 <label><input type="radio" name="saunaLoylyFrequency" value="不定期">不定期</label>
 </div>
@@ -659,7 +676,8 @@
 
 <fieldset class="full compact-top"><legend>→ 予約</legend>
 <div class="checks">
-<label><input type="radio" name="saunaLoylyReservation" value="必要" checked>必要</label>
+<label><input type="radio" name="saunaLoylyReservation" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaLoylyReservation" value="必要">必要</label>
 <label><input type="radio" name="saunaLoylyReservation" value="不要">不要</label>
 </div>
 </fieldset>
@@ -697,6 +715,8 @@
 <label><input type="radio" name="coldBathAvailability" value="あり">あり</label>
 <label><input type="radio" name="coldBathAvailability" value="なし">なし</label>
 </div></fieldset>
+
+<label class="full">💧 水風呂の個数<input id="coldBathCount" type="number" min="0" placeholder="例：2"></label>
 
 <fieldset class="full compact-top"><legend>💧 水風呂の形状</legend><div class="checks">
 <label><input type="checkbox" name="coldBathShape" value="一般的タイプ">一般的タイプ</label>
@@ -1132,15 +1152,6 @@
 <label><input type="radio" name="babyBed" value="不明" checked>不明</label>
 <label><input type="radio" name="babyBed" value="あり">あり</label>
 <label><input type="radio" name="babyBed" value="なし">なし</label>
-</div></fieldset>
-
-<fieldset class="compact-top"><legend>その他の設備</legend><div class="status-list">
-<div><span>休憩スペース</span><label><input type="radio" name="rest" value="あり">あり</label><label><input type="radio" name="rest" value="なし">なし</label><label><input type="radio" name="rest" value="不明" checked>不明</label></div>
-<div><span>Wi-Fi</span><label><input type="radio" name="wifi" value="あり">あり</label><label><input type="radio" name="wifi" value="なし">なし</label><label><input type="radio" name="wifi" value="不明" checked>不明</label></div>
-<div><span>駐車場</span><label><input type="radio" name="parking" value="あり">あり</label><label><input type="radio" name="parking" value="なし">なし</label><label><input type="radio" name="parking" value="不明" checked>不明</label></div>
-<div><span>貴重品ロッカー</span><label><input type="radio" name="locker" value="あり">あり</label><label><input type="radio" name="locker" value="なし">なし</label><label><input type="radio" name="locker" value="不明" checked>不明</label></div>
-<div><span>食事処</span><label><input type="radio" name="restaurant" value="あり">あり</label><label><input type="radio" name="restaurant" value="なし">なし</label><label><input type="radio" name="restaurant" value="不明" checked>不明</label></div>
-<div><span>バリアフリー</span><label><input type="radio" name="barrierFree" value="あり">あり</label><label><input type="radio" name="barrierFree" value="なし">なし</label><label><input type="radio" name="barrierFree" value="不明" checked>不明</label></div>
 </div></fieldset>
 
 <label class="full compact-top">🧼 その他 アメニティ・備品の補足事項<textarea id="amenityNote" rows="3"></textarea></label>
