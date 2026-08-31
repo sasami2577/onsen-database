@@ -1813,7 +1813,7 @@
           </div>
           ${item.outdoor === "あり" ? `<p class="field-subtitle">→ 外気浴の設置場所</p>` : ""}
           ${detailTags(item.outdoor_location)}
-          ${item.indoor_bathing === "あり" ? `<p class="field-title">→ 内気浴の設置場所</p>` : ""}
+          ${item.indoor_bathing === "あり" ? `<p class="field-subtitle">→ 内気浴の設置場所</p>` : ""}
           ${detailTags(item.indoor_location)}
 
           ${detailSubhead("🪑 ととのい椅子・設備")}
