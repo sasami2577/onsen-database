@@ -8,6 +8,7 @@ body.modal-open{overflow:visible}.primary{background:#875020;color:#fff}.seconda
 .form-section:first-child{border-top:0;padding-top:0;margin-top:0}
 .form-section h3{font-size:17px;margin:0 0 10px}
 .field-title{font-weight:700;margin:14px 0 8px}
+.field-subtitle{font-weight:600;margin:14px 0 8px;font-size:13px;color:#807972}
 .note-inline{font-size:12px;color:#807972;margin:10px 0 0}
 .form-section select{display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #e1dcd7;border-radius:9px;font:inherit;background:#fff}
 .compact-top{margin-top:12px}

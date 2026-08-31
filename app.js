@@ -1645,11 +1645,11 @@
           ${detailTags(item.indications) || `<p class="detail-note-tight">情報がありません。</p>`}
 
           ${detailSubhead("♨️ 温泉の状態・特徴")}
-          <p class="field-title">💧 温泉の色</p>
+          <p class="field-subtitle">💧 温泉の色</p>
           ${detailTags(item.spring_color) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">👃 温泉の匂い</p>
+          <p class="field-subtitle">👃 温泉の匂い</p>
           ${detailTags(item.spring_smell) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">🫧 温泉の感触・肌触り</p>
+          <p class="field-subtitle">🫧 温泉の感触・肌触り</p>
           ${detailTags(item.spring_texture) || `<p class="detail-note-tight">情報がありません。</p>`}
 
           ${detailSubhead("🛀 温泉の利用状況")}
@@ -1679,8 +1679,9 @@
             ${detailField("分析年月日", item.legionella_test_date)}
             ${detailField("検査結果", item.legionella_result)}
           </div>
-          <p class="field-title">📃 情報源</p>
+          <p class="field-subtitle">📃 情報源</p>
           ${detailTags(item.spring_info_source) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-gap"></div>
           <div class="detail-grid">${detailField("👀 情報確認日", item.spring_info_check_date)}</div>
 
           ${detailSubhead("👦🏻 子どもの混浴制度")}
@@ -1692,8 +1693,9 @@
             ${detailField("👧🏻 女児", item.child_girl_age_limit != null ? `${item.child_girl_age_limit}歳以下` : "")}
           </div>
           ${item.child_mixed_bathing_note ? `<p class="detail-note">${escapeHtml(item.child_mixed_bathing_note)}</p>` : ""}
-          <p class="field-title">📃 情報源</p>
+          <p class="field-subtitle">📃 情報源</p>
           ${detailTags(item.child_info_source) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-gap"></div>
           <div class="detail-grid">${detailField("👀 情報確認日", item.child_info_check_date)}</div>
         </section>
 
@@ -1792,15 +1794,15 @@
             ${detailField("💧 水風呂の深さ", item.cold_bath_depth != null ? `およそ${item.cold_bath_depth}cm` : "")}
             ${detailField("🚿 冷水シャワー", item.cold_shower)}
           </div>
-          <p class="field-title">💧 水風呂の形状</p>
+          <p class="field-subtitle">💧 水風呂の形状</p>
           ${detailTags(item.cold_bath_shape) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">💧 水風呂の設置場所</p>
+          <p class="field-subtitle">💧 水風呂の設置場所</p>
           ${detailTags(item.cold_bath_location) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">💧 水風呂の水源</p>
+          <p class="field-subtitle">💧 水風呂の水源</p>
           ${detailTags(item.cold_bath_source) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">💧 水風呂の冷却方法</p>
+          <p class="field-subtitle">💧 水風呂の冷却方法</p>
           ${detailTags(item.cold_bath_cooling) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">💧 水風呂の水流</p>
+          <p class="field-subtitle">💧 水風呂の水流</p>
           ${detailTags(item.cold_bath_flow) || `<p class="detail-note-tight">情報がありません。</p>`}
           ${item.cold_bath_note ? `<p class="detail-note">${escapeHtml(item.cold_bath_note)}</p>` : ""}
 
@@ -1809,7 +1811,7 @@
             ${detailField("🌿 外気浴", item.outdoor)}
             ${detailField("🌿 内気浴", item.indoor_bathing)}
           </div>
-          ${item.outdoor === "あり" ? `<p class="field-title">→ 外気浴の設置場所</p>` : ""}
+          ${item.outdoor === "あり" ? `<p class="field-subtitle">→ 外気浴の設置場所</p>` : ""}
           ${detailTags(item.outdoor_location)}
           ${item.indoor_bathing === "あり" ? `<p class="field-title">→ 内気浴の設置場所</p>` : ""}
           ${detailTags(item.indoor_location)}
@@ -1837,7 +1839,7 @@
             ${detailField("🏠 屋根・雨対策", item.roof_rain_protection)}
             ${detailField("☀️ 日なた・日陰", item.sun_shade)}
           </div>
-          <p class="field-title">🏞️ 景色・景観</p>
+          <p class="field-subtitle">🏞️ 景色・景観</p>
           ${detailTags(item.scenery) || `<p class="detail-note-tight">情報がありません。</p>`}
 
           ${item.outdoor_indoor_note ? `<p class="detail-note">${escapeHtml(item.outdoor_indoor_note)}</p>` : ""}
@@ -1849,7 +1851,9 @@
           <div class="detail-grid">
             ${detailField("🚿 シャワーの数", item.shower_count)}
           </div>
+          <p class="field-subtitle">🚿 シャワーの種類</p>
           ${detailTags(item.shower_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-gap"></div>
           <div class="detail-grid">
             ${detailField("🚿 シャワーヘッドの種類・メーカー等", item.shower_head_info)}
             ${detailField("🚰 吐水口・カラン", item.shower_faucet)}
