@@ -191,6 +191,61 @@
     }
   }
 
+  function addMenuFeeRow(containerId, menu = "", minutes = "", price = "", { focus = true } = {}) {
+    const rows = $(containerId);
+    if (!rows) return;
+
+    const rowId = `menu-fee-${++feeRowSeq}`;
+    const row = document.createElement("div");
+    row.className = "menu-fee-row";
+    row.dataset.rowId = rowId;
+
+    row.innerHTML = `
+      <input type="text" class="menu-fee-name" name="menu-fee-name-${rowId}" autocomplete="off" placeholder="メニュー（例：もみほぐし）" maxlength="60" value="${escapeHtml(menu)}">
+      <input type="number" class="menu-fee-minutes" name="menu-fee-minutes-${rowId}" autocomplete="off" placeholder="分" min="0" value="${escapeHtml(minutes)}">
+      <input type="number" class="menu-fee-price" name="menu-fee-price-${rowId}" autocomplete="off" placeholder="円" min="0" value="${escapeHtml(price)}">
+      <button type="button" class="remove-rental" aria-label="このメニューを削除">×</button>
+    `;
+
+    rows.appendChild(row);
+    if (focus) {
+      row.querySelector(".menu-fee-name")?.focus();
+    }
+  }
+
+  function collectMenuFeeRows(containerId) {
+    const rows = $(containerId);
+    if (!rows) return [];
+
+    const result = [];
+    rows.querySelectorAll(".menu-fee-row").forEach((row) => {
+      const menu = row.querySelector(".menu-fee-name")?.value.trim() || "";
+      const minutes = row.querySelector(".menu-fee-minutes")?.value.trim() || "";
+      const price = row.querySelector(".menu-fee-price")?.value.trim() || "";
+
+      if (!menu && !minutes && !price) return;
+
+      result.push({
+        menu: menu || "メニュー",
+        minutes: minutes ? Number(minutes) : null,
+        price: price ? Number(price) : null
+      });
+    });
+
+    return result;
+  }
+
+  function populateMenuFeeRows(containerId, items) {
+    const rows = $(containerId);
+    if (!rows) return;
+    rows.innerHTML = "";
+    if (!Array.isArray(items) || !items.length) return;
+
+    items.forEach((it) =>
+      addMenuFeeRow(containerId, it.menu || "", it.minutes ?? "", it.price ?? "", { focus: false })
+    );
+  }
+
   function collectFeeRows(containerId) {
     const rows = $(containerId);
     if (!rows) return [];
@@ -205,6 +260,54 @@
       if (!amount) return;
 
       result.push({ category: category || "料金", amount: Number(amount) });
+    });
+
+    return result;
+  }
+
+  // メニュー名・時間（分）・料金（円）の3項目版（マッサージ等の料金表用）
+  let feeRow3Seq = 0;
+
+  function addFeeRow3(containerId, name = "", minutes = "", price = "", { focus = true } = {}) {
+    const rows = $(containerId);
+    if (!rows) return;
+
+    const rowId = `fee3-${++feeRow3Seq}`;
+    const row = document.createElement("div");
+    row.className = "rental-row rental-row-3";
+    row.dataset.rowId = rowId;
+
+    row.innerHTML = `
+      <input type="text" class="fee3-name" name="fee3-name-${rowId}" autocomplete="off" placeholder="メニュー（例：全身マッサージ）" maxlength="60" value="${escapeHtml(name)}">
+      <input type="number" class="fee3-minutes" name="fee3-minutes-${rowId}" autocomplete="off" placeholder="分" min="0" value="${escapeHtml(minutes)}">
+      <input type="number" class="fee3-price" name="fee3-price-${rowId}" autocomplete="off" placeholder="円" min="0" value="${escapeHtml(price)}">
+      <button type="button" class="remove-rental" aria-label="この項目を削除">×</button>
+    `;
+
+    rows.appendChild(row);
+    if (focus) {
+      row.querySelector(".fee3-name")?.focus();
+    }
+  }
+
+  function collectFeeRows3(containerId) {
+    const rows = $(containerId);
+    if (!rows) return [];
+
+    const result = [];
+
+    rows.querySelectorAll(".rental-row-3").forEach((row) => {
+      const name = row.querySelector(".fee3-name")?.value.trim() || "";
+      const minutes = row.querySelector(".fee3-minutes")?.value.trim() || "";
+      const price = row.querySelector(".fee3-price")?.value.trim() || "";
+
+      if (!name && !minutes && !price) return;
+
+      result.push({
+        name: name || "メニュー",
+        minutes: minutes ? Number(minutes) : null,
+        price: price ? Number(price) : null
+      });
     });
 
     return result;
@@ -654,6 +757,137 @@
       toilet_slope: radioValue("toiletSlope"),
       toilet_elevator: radioValue("toiletElevator"),
       toilet_barrier_free_note: value("toiletBarrierFreeNote"),
+
+      // 🍴 お食事処
+      restaurant_status: radioValue("restaurantStatus"),
+      restaurant_types: [
+        ...checkedValues("restaurantTypes"),
+        ...(checkedBool("restaurantTypesOtherCheck")
+          ? [value("restaurantTypesOther") || "その他"]
+          : [])
+      ],
+      restaurant_feature: value("restaurantFeature"),
+      restaurant_hours_type: radioValue("restaurantHoursType"),
+      restaurant_open_time: timeValue("restaurantOpenTime"),
+      restaurant_close_time: timeValue("restaurantCloseTime"),
+      restaurant_last_order: timeValue("restaurantLastOrder"),
+      restaurant_payment: [
+        ...checkedValues("restaurantPayment"),
+        ...(checkedBool("restaurantPaymentOtherCheck")
+          ? [value("restaurantPaymentOther") || "その他"]
+          : [])
+      ],
+      restaurant_other_info: [
+        ...checkedValues("restaurantOtherInfo"),
+        ...(checkedBool("restaurantOtherInfoOtherCheck")
+          ? [value("restaurantOtherInfoOther") || "その他"]
+          : [])
+      ],
+      restaurant_note: value("restaurantNote"),
+
+      // 🛋 休憩スペース
+      rest_space_status: radioValue("restSpaceStatus"),
+      rest_space_type: [
+        ...checkedValues("restSpaceType"),
+        ...(checkedBool("restSpaceTypeOtherCheck")
+          ? [value("restSpaceTypeOther") || "その他"]
+          : [])
+      ],
+      rest_space_condition: radioValue("restSpaceCondition"),
+      rest_space_fee_type: radioValue("restSpaceFeeType"),
+      rest_space_fee_amount: numberValue("restSpaceFeeAmount"),
+      rest_space_hours_type: radioValue("restSpaceHoursType"),
+      rest_space_hours_open: timeValue("restSpaceHoursOpen"),
+      rest_space_hours_close: timeValue("restSpaceHoursClose"),
+      rest_space_per_person_type: radioValue("restSpacePerPersonType"),
+      rest_space_per_person_minutes: numberValue("restSpacePerPersonMinutes"),
+      rest_space_note: value("restSpaceNote"),
+
+      // 💆‍♀️ マッサージ・リラクゼーション
+      massage_status: radioValue("massageStatus"),
+      massage_types: [
+        ...checkedValues("massageTypes"),
+        ...(checkedBool("massageTypesOtherCheck")
+          ? [value("massageTypesOther") || "その他"]
+          : [])
+      ],
+      massage_menu_fees: collectFeeRows3("massageFeeRows"),
+      massage_hours_type: radioValue("massageHoursType"),
+      massage_hours_open: timeValue("massageHoursOpen"),
+      massage_hours_close: timeValue("massageHoursClose"),
+      massage_chair_status: radioValue("massageChairStatus"),
+      massage_chair_count: numberValue("massageChairCount"),
+      massage_chair_minutes: numberValue("massageChairMinutes"),
+      massage_chair_price: numberValue("massageChairPrice"),
+      massage_note: value("massageNote"),
+
+      // 💬 レンタル・コワーキングスペース
+      rental_space_status: radioValue("rentalSpaceStatus"),
+      coworking_space_status: radioValue("coworkingSpaceStatus"),
+      coworking_features: [
+        ...checkedValues("coworkingFeatures"),
+        ...(checkedBool("coworkingFeaturesOtherCheck")
+          ? [value("coworkingFeaturesOther") || "その他"]
+          : [])
+      ],
+      coworking_note: value("coworkingNote"),
+
+      // 🥤 自動販売機
+      vending_machine_status: radioValue("vendingMachineStatus"),
+      vending_machine_types: [
+        ...checkedValues("vendingMachineTypes"),
+        ...(checkedBool("vendingMachineTypesOtherCheck")
+          ? [value("vendingMachineTypesOther") || "その他"]
+          : [])
+      ],
+      vending_machine_location: [
+        ...checkedValues("vendingMachineLocation"),
+        ...(checkedBool("vendingMachineLocationOtherCheck")
+          ? [value("vendingMachineLocationOther") || "その他"]
+          : [])
+      ],
+      recycle_box_status: radioValue("recycleBoxStatus"),
+      vending_machine_note: value("vendingMachineNote"),
+
+      // 🛍 売店コーナー
+      shop_status: radioValue("shopStatus"),
+      shop_items: [
+        ...checkedValues("shopItems"),
+        ...(checkedBool("shopItemsOtherCheck")
+          ? [value("shopItemsOther") || "その他"]
+          : [])
+      ],
+      shop_hours_type: radioValue("shopHoursType"),
+      shop_hours_open: timeValue("shopHoursOpen"),
+      shop_hours_close: timeValue("shopHoursClose"),
+      shop_payment: [
+        ...checkedValues("shopPayment"),
+        ...(checkedBool("shopPaymentOtherCheck")
+          ? [value("shopPaymentOther") || "その他"]
+          : [])
+      ],
+      shop_note: value("shopNote"),
+
+      // その他の各種施設
+      accommodation_status: radioValue("accommodationStatus"),
+      pool_facility_status: radioValue("poolFacilityStatus"),
+      game_corner_status: radioValue("gameCornerStatus"),
+      kids_corner_status: radioValue("kidsCornerStatus"),
+      outdoor_facility_status: radioValue("outdoorFacilityStatus"),
+      foot_bath_status: radioValue("footBathStatus"),
+      ganbanyoku_status: radioValue("ganbanyokuStatus"),
+      coin_laundry_status: radioValue("coinLaundryStatus"),
+      spring_takeaway_status: radioValue("springTakeawayStatus"),
+      onsen_tamago_status: radioValue("onsenTamagoStatus"),
+      wifi_facility: radioValue("wifiFacility"),
+      wifi_fee_minutes: numberValue("wifiFeeMinutes"),
+      wifi_fee_price: numberValue("wifiFeePrice"),
+      charging_spot: radioValue("chargingSpot"),
+      charging_fee_minutes: numberValue("chargingFeeMinutes"),
+      charging_fee_price: numberValue("chargingFeePrice"),
+      aed_facility_status: radioValue("aedFacilityStatus"),
+      first_aid_room_status: radioValue("firstAidRoomStatus"),
+      other_facility_note: value("otherFacilityNote"),
 
       lat: numberValue("lat"),
       lng: numberValue("lng"),
@@ -1187,6 +1421,182 @@
     setRadioValue("toiletSlope", item.toilet_slope);
     setRadioValue("toiletElevator", item.toilet_elevator);
     setValue("toiletBarrierFreeNote", item.toilet_barrier_free_note);
+
+    // 🍴 お食事処
+    setRadioValue("restaurantStatus", item.restaurant_status);
+    setCheckboxGroup(
+      "restaurantTypes",
+      ["お食事処・レストラン", "食堂", "居酒屋", "カフェ", "軽食・売店", "ドリンクコーナー", "フードコート", "不明", "なし"],
+      item.restaurant_types,
+      "restaurantTypesOtherCheck",
+      "restaurantTypesOther"
+    );
+    setValue("restaurantFeature", item.restaurant_feature);
+    setRadioValue("restaurantHoursType", item.restaurant_hours_type);
+    if (item.restaurant_hours_type === "営業時間あり") {
+      $("restaurantHoursWrap")?.classList.remove("hidden");
+    }
+    setTimeValue("restaurantOpenTime", item.restaurant_open_time);
+    setTimeValue("restaurantCloseTime", item.restaurant_close_time);
+    setTimeValue("restaurantLastOrder", item.restaurant_last_order);
+    setCheckboxGroup(
+      "restaurantPayment",
+      ["現金", "クレジットカード", "電子マネー", "QRコード決済", "食券制", "リストバンド決済"],
+      item.restaurant_payment,
+      "restaurantPaymentOtherCheck",
+      "restaurantPaymentOther"
+    );
+    setCheckboxGroup(
+      "restaurantOtherInfo",
+      ["アルコール提供あり", "テイクアウト可能", "子ども向けメニューあり", "ベジタリアン対応", "座席あり", "個室・座敷あり"],
+      item.restaurant_other_info,
+      "restaurantOtherInfoOtherCheck",
+      "restaurantOtherInfoOther"
+    );
+    setValue("restaurantNote", item.restaurant_note);
+
+    // 🛋 休憩スペース
+    setRadioValue("restSpaceStatus", item.rest_space_status);
+    setCheckboxGroup(
+      "restSpaceType",
+      ["リクライニングチェア", "休憩ラウンジ", "畳・座敷", "仮眠スペース", "ソファスペース", "リラックスルーム", "ワークスペース", "テレビ付き", "雑誌・本あり", "おもちゃあり", "不明", "なし"],
+      item.rest_space_type,
+      "restSpaceTypeOtherCheck",
+      "restSpaceTypeOther"
+    );
+    setRadioValue("restSpaceCondition", item.rest_space_condition);
+    setRadioValue("restSpaceFeeType", item.rest_space_fee_type);
+    if (item.rest_space_fee_type === "その他") {
+      $("restSpaceFeeTypeOtherText")?.classList.remove("hidden");
+    }
+    if (item.rest_space_fee_type === "別料金") {
+      $("restSpaceFeeAmountWrap")?.classList.remove("hidden");
+    }
+    setValue("restSpaceFeeAmount", item.rest_space_fee_amount);
+    setRadioValue("restSpaceHoursType", item.rest_space_hours_type);
+    if (item.rest_space_hours_type === "利用時間あり") {
+      $("restSpaceHoursWrap")?.classList.remove("hidden");
+    }
+    setTimeValue("restSpaceHoursOpen", item.rest_space_hours_open);
+    setTimeValue("restSpaceHoursClose", item.rest_space_hours_close);
+    setRadioValue("restSpacePerPersonType", item.rest_space_per_person_type);
+    if (item.rest_space_per_person_type === "時間指定") {
+      $("restSpacePerPersonWrap")?.classList.remove("hidden");
+    }
+    setValue("restSpacePerPersonMinutes", item.rest_space_per_person_minutes);
+    setValue("restSpaceNote", item.rest_space_note);
+
+    // 💆‍♀️ マッサージ・リラクゼーション
+    setRadioValue("massageStatus", item.massage_status);
+    setCheckboxGroup(
+      "massageTypes",
+      ["マッサージ", "ボディケア・もみほぐし", "フットケア・足つぼ", "アカスリ", "ヘッドスパ", "エステ・美容", "整体・ストレッチ", "リラクゼーションサロン", "不明", "なし"],
+      item.massage_types,
+      "massageTypesOtherCheck",
+      "massageTypesOther"
+    );
+    const massageFeeRows = $("massageFeeRows");
+    if (massageFeeRows) {
+      massageFeeRows.innerHTML = "";
+      if (Array.isArray(item.massage_menu_fees) && item.massage_menu_fees.length) {
+        item.massage_menu_fees.forEach((f) =>
+          addFeeRow3("massageFeeRows", f.name || "", f.minutes ?? "", f.price ?? "", { focus: false })
+        );
+      }
+    }
+    setRadioValue("massageHoursType", item.massage_hours_type);
+    if (item.massage_hours_type === "営業時間あり") {
+      $("massageHoursWrap")?.classList.remove("hidden");
+    }
+    setTimeValue("massageHoursOpen", item.massage_hours_open);
+    setTimeValue("massageHoursClose", item.massage_hours_close);
+    setRadioValue("massageChairStatus", item.massage_chair_status);
+    setValue("massageChairCount", item.massage_chair_count);
+    setValue("massageChairMinutes", item.massage_chair_minutes);
+    setValue("massageChairPrice", item.massage_chair_price);
+    setValue("massageNote", item.massage_note);
+
+    // 💬 レンタル・コワーキングスペース
+    setRadioValue("rentalSpaceStatus", item.rental_space_status);
+    setRadioValue("coworkingSpaceStatus", item.coworking_space_status);
+    setCheckboxGroup(
+      "coworkingFeatures",
+      ["デスク・作業スペースあり", "Wi-Fiあり", "電源あり", "モニターあり", "通話可能", "個人ブースあり"],
+      item.coworking_features,
+      "coworkingFeaturesOtherCheck",
+      "coworkingFeaturesOther"
+    );
+    setValue("coworkingNote", item.coworking_note);
+
+    // 🥤 自動販売機
+    setRadioValue("vendingMachineStatus", item.vending_machine_status);
+    setCheckboxGroup(
+      "vendingMachineTypes",
+      ["ペットボトル飲料", "ビン飲料", "アイス", "軽食"],
+      item.vending_machine_types,
+      "vendingMachineTypesOtherCheck",
+      "vendingMachineTypesOther"
+    );
+    setCheckboxGroup(
+      "vendingMachineLocation",
+      ["更衣室内", "休憩施設内", "ロビー", "屋外"],
+      item.vending_machine_location,
+      "vendingMachineLocationOtherCheck",
+      "vendingMachineLocationOther"
+    );
+    setRadioValue("recycleBoxStatus", item.recycle_box_status);
+    setValue("vendingMachineNote", item.vending_machine_note);
+
+    // 🛍 売店コーナー
+    setRadioValue("shopStatus", item.shop_status);
+    setCheckboxGroup(
+      "shopItems",
+      ["入浴用品", "サウナ用品", "衣類・館内着", "履き物", "タオル・バスタオル", "化粧品・スキンケア用品", "軽食・お菓子", "お弁当・食品", "飲料", "アイス・スイーツ", "地元の食材", "お土産・特産品", "雑貨・グッズ", "その他の日用品"],
+      item.shop_items,
+      "shopItemsOtherCheck",
+      "shopItemsOther"
+    );
+    setRadioValue("shopHoursType", item.shop_hours_type);
+    if (item.shop_hours_type === "利用時間あり") {
+      $("shopHoursWrap")?.classList.remove("hidden");
+    }
+    setTimeValue("shopHoursOpen", item.shop_hours_open);
+    setTimeValue("shopHoursClose", item.shop_hours_close);
+    setCheckboxGroup(
+      "shopPayment",
+      ["現金", "クレジットカード", "電子マネー", "QRコード決済", "リストバンド決済"],
+      item.shop_payment,
+      "shopPaymentOtherCheck",
+      "shopPaymentOther"
+    );
+    setValue("shopNote", item.shop_note);
+
+    // その他の各種施設
+    setRadioValue("accommodationStatus", item.accommodation_status);
+    setRadioValue("poolFacilityStatus", item.pool_facility_status);
+    setRadioValue("gameCornerStatus", item.game_corner_status);
+    setRadioValue("kidsCornerStatus", item.kids_corner_status);
+    setRadioValue("outdoorFacilityStatus", item.outdoor_facility_status);
+    setRadioValue("footBathStatus", item.foot_bath_status);
+    setRadioValue("ganbanyokuStatus", item.ganbanyoku_status);
+    setRadioValue("coinLaundryStatus", item.coin_laundry_status);
+    setRadioValue("springTakeawayStatus", item.spring_takeaway_status);
+    setRadioValue("onsenTamagoStatus", item.onsen_tamago_status);
+    setRadioValue("wifiFacility", item.wifi_facility);
+    if (item.wifi_facility === "有料") {
+      $("wifiFeeWrap")?.classList.remove("hidden");
+    }
+    setValue("wifiFeeMinutes", item.wifi_fee_minutes);
+    setValue("wifiFeePrice", item.wifi_fee_price);
+    setRadioValue("chargingSpot", item.charging_spot);
+    if (item.charging_spot === "有料") {
+      $("chargingFeeWrap")?.classList.remove("hidden");
+    }
+    setValue("chargingFeeMinutes", item.charging_fee_minutes);
+    setValue("chargingFeePrice", item.charging_fee_price);
+    setRadioValue("aedFacilityStatus", item.aed_facility_status);
+    setRadioValue("firstAidRoomStatus", item.first_aid_room_status);
+    setValue("otherFacilityNote", item.other_facility_note);
 
     setValue("lat", item.lat);
     setValue("lng", item.lng);
@@ -2183,11 +2593,191 @@
             ${detailField("👶🏻 ベビーチェア", item.toilet_baby_chair_in_toilet)}
           </div>
 
+          <div class="detail-gap"></div>
+
           <div class="detail-grid detail-grid-large">
             ${detailField("♿️ スロープ", item.toilet_slope)}
             ${detailField("🛗 エレベーター・エスカレーター", item.toilet_elevator)}
           </div>
           ${item.toilet_barrier_free_note ? `<p class="detail-note">${escapeHtml(item.toilet_barrier_free_note)}</p>` : ""}
+        </section>
+
+
+        <!-- お食事処・休憩スペース等の施設 -->
+        <section class="detail-section">
+          <h3>🛋 お食事処・休憩スペース等の施設</h3>
+
+          <div class="detail-grid">
+            ${detailField("🍴 お食事処", item.restaurant_status)}
+          </div>
+          <p class="field-title">🍴 お食事処の種類</p>
+          ${detailTags(item.restaurant_types) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.restaurant_feature ? `<p class="detail-note">${escapeHtml(item.restaurant_feature)}</p>` : ""}
+          <div class="detail-grid">
+            ${detailField("🕒 営業時間（お食事処）", item.restaurant_hours_type)}
+          </div>
+          ${
+            item.restaurant_hours_type === "営業時間あり"
+              ? `<div class="detail-grid">
+                  ${detailField("開店時間", item.restaurant_open_time)}
+                  ${detailField("閉店時間", item.restaurant_close_time)}
+                  ${detailField("ラストオーダー", item.restaurant_last_order)}
+                </div>`
+              : ""
+          }
+          <p class="field-title">💴 決済方法（お食事処）</p>
+          ${detailTags(item.restaurant_payment) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">🍺 その他の情報</p>
+          ${detailTags(item.restaurant_other_info) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.restaurant_note ? `<p class="detail-note">${escapeHtml(item.restaurant_note)}</p>` : ""}
+
+          <div class="detail-gap"></div>
+
+          <div class="detail-grid">
+            ${detailField("🛋 休憩スペース", item.rest_space_status)}
+            ${detailField("🛋 利用条件", item.rest_space_condition)}
+            ${detailField("🪙 利用料金", item.rest_space_fee_type)}
+            ${detailField("別料金", item.rest_space_fee_amount != null ? `${item.rest_space_fee_amount}円` : "")}
+          </div>
+          <p class="field-title">🛋 休憩スペースの形式</p>
+          ${detailTags(item.rest_space_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-grid">
+            ${detailField("🕒 利用時間（休憩スペース）", item.rest_space_hours_type)}
+          </div>
+          ${
+            item.rest_space_hours_type === "利用時間あり"
+              ? `<div class="detail-grid">
+                  ${detailField("開始", item.rest_space_hours_open)}
+                  ${detailField("終了", item.rest_space_hours_close)}
+                </div>`
+              : ""
+          }
+          <div class="detail-grid">
+            ${detailField(
+              "1人あたりの利用時間",
+              item.rest_space_per_person_type === "時間指定" && item.rest_space_per_person_minutes != null
+                ? `${item.rest_space_per_person_minutes}分`
+                : item.rest_space_per_person_type || ""
+            )}
+          </div>
+          ${item.rest_space_note ? `<p class="detail-note">${escapeHtml(item.rest_space_note)}</p>` : ""}
+
+          <div class="detail-gap"></div>
+
+          <div class="detail-grid">
+            ${detailField("💆‍♀️ マッサージ・リラクゼーション施設", item.massage_status)}
+          </div>
+          <p class="field-title">💆‍♀️ マッサージ・リラクゼーション施設の種類</p>
+          ${detailTags(item.massage_types) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${
+            Array.isArray(item.massage_menu_fees) && item.massage_menu_fees.length
+              ? `<p class="field-title">💴 料金</p>
+                <ul class="rental-list">
+                  ${item.massage_menu_fees
+                    .map(
+                      (f) =>
+                        `<li>${escapeHtml(f.name)}：${f.minutes != null ? `${f.minutes}分` : "?"}${f.price != null ? `${f.price}円` : "?円"}</li>`
+                    )
+                    .join("")}
+                </ul>`
+              : ""
+          }
+          <div class="detail-grid">
+            ${detailField("🕒 営業時間（マッサージ）", item.massage_hours_type)}
+          </div>
+          ${
+            item.massage_hours_type === "営業時間あり"
+              ? `<div class="detail-grid">
+                  ${detailField("開始", item.massage_hours_open)}
+                  ${detailField("終了", item.massage_hours_close)}
+                </div>`
+              : ""
+          }
+          <div class="detail-grid">
+            ${detailField("💆‍♀️ マッサージチェア", item.massage_chair_status)}
+            ${detailField("設置台数", item.massage_chair_count != null ? `${item.massage_chair_count}台` : "")}
+            ${detailField(
+              "時間・料金",
+              item.massage_chair_minutes != null || item.massage_chair_price != null
+                ? `${item.massage_chair_minutes ?? "?"}分 ${item.massage_chair_price ?? "?"}円`
+                : ""
+            )}
+          </div>
+          ${item.massage_note ? `<p class="detail-note">${escapeHtml(item.massage_note)}</p>` : ""}
+
+          <div class="detail-gap"></div>
+
+          <div class="detail-grid">
+            ${detailField("💬 レンタルスペース", item.rental_space_status)}
+            ${detailField("👩🏻‍💻 コワーキングスペース", item.coworking_space_status)}
+          </div>
+          <p class="field-title">👩🏻‍💻 レンタル・コワーキングスペースの特徴</p>
+          ${detailTags(item.coworking_features) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.coworking_note ? `<p class="detail-note">${escapeHtml(item.coworking_note)}</p>` : ""}
+
+          <div class="detail-gap"></div>
+
+          <div class="detail-grid">
+            ${detailField("🥤 自動販売機", item.vending_machine_status)}
+            ${detailField("🚮 リサイクルボックス", item.recycle_box_status)}
+          </div>
+          <p class="field-title">🥤 自動販売機の種類</p>
+          ${detailTags(item.vending_machine_types) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">🥤 設置場所</p>
+          ${detailTags(item.vending_machine_location) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.vending_machine_note ? `<p class="detail-note">${escapeHtml(item.vending_machine_note)}</p>` : ""}
+
+          <div class="detail-gap"></div>
+
+          <div class="detail-grid">
+            ${detailField("🛍 売店コーナー", item.shop_status)}
+            ${detailField("🕒 営業時間（売店）", item.shop_hours_type)}
+          </div>
+          ${
+            item.shop_hours_type === "利用時間あり"
+              ? `<div class="detail-grid">
+                  ${detailField("開始", item.shop_hours_open)}
+                  ${detailField("終了", item.shop_hours_close)}
+                </div>`
+              : ""
+          }
+          <p class="field-title">🛍 売店コーナーの品揃え</p>
+          ${detailTags(item.shop_items) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">💴 決済方法（売店）</p>
+          ${detailTags(item.shop_payment) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.shop_note ? `<p class="detail-note">${escapeHtml(item.shop_note)}</p>` : ""}
+
+          <div class="detail-gap"></div>
+
+          <div class="detail-grid">
+            ${detailField("🛌 宿泊施設", item.accommodation_status)}
+            ${detailField("🏊 プール", item.pool_facility_status)}
+            ${detailField("🎮 ゲームコーナー", item.game_corner_status)}
+            ${detailField("👧🏻 キッズコーナー", item.kids_corner_status)}
+            ${detailField("☀️ 屋外施設", item.outdoor_facility_status)}
+            ${detailField("♨️ 足湯", item.foot_bath_status)}
+            ${detailField("🪨 岩盤浴", item.ganbanyoku_status)}
+            ${detailField("🧺 コインランドリー", item.coin_laundry_status)}
+            ${detailField("🚰 源泉持ち帰り", item.spring_takeaway_status)}
+            ${detailField("🥚 温泉たまご", item.onsen_tamago_status)}
+            ${detailField("🛜 Wi-Fi", item.wifi_facility)}
+            ${detailField(
+              "Wi-Fi利用時間・料金",
+              item.wifi_fee_minutes != null || item.wifi_fee_price != null
+                ? `${item.wifi_fee_minutes ?? "?"}分 ${item.wifi_fee_price ?? "?"}円`
+                : ""
+            )}
+            ${detailField("🔌 充電スポット", item.charging_spot)}
+            ${detailField(
+              "充電利用時間・料金",
+              item.charging_fee_minutes != null || item.charging_fee_price != null
+                ? `${item.charging_fee_minutes ?? "?"}分 ${item.charging_fee_price ?? "?"}円`
+                : ""
+            )}
+            ${detailField("🚑 AED", item.aed_facility_status)}
+            ${detailField("🏥 救護室", item.first_aid_room_status)}
+          </div>
+          ${item.other_facility_note ? `<p class="detail-note">${escapeHtml(item.other_facility_note)}</p>` : ""}
         </section>
 
         <!-- 地図情報 -->
@@ -2556,6 +3146,27 @@
     $("shoeboxTypeOther")?.classList.add("hidden");
     $("shoeboxKeyTypeOther")?.classList.add("hidden");
     $("toiletTypesOther")?.classList.add("hidden");
+    $("restaurantTypesOther")?.classList.add("hidden");
+    $("restaurantPaymentOther")?.classList.add("hidden");
+    $("restaurantOtherInfoOther")?.classList.add("hidden");
+    $("restaurantHoursWrap")?.classList.add("hidden");
+    $("restSpaceTypeOther")?.classList.add("hidden");
+    $("restSpaceFeeTypeOtherText")?.classList.add("hidden");
+    $("restSpaceFeeAmountWrap")?.classList.add("hidden");
+    $("restSpaceHoursWrap")?.classList.add("hidden");
+    $("restSpacePerPersonWrap")?.classList.add("hidden");
+    $("massageTypesOther")?.classList.add("hidden");
+    $("massageHoursWrap")?.classList.add("hidden");
+    $("coworkingFeaturesOther")?.classList.add("hidden");
+    $("vendingMachineTypesOther")?.classList.add("hidden");
+    $("vendingMachineLocationOther")?.classList.add("hidden");
+    $("shopItemsOther")?.classList.add("hidden");
+    $("shopPaymentOther")?.classList.add("hidden");
+    $("shopHoursWrap")?.classList.add("hidden");
+    $("wifiFeeWrap")?.classList.add("hidden");
+    $("chargingFeeWrap")?.classList.add("hidden");
+    const massageFeeRows = $("massageFeeRows");
+    if (massageFeeRows) massageFeeRows.innerHTML = "";
     $("saunaHoursWrap")?.classList.add("hidden");
   }
 
@@ -2601,6 +3212,11 @@
         DEFAULT_OTHER_FEE_CATEGORIES.forEach((category) =>
           addFeeRow("otherFeeRows", category, "", { focus: false })
         );
+      }
+
+      const massageFeeRows = $("massageFeeRows");
+      if (massageFeeRows && !massageFeeRows.children.length) {
+        addFeeRow3("massageFeeRows", "", "", "", { focus: false });
       }
 
       // モーダルを開いたら温泉名欄にフォーカス
@@ -2676,6 +3292,42 @@
       });
     });
 
+    // お食事処・休憩スペース等施設：条件付き表示のトグル一覧
+    [
+      ["restaurantHoursType", "営業時間あり", "restaurantHoursWrap"],
+      ["restSpaceHoursType", "利用時間あり", "restSpaceHoursWrap"],
+      ["restSpacePerPersonType", "時間指定", "restSpacePerPersonWrap"],
+      ["massageHoursType", "営業時間あり", "massageHoursWrap"],
+      ["shopHoursType", "利用時間あり", "shopHoursWrap"],
+      ["wifiFacility", "有料", "wifiFeeWrap"],
+      ["chargingSpot", "有料", "chargingFeeWrap"]
+    ].forEach(([name, triggerValue, wrapId]) => {
+      document.querySelectorAll(`input[name="${name}"]`).forEach((radio) => {
+        radio.addEventListener("change", () => {
+          const wrap = $(wrapId);
+          if (!wrap) return;
+          wrap.classList.toggle("hidden", radioValue(name) !== triggerValue);
+        });
+      });
+    });
+
+    // 休憩スペースの利用料金：「その他」を選んだ時だけ自由記述欄を表示
+    document.querySelectorAll('input[name="restSpaceFeeType"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        const other = $("restSpaceFeeTypeOtherText");
+        const feeWrap = $("restSpaceFeeAmountWrap");
+        if (other) other.classList.toggle("hidden", radioValue("restSpaceFeeType") !== "その他");
+        if (feeWrap) feeWrap.classList.toggle("hidden", radioValue("restSpaceFeeType") !== "別料金");
+      });
+    });
+
+    $("addMassageFee")?.addEventListener("click", () => addFeeRow3("massageFeeRows"));
+    $("massageFeeRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+      button.closest(".rental-row")?.remove();
+    });
+
     [
       ["bathShapeOtherCheck", "bathShapeOther"],
       ["bathFunctionOtherCheck", "bathFunctionOther"],
@@ -2704,7 +3356,17 @@
       ["lockerSizeOtherCheck", "lockerSizeOther"],
       ["shoeboxTypeOtherCheck", "shoeboxTypeOther"],
       ["shoeboxKeyTypeOtherCheck", "shoeboxKeyTypeOther"],
-      ["toiletTypesOtherCheck", "toiletTypesOther"]
+      ["toiletTypesOtherCheck", "toiletTypesOther"],
+      ["restaurantTypesOtherCheck", "restaurantTypesOther"],
+      ["restaurantPaymentOtherCheck", "restaurantPaymentOther"],
+      ["restaurantOtherInfoOtherCheck", "restaurantOtherInfoOther"],
+      ["restSpaceTypeOtherCheck", "restSpaceTypeOther"],
+      ["massageTypesOtherCheck", "massageTypesOther"],
+      ["coworkingFeaturesOtherCheck", "coworkingFeaturesOther"],
+      ["vendingMachineTypesOtherCheck", "vendingMachineTypesOther"],
+      ["vendingMachineLocationOtherCheck", "vendingMachineLocationOther"],
+      ["shopItemsOtherCheck", "shopItemsOther"],
+      ["shopPaymentOtherCheck", "shopPaymentOther"]
     ].forEach(([checkId, inputId]) => {
       $(checkId)?.addEventListener("change", (event) => {
         const other = $(inputId);
