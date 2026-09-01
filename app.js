@@ -2610,9 +2610,10 @@
           <div class="detail-grid">
             ${detailField("🍴 お食事処", item.restaurant_status)}
           </div>
-          <p class="field-title">🍴 お食事処の種類</p>
+          <p class="field-subtitle">🍴 お食事処の種類</p>
           ${detailTags(item.restaurant_types) || `<p class="detail-note-tight">情報がありません。</p>`}
           ${item.restaurant_feature ? `<p class="detail-note">${escapeHtml(item.restaurant_feature)}</p>` : ""}
+          <div class="detail-gap"></div>
           <div class="detail-grid">
             ${detailField("🕒 営業時間（お食事処）", item.restaurant_hours_type)}
           </div>
@@ -2625,9 +2626,9 @@
                 </div>`
               : ""
           }
-          <p class="field-title">💴 決済方法（お食事処）</p>
+          <p class="field-subtitle">💴 決済方法（お食事処）</p>
           ${detailTags(item.restaurant_payment) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">🍺 その他の情報</p>
+          <p class="field-subtitle">🍺 その他の情報</p>
           ${detailTags(item.restaurant_other_info) || `<p class="detail-note-tight">情報がありません。</p>`}
           ${item.restaurant_note ? `<p class="detail-note">${escapeHtml(item.restaurant_note)}</p>` : ""}
 
@@ -2639,8 +2640,9 @@
             ${detailField("🪙 利用料金", item.rest_space_fee_type)}
             ${detailField("別料金", item.rest_space_fee_amount != null ? `${item.rest_space_fee_amount}円` : "")}
           </div>
-          <p class="field-title">🛋 休憩スペースの形式</p>
+          <p class="field-subtitle">🛋 休憩スペースの形式</p>
           ${detailTags(item.rest_space_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-gap"></div>
           <div class="detail-grid">
             ${detailField("🕒 利用時間（休憩スペース）", item.rest_space_hours_type)}
           </div>
@@ -2652,6 +2654,7 @@
                 </div>`
               : ""
           }
+          <div class="detail-gap"></div>
           <div class="detail-grid">
             ${detailField(
               "1人あたりの利用時間",
@@ -2667,7 +2670,7 @@
           <div class="detail-grid">
             ${detailField("💆‍♀️ マッサージ・リラクゼーション施設", item.massage_status)}
           </div>
-          <p class="field-title">💆‍♀️ マッサージ・リラクゼーション施設の種類</p>
+          <p class="field-subtitle">💆‍♀️ マッサージ・リラクゼーション施設の種類</p>
           ${detailTags(item.massage_types) || `<p class="detail-note-tight">情報がありません。</p>`}
           ${
             Array.isArray(item.massage_menu_fees) && item.massage_menu_fees.length
@@ -2682,6 +2685,7 @@
                 </ul>`
               : ""
           }
+          <div class="detail-gap"></div>
           <div class="detail-grid">
             ${detailField("🕒 営業時間（マッサージ）", item.massage_hours_type)}
           </div>
@@ -2693,6 +2697,7 @@
                 </div>`
               : ""
           }
+          <div class="detail-gap"></div>
           <div class="detail-grid">
             ${detailField("💆‍♀️ マッサージチェア", item.massage_chair_status)}
             ${detailField("設置台数", item.massage_chair_count != null ? `${item.massage_chair_count}台` : "")}
@@ -2711,7 +2716,7 @@
             ${detailField("💬 レンタルスペース", item.rental_space_status)}
             ${detailField("👩🏻‍💻 コワーキングスペース", item.coworking_space_status)}
           </div>
-          <p class="field-title">👩🏻‍💻 レンタル・コワーキングスペースの特徴</p>
+          <p class="field-subtitle">👩🏻‍💻 レンタル・コワーキングスペースの特徴</p>
           ${detailTags(item.coworking_features) || `<p class="detail-note-tight">情報がありません。</p>`}
           ${item.coworking_note ? `<p class="detail-note">${escapeHtml(item.coworking_note)}</p>` : ""}
 
@@ -2721,9 +2726,9 @@
             ${detailField("🥤 自動販売機", item.vending_machine_status)}
             ${detailField("🚮 リサイクルボックス", item.recycle_box_status)}
           </div>
-          <p class="field-title">🥤 自動販売機の種類</p>
+          <p class="field-subtitle">🥤 自動販売機の種類</p>
           ${detailTags(item.vending_machine_types) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">🥤 設置場所</p>
+          <p class="field-subtitle">🥤 設置場所</p>
           ${detailTags(item.vending_machine_location) || `<p class="detail-note-tight">情報がありません。</p>`}
           ${item.vending_machine_note ? `<p class="detail-note">${escapeHtml(item.vending_machine_note)}</p>` : ""}
 
@@ -2741,9 +2746,9 @@
                 </div>`
               : ""
           }
-          <p class="field-title">🛍 売店コーナーの品揃え</p>
+          <p class="field-subtitle">🛍 売店コーナーの品揃え</p>
           ${detailTags(item.shop_items) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">💴 決済方法（売店）</p>
+          <p class="field-subtitle">💴 決済方法（売店）</p>
           ${detailTags(item.shop_payment) || `<p class="detail-note-tight">情報がありません。</p>`}
           ${item.shop_note ? `<p class="detail-note">${escapeHtml(item.shop_note)}</p>` : ""}
 
