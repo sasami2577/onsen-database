@@ -49,6 +49,7 @@ body.modal-open{overflow:visible}.primary{background:#875020;color:#fff}.seconda
 .detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 20px}
 .detail-item dt{font-size:12px;color:#837d77;margin:0}
 .detail-item dd{margin:2px 0 0;font-size:15px;font-weight:600}
+.detail-grid-large .detail-item dd{font-size:19px}
 .detail-phone{color:#714117;text-decoration:none}
 .detail-phone:hover{text-decoration:underline}
 .detail-tags{display:flex;flex-wrap:wrap;gap:8px}

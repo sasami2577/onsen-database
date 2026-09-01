@@ -657,6 +657,7 @@
 
       lat: numberValue("lat"),
       lng: numberValue("lng"),
+      google_maps_url: value("googleMapsUrl"),
       note: value("note"),
 
       // アプリ側で管理する情報
@@ -1189,6 +1190,7 @@
 
     setValue("lat", item.lat);
     setValue("lng", item.lng);
+    setValue("googleMapsUrl", item.google_maps_url);
     setValue("note", item.note);
   }
 
@@ -2160,7 +2162,7 @@
         <section class="detail-section">
           <h3>🚻 トイレ・バリアフリー</h3>
 
-          <p class="field-title">🚻 トイレの設置場所</p>
+          <p class="field-subtitle">🚻 トイレの設置場所</p>
           <div class="detail-grid">
             ${detailField("💁 ロビー・受付", item.toilet_location_lobby)}
             ${detailField("🚹 男性更衣室内のトイレ", item.toilet_mens_changing_room)}
@@ -2168,8 +2170,10 @@
           </div>
           ${item.toilet_location_other ? `<p class="detail-note">${escapeHtml(item.toilet_location_other)}</p>` : ""}
 
-          <p class="field-title">🚽 トイレの種類</p>
+          <p class="field-subtitle">🚽 トイレの種類</p>
           ${detailTags(item.toilet_types) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          <div class="detail-gap"></div>
 
           <div class="detail-grid">
             ${detailField("♿️ 身障者用・多目的トイレ", item.toilet_accessible)}
@@ -2177,6 +2181,9 @@
             ${detailField("♿️ オストメイト対応トイレ", item.toilet_ostomate)}
             ${detailField("👶🏻 おむつ交換台", item.toilet_diaper_table)}
             ${detailField("👶🏻 ベビーチェア", item.toilet_baby_chair_in_toilet)}
+          </div>
+
+          <div class="detail-grid detail-grid-large">
             ${detailField("♿️ スロープ", item.toilet_slope)}
             ${detailField("🛗 エレベーター・エスカレーター", item.toilet_elevator)}
           </div>
@@ -2185,7 +2192,7 @@
 
         <!-- 地図情報 -->
         ${
-          item.lat != null && item.lng != null
+          item.lat != null || item.lng != null || item.google_maps_url
             ? `
               <section class="detail-section">
                 <h3>地図情報</h3>
@@ -2193,9 +2200,19 @@
                   ${detailField("緯度", item.lat)}
                   ${detailField("経度", item.lng)}
                 </div>
-                <p class="detail-links">
-                  <a href="https://www.google.com/maps?q=${escapeHtml(item.lat)},${escapeHtml(item.lng)}" target="_blank" rel="noopener">Googleマップで見る</a>
-                </p>
+                ${
+                  item.google_maps_url || (item.lat != null && item.lng != null)
+                    ? `
+                      <p class="detail-links">
+                        <a href="${
+                          item.google_maps_url
+                            ? escapeHtml(item.google_maps_url)
+                            : `https://www.google.com/maps?q=${escapeHtml(item.lat)},${escapeHtml(item.lng)}`
+                        }" target="_blank" rel="noopener">Googleマップで見る</a>
+                      </p>
+                    `
+                    : ""
+                }
               </section>
             `
             : ""
