@@ -889,6 +889,56 @@
       first_aid_room_status: radioValue("firstAidRoomStatus"),
       other_facility_note: value("otherFacilityNote"),
 
+      // 🅿️ 駐車場・駐輪場
+      parking_status: radioValue("parkingStatus"),
+      parking_capacity: value("parkingCapacity"),
+      parking_fee_type: radioValue("parkingFeeType"),
+      parking_fee_amount: numberValue("parkingFeeAmount"),
+      parking_conditions: [
+        ...checkedValues("parkingConditions"),
+        ...(checkedBool("parkingFreeHoursCheck") && value("parkingFreeHours")
+          ? [`${value("parkingFreeHours")}時間無料`]
+          : []),
+        ...(checkedBool("parkingConditionsOtherCheck")
+          ? [value("parkingConditionsOther") || "その他"]
+          : [])
+      ],
+      parking_types: [
+        ...checkedValues("parkingTypes"),
+        ...(checkedBool("parkingTypesOtherCheck")
+          ? [value("parkingTypesOther") || "その他"]
+          : [])
+      ],
+      parking_accessible: [
+        ...checkedValues("parkingAccessible"),
+        ...(checkedBool("parkingAccessibleOtherCheck")
+          ? [value("parkingAccessibleOther") || "その他"]
+          : [])
+      ],
+      parking_temporary: radioValue("parkingTemporary"),
+      motorcycle_parking: radioValue("motorcycleParking"),
+      bicycle_parking: radioValue("bicycleParking"),
+      parking_note: value("parkingNote"),
+
+      // 📢 お知らせ・イベント情報
+      notice_info: value("noticeInfo"),
+      event_info: value("eventInfo"),
+
+      // ⭐️ ユーザー情報
+      last_visit_date: dateValue("lastVisitDate"),
+      last_info_check_date: dateValue("lastInfoCheckDate"),
+      user_info_source: [
+        ...checkedValues("userInfoSource"),
+        ...(checkedBool("userInfoSourceOtherCheck")
+          ? [value("userInfoSourceOther") || "その他"]
+          : [])
+      ],
+      facility_rating: numberValue("facilityRating"),
+      my_impression: value("myImpression"),
+
+      // 📍 位置情報・メモ
+      apple_maps_url: value("appleMapsUrl"),
+
       lat: numberValue("lat"),
       lng: numberValue("lng"),
       google_maps_url: value("googleMapsUrl"),
@@ -953,6 +1003,15 @@
     if ($(`${prefix}Year`)) $(`${prefix}Year`).value = y || "";
     if ($(`${prefix}Month`)) $(`${prefix}Month`).value = m ? String(Number(m)) : "";
     if ($(`${prefix}Day`)) $(`${prefix}Day`).value = d ? String(Number(d)) : "";
+  }
+
+  function setStarRating(value) {
+    const ratingStars = $("facilityRatingStars");
+    if (!ratingStars) return;
+    ratingStars.querySelectorAll(".star").forEach((star) => {
+      star.classList.toggle("filled", Number(star.dataset.star) <= value);
+    });
+    if ($("facilityRating")) $("facilityRating").value = String(value);
   }
 
   function populateFeeRows(containerId, fees) {
@@ -1597,6 +1656,72 @@
     setRadioValue("aedFacilityStatus", item.aed_facility_status);
     setRadioValue("firstAidRoomStatus", item.first_aid_room_status);
     setValue("otherFacilityNote", item.other_facility_note);
+
+    // 🅿️ 駐車場・駐輪場
+    setRadioValue("parkingStatus", item.parking_status);
+    setValue("parkingCapacity", item.parking_capacity);
+    setRadioValue("parkingFeeType", item.parking_fee_type);
+    if (item.parking_fee_type === "有料") {
+      $("parkingFeeAmountWrap")?.classList.remove("hidden");
+    }
+    setValue("parkingFeeAmount", item.parking_fee_amount);
+    if (Array.isArray(item.parking_conditions)) {
+      const knownConditions = ["施設利用者無料", "サービス券あり", "駐車券タイプ", "ナンバー読み取りタイプ"];
+      document.querySelectorAll('input[name="parkingConditions"]').forEach((el) => {
+        el.checked = item.parking_conditions.includes(el.value);
+      });
+      const freeHoursEntry = item.parking_conditions.find((v) => /^\d+時間無料$/.test(v));
+      if (freeHoursEntry) {
+        $("parkingFreeHoursCheck").checked = true;
+        setValue("parkingFreeHours", freeHoursEntry.replace("時間無料", ""));
+      }
+      const otherConditions = item.parking_conditions.filter(
+        (v) => !knownConditions.includes(v) && !/^\d+時間無料$/.test(v)
+      );
+      if (otherConditions.length) {
+        $("parkingConditionsOtherCheck").checked = true;
+        $("parkingConditionsOther")?.classList.remove("hidden");
+        setValue("parkingConditionsOther", otherConditions.join("、"));
+      }
+    }
+    setCheckboxGroup(
+      "parkingTypes",
+      ["平面駐車場", "立体駐車場", "地下駐車場", "提携駐車場", "施設共用駐車場"],
+      item.parking_types,
+      "parkingTypesOtherCheck",
+      "parkingTypesOther"
+    );
+    setCheckboxGroup(
+      "parkingAccessible",
+      ["車椅子対応駐車スペース", "大型車駐車スペース", "バス駐車スペース"],
+      item.parking_accessible,
+      "parkingAccessibleOtherCheck",
+      "parkingAccessibleOther"
+    );
+    setRadioValue("parkingTemporary", item.parking_temporary);
+    setRadioValue("motorcycleParking", item.motorcycle_parking);
+    setRadioValue("bicycleParking", item.bicycle_parking);
+    setValue("parkingNote", item.parking_note);
+
+    // 📢 お知らせ・イベント情報
+    setValue("noticeInfo", item.notice_info);
+    setValue("eventInfo", item.event_info);
+
+    // ⭐️ ユーザー情報
+    setDateValue("lastVisitDate", item.last_visit_date);
+    setDateValue("lastInfoCheckDate", item.last_info_check_date);
+    setCheckboxGroup(
+      "userInfoSource",
+      ["公式サイト", "温泉情報サイト", "自治体公式サイト"],
+      item.user_info_source,
+      "userInfoSourceOtherCheck",
+      "userInfoSourceOther"
+    );
+    setStarRating(item.facility_rating || 0);
+    setValue("myImpression", item.my_impression);
+
+    // 📍 位置情報・メモ
+    setValue("appleMapsUrl", item.apple_maps_url);
 
     setValue("lat", item.lat);
     setValue("lng", item.lng);
@@ -2785,9 +2910,59 @@
           ${item.other_facility_note ? `<p class="detail-note">${escapeHtml(item.other_facility_note)}</p>` : ""}
         </section>
 
+        <!-- 駐車場・駐輪場 -->
+        <section class="detail-section">
+          <h3>🅿️ 駐車場・駐輪場</h3>
+          <div class="detail-grid">
+            ${detailField("🅿️ 駐車場", item.parking_status)}
+            ${detailField("🅿️ 駐車可能台数", item.parking_capacity)}
+            ${detailField("💰 駐車料金", item.parking_fee_type)}
+            ${detailField("料金", item.parking_fee_amount != null ? `${item.parking_fee_amount}円` : "")}
+          </div>
+          <p class="field-subtitle">🆓 利用条件</p>
+          ${detailTags(item.parking_conditions) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">🅿️ 駐車場の種類</p>
+          ${detailTags(item.parking_types) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">♿️ バリアフリー・大型車対応</p>
+          ${detailTags(item.parking_accessible) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-grid">
+            ${detailField("🚗 多忙期の臨時駐車場", item.parking_temporary)}
+            ${detailField("🏍 バイク駐車場", item.motorcycle_parking)}
+            ${detailField("🚲 駐輪場", item.bicycle_parking)}
+          </div>
+          ${item.parking_note ? `<p class="detail-note">${escapeHtml(item.parking_note)}</p>` : ""}
+        </section>
+
+        <!-- お知らせ・イベント情報 -->
+        ${
+          item.notice_info || item.event_info
+            ? `
+              <section class="detail-section">
+                <h3>📢 お知らせ・イベント情報</h3>
+                ${item.notice_info ? `<p class="field-title">📢 施設からのお知らせ情報</p><p class="detail-note">${escapeHtml(item.notice_info)}</p>` : ""}
+                ${item.event_info ? `<p class="field-title">📢 イベント情報・期間限定情報</p><p class="detail-note">${escapeHtml(item.event_info)}</p>` : ""}
+              </section>
+            `
+            : ""
+        }
+
+        <!-- ユーザー情報 -->
+        <section class="detail-section">
+          <h3>⭐️ ユーザー情報</h3>
+          <div class="detail-grid">
+            ${detailField("🗓 最終訪問日", item.last_visit_date)}
+            ${detailField("🕒 最終情報確認日", item.last_info_check_date)}
+          </div>
+          <p class="field-subtitle">✍️ 情報源</p>
+          ${detailTags(item.user_info_source) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-title">⭐️ 施設の評価</p>
+          <p class="detail-note-tight">${item.facility_rating ? "★".repeat(item.facility_rating) + "☆".repeat(5 - item.facility_rating) : "評価なし"}</p>
+          ${item.my_impression ? `<p class="field-title">📝 自分の感想</p><p class="detail-note">${escapeHtml(item.my_impression)}</p>` : ""}
+        </section>
+
         <!-- 地図情報 -->
         ${
-          item.lat != null || item.lng != null || item.google_maps_url
+          item.lat != null || item.lng != null || item.google_maps_url || item.apple_maps_url
             ? `
               <section class="detail-section">
                 <h3>地図情報</h3>
@@ -2795,19 +2970,22 @@
                   ${detailField("緯度", item.lat)}
                   ${detailField("経度", item.lng)}
                 </div>
-                ${
-                  item.google_maps_url || (item.lat != null && item.lng != null)
-                    ? `
-                      <p class="detail-links">
-                        <a href="${
+                <p class="detail-links">
+                  ${
+                    item.google_maps_url || (item.lat != null && item.lng != null)
+                      ? `<a href="${
                           item.google_maps_url
                             ? escapeHtml(item.google_maps_url)
                             : `https://www.google.com/maps?q=${escapeHtml(item.lat)},${escapeHtml(item.lng)}`
-                        }" target="_blank" rel="noopener">Googleマップで見る</a>
-                      </p>
-                    `
-                    : ""
-                }
+                        }" target="_blank" rel="noopener">Googleマップで見る</a>`
+                      : ""
+                  }
+                  ${
+                    item.apple_maps_url
+                      ? `<a href="${escapeHtml(item.apple_maps_url)}" target="_blank" rel="noopener">Appleマップで見る</a>`
+                      : ""
+                  }
+                </p>
               </section>
             `
             : ""
@@ -3167,6 +3345,12 @@
     $("vendingMachineLocationOther")?.classList.add("hidden");
     $("shopItemsOther")?.classList.add("hidden");
     $("shopPaymentOther")?.classList.add("hidden");
+    $("parkingFeeAmountWrap")?.classList.add("hidden");
+    $("parkingConditionsOther")?.classList.add("hidden");
+    $("parkingTypesOther")?.classList.add("hidden");
+    $("parkingAccessibleOther")?.classList.add("hidden");
+    $("userInfoSourceOther")?.classList.add("hidden");
+    setStarRating(0);
     $("shopHoursWrap")?.classList.add("hidden");
     $("wifiFeeWrap")?.classList.add("hidden");
     $("chargingFeeWrap")?.classList.add("hidden");
@@ -3333,6 +3517,41 @@
       button.closest(".rental-row")?.remove();
     });
 
+    // 駐車料金：「有料」を選んだ時だけ料金欄を表示
+    document.querySelectorAll('input[name="parkingFeeType"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        const wrap = $("parkingFeeAmountWrap");
+        if (!wrap) return;
+        wrap.classList.toggle("hidden", radioValue("parkingFeeType") !== "有料");
+      });
+    });
+
+    // 最終訪問日・最終情報確認日：今日／昨日／一昨日ボタン
+    document.querySelectorAll("[data-quickdate-prefix]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const prefix = button.dataset.quickdatePrefix;
+        const offset = Number(button.dataset.quickdateOffset || 0);
+        const d = new Date();
+        d.setDate(d.getDate() + offset);
+        if ($(`${prefix}Year`)) $(`${prefix}Year`).value = String(d.getFullYear());
+        if ($(`${prefix}Month`)) $(`${prefix}Month`).value = String(d.getMonth() + 1);
+        if ($(`${prefix}Day`)) $(`${prefix}Day`).value = String(d.getDate());
+      });
+    });
+
+    // 施設の評価：星をタップして0〜5段階評価
+    const ratingStars = $("facilityRatingStars");
+    if (ratingStars) {
+      ratingStars.querySelectorAll(".star").forEach((star) => {
+        star.addEventListener("click", () => {
+          const value = Number(star.dataset.star);
+          const current = Number($("facilityRating")?.value || 0);
+          // 同じ星をもう一度押すと評価を0に戻す
+          setStarRating(current === value ? 0 : value);
+        });
+      });
+    }
+
     [
       ["bathShapeOtherCheck", "bathShapeOther"],
       ["bathFunctionOtherCheck", "bathFunctionOther"],
@@ -3371,7 +3590,11 @@
       ["vendingMachineTypesOtherCheck", "vendingMachineTypesOther"],
       ["vendingMachineLocationOtherCheck", "vendingMachineLocationOther"],
       ["shopItemsOtherCheck", "shopItemsOther"],
-      ["shopPaymentOtherCheck", "shopPaymentOther"]
+      ["shopPaymentOtherCheck", "shopPaymentOther"],
+      ["parkingConditionsOtherCheck", "parkingConditionsOther"],
+      ["parkingTypesOtherCheck", "parkingTypesOther"],
+      ["parkingAccessibleOtherCheck", "parkingAccessibleOther"],
+      ["userInfoSourceOtherCheck", "userInfoSourceOther"]
     ].forEach(([checkId, inputId]) => {
       $(checkId)?.addEventListener("change", (event) => {
         const other = $(inputId);
