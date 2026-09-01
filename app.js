@@ -635,6 +635,26 @@
       shoebox_fee: radioValue("shoeboxFee"),
       shoebox_note: value("shoeboxNote"),
 
+      // 🚻 トイレ・バリアフリー
+      toilet_location_lobby: radioValue("toiletLocationLobby"),
+      toilet_mens_changing_room: radioValue("toiletMensChangingRoom"),
+      toilet_womens_changing_room: radioValue("toiletWomensChangingRoom"),
+      toilet_location_other: value("toiletLocationOther"),
+      toilet_types: [
+        ...checkedValues("toiletTypes"),
+        ...(checkedBool("toiletTypesOtherCheck")
+          ? [value("toiletTypesOther") || "その他"]
+          : [])
+      ],
+      toilet_accessible: radioValue("toiletAccessible"),
+      toilet_wheelchair: radioValue("toiletWheelchair"),
+      toilet_ostomate: radioValue("toiletOstomate"),
+      toilet_diaper_table: radioValue("toiletDiaperTable"),
+      toilet_baby_chair_in_toilet: radioValue("toiletBabyChairInToilet"),
+      toilet_slope: radioValue("toiletSlope"),
+      toilet_elevator: radioValue("toiletElevator"),
+      toilet_barrier_free_note: value("toiletBarrierFreeNote"),
+
       lat: numberValue("lat"),
       lng: numberValue("lng"),
       note: value("note"),
@@ -1145,6 +1165,27 @@
     );
     setRadioValue("shoeboxFee", item.shoebox_fee);
     setValue("shoeboxNote", item.shoebox_note);
+
+    // 🚻 トイレ・バリアフリー
+    setRadioValue("toiletLocationLobby", item.toilet_location_lobby);
+    setRadioValue("toiletMensChangingRoom", item.toilet_mens_changing_room);
+    setRadioValue("toiletWomensChangingRoom", item.toilet_womens_changing_room);
+    setValue("toiletLocationOther", item.toilet_location_other);
+    setCheckboxGroup(
+      "toiletTypes",
+      ["不明", "洋式トイレ", "和式トイレ", "小便器"],
+      item.toilet_types,
+      "toiletTypesOtherCheck",
+      "toiletTypesOther"
+    );
+    setRadioValue("toiletAccessible", item.toilet_accessible);
+    setRadioValue("toiletWheelchair", item.toilet_wheelchair);
+    setRadioValue("toiletOstomate", item.toilet_ostomate);
+    setRadioValue("toiletDiaperTable", item.toilet_diaper_table);
+    setRadioValue("toiletBabyChairInToilet", item.toilet_baby_chair_in_toilet);
+    setRadioValue("toiletSlope", item.toilet_slope);
+    setRadioValue("toiletElevator", item.toilet_elevator);
+    setValue("toiletBarrierFreeNote", item.toilet_barrier_free_note);
 
     setValue("lat", item.lat);
     setValue("lng", item.lng);
@@ -1843,7 +1884,7 @@
           <p class="field-title">🧖‍♀️ サウナの種類</p>
           ${detailTags(item.sauna_types) || `<p class="detail-note-tight">情報がありません。</p>`}
 
-          <p class="field-title">🕒 サウナの利用時間</p>
+          <p class="field-subtitle">🕒 サウナの利用時間</p>
           <p class="detail-note-tight">${escapeHtml(item.sauna_hours_type || "不明")}</p>
           ${
             item.sauna_hours_type === "利用時間あり"
@@ -2081,14 +2122,15 @@
           <div class="detail-grid">
             ${detailField("🔐 ロッカー数", item.locker_count)}
           </div>
-          <p class="field-title">🔐 ロッカーキーの仕組み</p>
+          <p class="field-subtitle">🔐 ロッカーキーの仕組み</p>
           ${detailTags(item.locker_key_type) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">⌚️ リストバンドの種類</p>
+          <p class="field-subtitle">⌚️ リストバンドの種類</p>
           ${detailTags(item.locker_wristband_type) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">⌚️ リストバンド用途</p>
+          <p class="field-subtitle">⌚️ リストバンド用途</p>
           ${detailTags(item.locker_wristband_use) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">🔐 ロッカーの大きさ</p>
+          <p class="field-subtitle">🔐 ロッカーの大きさ</p>
           ${detailTags(item.locker_size) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-gap"></div>
           <div class="detail-grid">
             ${detailField("🔐 ロッカー内の仕切り・2段タイプ", item.locker_divider)}
             ${detailField("👕 ロッカー内のハンガー", item.locker_hanger)}
@@ -2107,11 +2149,38 @@
             ${detailField("👟 靴箱数", item.shoebox_count)}
             ${detailField("🪙 利用料金", item.shoebox_fee)}
           </div>
-          <p class="field-title">👟 靴箱の仕組み</p>
+          <p class="field-subtitle">👟 靴箱の仕組み</p>
           ${detailTags(item.shoebox_type) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">🔐 鍵の仕組み</p>
+          <p class="field-subtitle">🔐 靴箱の鍵の仕組み</p>
           ${detailTags(item.shoebox_key_type) || `<p class="detail-note-tight">情報がありません。</p>`}
           ${item.shoebox_note ? `<p class="detail-note">${escapeHtml(item.shoebox_note)}</p>` : ""}
+        </section>
+
+        <!-- トイレ・バリアフリー -->
+        <section class="detail-section">
+          <h3>🚻 トイレ・バリアフリー</h3>
+
+          <p class="field-title">🚻 トイレの設置場所</p>
+          <div class="detail-grid">
+            ${detailField("💁 ロビー・受付", item.toilet_location_lobby)}
+            ${detailField("🚹 男性更衣室内のトイレ", item.toilet_mens_changing_room)}
+            ${detailField("🚺 女性更衣室内のトイレ", item.toilet_womens_changing_room)}
+          </div>
+          ${item.toilet_location_other ? `<p class="detail-note">${escapeHtml(item.toilet_location_other)}</p>` : ""}
+
+          <p class="field-title">🚽 トイレの種類</p>
+          ${detailTags(item.toilet_types) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          <div class="detail-grid">
+            ${detailField("♿️ 身障者用・多目的トイレ", item.toilet_accessible)}
+            ${detailField("♿️ 車椅子対応トイレ", item.toilet_wheelchair)}
+            ${detailField("♿️ オストメイト対応トイレ", item.toilet_ostomate)}
+            ${detailField("👶🏻 おむつ交換台", item.toilet_diaper_table)}
+            ${detailField("👶🏻 ベビーチェア", item.toilet_baby_chair_in_toilet)}
+            ${detailField("♿️ スロープ", item.toilet_slope)}
+            ${detailField("🛗 エレベーター・エスカレーター", item.toilet_elevator)}
+          </div>
+          ${item.toilet_barrier_free_note ? `<p class="detail-note">${escapeHtml(item.toilet_barrier_free_note)}</p>` : ""}
         </section>
 
         <!-- 地図情報 -->
@@ -2469,6 +2538,7 @@
     $("lockerSizeOther")?.classList.add("hidden");
     $("shoeboxTypeOther")?.classList.add("hidden");
     $("shoeboxKeyTypeOther")?.classList.add("hidden");
+    $("toiletTypesOther")?.classList.add("hidden");
     $("saunaHoursWrap")?.classList.add("hidden");
   }
 
@@ -2616,7 +2686,8 @@
       ["lockerWristbandUseOtherCheck", "lockerWristbandUseOther"],
       ["lockerSizeOtherCheck", "lockerSizeOther"],
       ["shoeboxTypeOtherCheck", "shoeboxTypeOther"],
-      ["shoeboxKeyTypeOtherCheck", "shoeboxKeyTypeOther"]
+      ["shoeboxKeyTypeOtherCheck", "shoeboxKeyTypeOther"],
+      ["toiletTypesOtherCheck", "toiletTypesOther"]
     ].forEach(([checkId, inputId]) => {
       $(checkId)?.addEventListener("change", (event) => {
         const other = $(inputId);
