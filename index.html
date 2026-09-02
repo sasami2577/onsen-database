@@ -28,8 +28,23 @@
 <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
 <button id="close" class="close" type="button" aria-label="閉じる">×</button>
 <div class="modal-head"><span class="modal-icon">♨</span><div><h2 id="modalTitle">温泉を追加</h2><p>分かる項目だけ入力できます。</p></div></div>
+<div class="tab-bar" id="formTabBar">
+<button type="button" class="tab-btn" data-tab-target="basic">基本情報</button>
+<button type="button" class="tab-btn" data-tab-target="price">料金・決済方法</button>
+<button type="button" class="tab-btn" data-tab-target="facility">施設情報</button>
+<button type="button" class="tab-btn" data-tab-target="onsen">温泉情報</button>
+<button type="button" class="tab-btn" data-tab-target="sauna">サウナ関連</button>
+<button type="button" class="tab-btn" data-tab-target="amenity">シャワー・アメニティ</button>
+<button type="button" class="tab-btn" data-tab-target="locker">ロッカー・靴箱</button>
+<button type="button" class="tab-btn" data-tab-target="toilet">トイレ・バリアフリー</button>
+<button type="button" class="tab-btn" data-tab-target="dining">お食事処・売店・自動販売機</button>
+<button type="button" class="tab-btn" data-tab-target="rest-massage">休憩スペース・マッサージ</button>
+<button type="button" class="tab-btn" data-tab-target="rental-misc">レンタルスペース・その他の施設</button>
+<button type="button" class="tab-btn" data-tab-target="parking">駐車場</button>
+<button type="button" class="tab-btn" data-tab-target="user">ユーザー情報・地図情報</button>
+</div>
 <form id="form">
-<section class="form-section"><h3>基本情報</h3><div class="grid two">
+<section class="form-section" data-tab="basic"><h3>基本情報</h3><div class="grid two">
 <label class="full">温泉名 <em>必須</em><input id="name" required maxlength="100" placeholder="例：○○温泉"></label>
 <label>都道府県<select id="prefecture"><option value="">選択してください</option><option>北海道</option><option>青森県</option><option>岩手県</option><option>宮城県</option><option>秋田県</option><option>山形県</option><option>福島県</option><option>茨城県</option><option>栃木県</option><option>群馬県</option><option>埼玉県</option><option>千葉県</option><option>東京都</option><option>神奈川県</option><option>新潟県</option><option>富山県</option><option>石川県</option><option>福井県</option><option>山梨県</option><option>長野県</option><option>岐阜県</option><option>静岡県</option><option>愛知県</option><option>三重県</option><option>滋賀県</option><option>京都府</option><option>大阪府</option><option>兵庫県</option><option>奈良県</option><option>和歌山県</option><option>鳥取県</option><option>島根県</option><option>岡山県</option><option>広島県</option><option>山口県</option><option>徳島県</option><option>香川県</option><option>愛媛県</option><option>高知県</option><option>福岡県</option><option>佐賀県</option><option>長崎県</option><option>熊本県</option><option>大分県</option><option>宮崎県</option><option>鹿児島県</option><option>沖縄県</select></label>
 <label>市区町村・地域<input id="area" placeholder="例：草津町"></label>
@@ -68,7 +83,7 @@
 <label class="full">住所<input id="address" placeholder="例：○○県○○町○○1-2-3"></label>
 <label>電話番号<input id="phone" type="tel"></label>
 </div></section>
-<section class="form-section"><h3>営業時間・定休日</h3><div class="grid two">
+<section class="form-section" data-tab="basic"><h3>営業時間・定休日</h3><div class="grid two">
 <label>営業時間（開始）<div class="time-select"><select id="openTimeHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="openTimeMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>営業時間（終了）<div class="time-select"><select id="closeTimeHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="closeTimeMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>最終受付<div class="time-select"><select id="lastEntryHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="lastEntryMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label>
 <fieldset class="full"><legend>定休日</legend><div class="checks">
 <label><input type="checkbox" name="closedDay" value="日">日曜日</label>
@@ -88,11 +103,11 @@
 </div></fieldset>
 <label class="full">営業時間の補足<textarea id="hoursNote" rows="2"></textarea></label>
 </div></section>
-<section class="form-section"><h3>アクセス</h3><div class="grid two">
+<section class="form-section" data-tab="basic"><h3>アクセス</h3><div class="grid two">
 <label>最寄り駅<input id="nearestStation" placeholder="例：草津温泉バスターミナル"></label>
 <label class="full">アクセス方法<textarea id="accessMethod" rows="2" placeholder="例：JR長野原草津口駅からバスで25分"></textarea></label>
 </div></section>
-<section class="form-section"><h3>💰 料金・決済方法</h3>
+<section class="form-section" data-tab="price"><h3>💰 料金・決済方法</h3>
 
 <fieldset class="full"><legend>♨️ 入浴料</legend>
 <div id="bathFeeRows"></div>
@@ -148,7 +163,7 @@
 <label class="full compact-top">その他料金・決済方法に関する補足事項<textarea id="priceNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>🛀 施設情報</h3>
+<section class="form-section" data-tab="facility"><h3>🛀 施設情報</h3>
 
 <fieldset class="full"><legend>♨️ 浴場・浴槽の形状</legend><div class="checks">
 <label><input type="checkbox" name="bathShape" value="大浴場">大浴場</label>
@@ -265,7 +280,7 @@
 <label class="full compact-top">♨️ その他 浴場・浴槽の補足事項<textarea id="bathNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>♨️ 温泉情報</h3>
+<section class="form-section" data-tab="onsen"><h3>♨️ 温泉情報</h3>
 
 <fieldset class="full"><legend>♨️ 泉質</legend>
 <div class="checks">
@@ -458,7 +473,7 @@
 </fieldset>
 
 </section>
-<section class="form-section"><h3>🧖‍♀️ サウナ関連</h3>
+<section class="form-section" data-tab="sauna"><h3>🧖‍♀️ サウナ関連</h3>
 
 <fieldset class="full"><legend>🧖‍♀️ サウナ設備</legend><div class="checks">
 <label><input type="radio" name="saunaFacility" value="不明" checked>不明</label>
@@ -917,7 +932,7 @@
 <label class="full compact-top">🌿 外気浴・内気浴の補足事項<textarea id="outdoorIndoorNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>🚿 シャワー</h3>
+<section class="form-section" data-tab="amenity"><h3>🚿 シャワー</h3>
 
 <fieldset class="full"><legend>🚿 シャワーの数</legend>
 <select id="showerCount">
@@ -982,7 +997,7 @@
 
 </section>
 
-<section class="form-section"><h3>🧴 アメニティ・備品</h3>
+<section class="form-section" data-tab="amenity"><h3>🧴 アメニティ・備品</h3>
 
 <fieldset class="full"><legend>🧴 シャンプー・コンディショナー</legend><div class="checks">
 <label><input type="radio" name="shampooConditioner" value="不明" checked>不明</label>
@@ -1171,7 +1186,7 @@
 
 </section>
 
-<section class="form-section"><h3>🔐 ロッカー</h3>
+<section class="form-section" data-tab="locker"><h3>🔐 ロッカー</h3>
 
 <fieldset class="full"><legend>🔐 ロッカー数</legend>
 <select id="lockerCount">
@@ -1283,7 +1298,7 @@
 <label class="full compact-top">🔐 その他のロッカーに関する補足事項<textarea id="lockerNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>👟 靴箱</h3>
+<section class="form-section" data-tab="locker"><h3>👟 靴箱</h3>
 
 <fieldset class="full"><legend>👟 靴箱数</legend>
 <select id="shoeboxCount">
@@ -1334,7 +1349,7 @@
 <label class="full compact-top">👟 その他の靴箱に関する補足事項<textarea id="shoeboxNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>🚻 トイレ・バリアフリー</h3>
+<section class="form-section" data-tab="toilet"><h3>🚻 トイレ・バリアフリー</h3>
 
 <fieldset class="full"><legend>🚻 トイレの設置場所</legend>
 <p class="field-title">💁 ロビー・受付</p>
@@ -1413,7 +1428,7 @@
 <label class="full compact-top">♿️ その他トイレ・バリアフリーに関する補足事項<textarea id="toiletBarrierFreeNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>🛋 お食事処・休憩スペース等の施設</h3>
+<section class="form-section" data-tab="dining"><h3>🛋 お食事処・売店・自動販売機</h3>
 
 <fieldset class="full compact-top"><legend>🍴 お食事処</legend><div class="checks">
 <label><input type="radio" name="restaurantStatus" value="不明" checked>不明</label>
@@ -1472,6 +1487,91 @@
 </fieldset>
 
 <label class="full compact-top">🍴 備考（お食事処）<textarea id="restaurantNote" rows="2"></textarea></label>
+
+<fieldset class="full compact-top"><legend>🥤 自動販売機</legend><div class="checks">
+<label><input type="radio" name="vendingMachineStatus" value="不明" checked>不明</label>
+<label><input type="radio" name="vendingMachineStatus" value="あり">あり</label>
+<label><input type="radio" name="vendingMachineStatus" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🥤 自動販売機の種類</legend><div class="checks">
+<label><input type="checkbox" name="vendingMachineTypes" value="ペットボトル飲料">ペットボトル飲料</label>
+<label><input type="checkbox" name="vendingMachineTypes" value="ビン飲料">ビン飲料</label>
+<label><input type="checkbox" name="vendingMachineTypes" value="アイス">アイス</label>
+<label><input type="checkbox" name="vendingMachineTypes" value="軽食">軽食</label>
+<label><input type="checkbox" id="vendingMachineTypesOtherCheck">その他</label>
+</div>
+<input type="text" id="vendingMachineTypesOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🥤 設置場所</legend><div class="checks">
+<label><input type="checkbox" name="vendingMachineLocation" value="更衣室内">更衣室内</label>
+<label><input type="checkbox" name="vendingMachineLocation" value="休憩施設内">休憩施設内</label>
+<label><input type="checkbox" name="vendingMachineLocation" value="ロビー">ロビー</label>
+<label><input type="checkbox" name="vendingMachineLocation" value="屋外">屋外</label>
+<label><input type="checkbox" id="vendingMachineLocationOtherCheck">その他</label>
+</div>
+<input type="text" id="vendingMachineLocationOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🚮 リサイクルボックス</legend><div class="checks">
+<label><input type="radio" name="recycleBoxStatus" value="不明" checked>不明</label>
+<label><input type="radio" name="recycleBoxStatus" value="あり">あり</label>
+<label><input type="radio" name="recycleBoxStatus" value="なし">なし</label>
+</div></fieldset>
+
+<label class="full compact-top">🥤 備考（自動販売機）<textarea id="vendingMachineNote" rows="2"></textarea></label>
+
+<fieldset class="full compact-top"><legend>🛍 売店コーナー</legend><div class="checks">
+<label><input type="radio" name="shopStatus" value="不明" checked>不明</label>
+<label><input type="radio" name="shopStatus" value="あり">あり</label>
+<label><input type="radio" name="shopStatus" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🛍 売店コーナーの品揃え</legend><div class="checks">
+<label><input type="checkbox" name="shopItems" value="入浴用品">入浴用品</label>
+<label><input type="checkbox" name="shopItems" value="サウナ用品">サウナ用品</label>
+<label><input type="checkbox" name="shopItems" value="衣類・館内着">衣類・館内着</label>
+<label><input type="checkbox" name="shopItems" value="履き物">履き物</label>
+<label><input type="checkbox" name="shopItems" value="タオル・バスタオル">タオル・バスタオル</label>
+<label><input type="checkbox" name="shopItems" value="化粧品・スキンケア用品">化粧品・スキンケア用品</label>
+<label><input type="checkbox" name="shopItems" value="軽食・お菓子">軽食・お菓子</label>
+<label><input type="checkbox" name="shopItems" value="お弁当・食品">お弁当・食品</label>
+<label><input type="checkbox" name="shopItems" value="飲料">飲料</label>
+<label><input type="checkbox" name="shopItems" value="アイス・スイーツ">アイス・スイーツ</label>
+<label><input type="checkbox" name="shopItems" value="地元の食材">地元の食材</label>
+<label><input type="checkbox" name="shopItems" value="お土産・特産品">お土産・特産品</label>
+<label><input type="checkbox" name="shopItems" value="雑貨・グッズ">雑貨・グッズ</label>
+<label><input type="checkbox" name="shopItems" value="その他の日用品">その他の日用品</label>
+<label><input type="checkbox" id="shopItemsOtherCheck">その他</label>
+</div>
+<input type="text" id="shopItemsOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🕒 営業時間（売店）</legend><div class="checks">
+<label><input type="radio" name="shopHoursType" value="不明" checked>不明</label>
+<label><input type="radio" name="shopHoursType" value="施設の営業時間と同じ">施設の営業時間と同じ</label>
+<label><input type="radio" name="shopHoursType" value="利用時間あり" id="shopHoursTypeCustom">利用時間あり</label>
+</div>
+<div class="hidden compact-top" id="shopHoursWrap"><div class="grid two">
+<label>開始<div class="time-select"><select id="shopHoursOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="shopHoursOpenMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>終了<div class="time-select"><select id="shopHoursCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="shopHoursCloseMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label></div></div>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>💴 決済方法（売店）</legend><div class="checks">
+<label><input type="checkbox" name="shopPayment" value="現金">現金</label>
+<label><input type="checkbox" name="shopPayment" value="クレジットカード">クレジットカード</label>
+<label><input type="checkbox" name="shopPayment" value="電子マネー">電子マネー</label>
+<label><input type="checkbox" name="shopPayment" value="QRコード決済">QRコード決済</label>
+<label><input type="checkbox" name="shopPayment" value="リストバンド決済">リストバンド決済</label>
+<label><input type="checkbox" id="shopPaymentOtherCheck">その他</label>
+</div>
+<input type="text" id="shopPaymentOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<label class="full compact-top">🛍 備考（売店コーナー）<textarea id="shopNote" rows="2"></textarea></label>
+
+</section>
+<section class="form-section" data-tab="rest-massage"><h3>🛋 休憩スペース・マッサージ</h3>
 
 <fieldset class="full compact-top"><legend>🛋 休憩スペース</legend><div class="checks">
 <label><input type="radio" name="restSpaceStatus" value="不明" checked>不明</label>
@@ -1583,6 +1683,9 @@
 
 <label class="full compact-top">💆‍♀️ 備考（マッサージ・リラクゼーション）<textarea id="massageNote" rows="2"></textarea></label>
 
+</section>
+<section class="form-section" data-tab="rental-misc"><h3>🛋 レンタルスペース・その他の施設</h3>
+
 <fieldset class="full compact-top"><legend>💬 レンタルスペース</legend><div class="checks">
 <label><input type="radio" name="rentalSpaceStatus" value="不明" checked>不明</label>
 <label><input type="radio" name="rentalSpaceStatus" value="あり">あり</label>
@@ -1608,88 +1711,6 @@
 </fieldset>
 
 <label class="full compact-top">👩🏻‍💻 備考（レンタル・コワーキングスペース）<textarea id="coworkingNote" rows="2"></textarea></label>
-
-<fieldset class="full compact-top"><legend>🥤 自動販売機</legend><div class="checks">
-<label><input type="radio" name="vendingMachineStatus" value="不明" checked>不明</label>
-<label><input type="radio" name="vendingMachineStatus" value="あり">あり</label>
-<label><input type="radio" name="vendingMachineStatus" value="なし">なし</label>
-</div></fieldset>
-
-<fieldset class="full compact-top"><legend>🥤 自動販売機の種類</legend><div class="checks">
-<label><input type="checkbox" name="vendingMachineTypes" value="ペットボトル飲料">ペットボトル飲料</label>
-<label><input type="checkbox" name="vendingMachineTypes" value="ビン飲料">ビン飲料</label>
-<label><input type="checkbox" name="vendingMachineTypes" value="アイス">アイス</label>
-<label><input type="checkbox" name="vendingMachineTypes" value="軽食">軽食</label>
-<label><input type="checkbox" id="vendingMachineTypesOtherCheck">その他</label>
-</div>
-<input type="text" id="vendingMachineTypesOther" class="hidden compact-top" placeholder="その他の内容を入力">
-</fieldset>
-
-<fieldset class="full compact-top"><legend>🥤 設置場所</legend><div class="checks">
-<label><input type="checkbox" name="vendingMachineLocation" value="更衣室内">更衣室内</label>
-<label><input type="checkbox" name="vendingMachineLocation" value="休憩施設内">休憩施設内</label>
-<label><input type="checkbox" name="vendingMachineLocation" value="ロビー">ロビー</label>
-<label><input type="checkbox" name="vendingMachineLocation" value="屋外">屋外</label>
-<label><input type="checkbox" id="vendingMachineLocationOtherCheck">その他</label>
-</div>
-<input type="text" id="vendingMachineLocationOther" class="hidden compact-top" placeholder="その他の内容を入力">
-</fieldset>
-
-<fieldset class="full compact-top"><legend>🚮 リサイクルボックス</legend><div class="checks">
-<label><input type="radio" name="recycleBoxStatus" value="不明" checked>不明</label>
-<label><input type="radio" name="recycleBoxStatus" value="あり">あり</label>
-<label><input type="radio" name="recycleBoxStatus" value="なし">なし</label>
-</div></fieldset>
-
-<label class="full compact-top">🥤 備考（自動販売機）<textarea id="vendingMachineNote" rows="2"></textarea></label>
-
-<fieldset class="full compact-top"><legend>🛍 売店コーナー</legend><div class="checks">
-<label><input type="radio" name="shopStatus" value="不明" checked>不明</label>
-<label><input type="radio" name="shopStatus" value="あり">あり</label>
-<label><input type="radio" name="shopStatus" value="なし">なし</label>
-</div></fieldset>
-
-<fieldset class="full compact-top"><legend>🛍 売店コーナーの品揃え</legend><div class="checks">
-<label><input type="checkbox" name="shopItems" value="入浴用品">入浴用品</label>
-<label><input type="checkbox" name="shopItems" value="サウナ用品">サウナ用品</label>
-<label><input type="checkbox" name="shopItems" value="衣類・館内着">衣類・館内着</label>
-<label><input type="checkbox" name="shopItems" value="履き物">履き物</label>
-<label><input type="checkbox" name="shopItems" value="タオル・バスタオル">タオル・バスタオル</label>
-<label><input type="checkbox" name="shopItems" value="化粧品・スキンケア用品">化粧品・スキンケア用品</label>
-<label><input type="checkbox" name="shopItems" value="軽食・お菓子">軽食・お菓子</label>
-<label><input type="checkbox" name="shopItems" value="お弁当・食品">お弁当・食品</label>
-<label><input type="checkbox" name="shopItems" value="飲料">飲料</label>
-<label><input type="checkbox" name="shopItems" value="アイス・スイーツ">アイス・スイーツ</label>
-<label><input type="checkbox" name="shopItems" value="地元の食材">地元の食材</label>
-<label><input type="checkbox" name="shopItems" value="お土産・特産品">お土産・特産品</label>
-<label><input type="checkbox" name="shopItems" value="雑貨・グッズ">雑貨・グッズ</label>
-<label><input type="checkbox" name="shopItems" value="その他の日用品">その他の日用品</label>
-<label><input type="checkbox" id="shopItemsOtherCheck">その他</label>
-</div>
-<input type="text" id="shopItemsOther" class="hidden compact-top" placeholder="その他の内容を入力">
-</fieldset>
-
-<fieldset class="full compact-top"><legend>🕒 営業時間（売店）</legend><div class="checks">
-<label><input type="radio" name="shopHoursType" value="不明" checked>不明</label>
-<label><input type="radio" name="shopHoursType" value="施設の営業時間と同じ">施設の営業時間と同じ</label>
-<label><input type="radio" name="shopHoursType" value="利用時間あり" id="shopHoursTypeCustom">利用時間あり</label>
-</div>
-<div class="hidden compact-top" id="shopHoursWrap"><div class="grid two">
-<label>開始<div class="time-select"><select id="shopHoursOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="shopHoursOpenMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>終了<div class="time-select"><select id="shopHoursCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="shopHoursCloseMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label></div></div>
-</fieldset>
-
-<fieldset class="full compact-top"><legend>💴 決済方法（売店）</legend><div class="checks">
-<label><input type="checkbox" name="shopPayment" value="現金">現金</label>
-<label><input type="checkbox" name="shopPayment" value="クレジットカード">クレジットカード</label>
-<label><input type="checkbox" name="shopPayment" value="電子マネー">電子マネー</label>
-<label><input type="checkbox" name="shopPayment" value="QRコード決済">QRコード決済</label>
-<label><input type="checkbox" name="shopPayment" value="リストバンド決済">リストバンド決済</label>
-<label><input type="checkbox" id="shopPaymentOtherCheck">その他</label>
-</div>
-<input type="text" id="shopPaymentOther" class="hidden compact-top" placeholder="その他の内容を入力">
-</fieldset>
-
-<label class="full compact-top">🛍 備考（売店コーナー）<textarea id="shopNote" rows="2"></textarea></label>
 
 <fieldset class="full compact-top"><legend>🛌 宿泊施設</legend><div class="checks">
 <label><input type="radio" name="accommodationStatus" value="不明" checked>不明</label>
@@ -1790,7 +1811,7 @@
 <label class="full compact-top">🏢 その他施設・設備に関する補足事項<textarea id="otherFacilityNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>🅿️ 駐車場・駐輪場</h3>
+<section class="form-section" data-tab="parking"><h3>🅿️ 駐車場・駐輪場</h3>
 
 <fieldset class="full compact-top"><legend>🅿️ 駐車場</legend><div class="checks">
 <label><input type="radio" name="parkingStatus" value="不明" checked>不明</label>
@@ -1874,14 +1895,14 @@
 <label class="full compact-top">🅿️ 備考（駐車場・駐輪場）<textarea id="parkingNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>📢 お知らせ・イベント情報</h3>
+<section class="form-section" data-tab="user"><h3>📢 お知らせ・イベント情報</h3>
 
 <label class="full">📢 施設からのお知らせ情報<textarea id="noticeInfo" rows="3"></textarea></label>
 
 <label class="full compact-top">📢 イベント情報・期間限定情報<textarea id="eventInfo" rows="3"></textarea></label>
 
 </section>
-<section class="form-section"><h3>⭐️ ユーザー情報</h3>
+<section class="form-section" data-tab="user"><h3>⭐️ ユーザー情報</h3>
 
 <fieldset class="full"><p class="field-title">🗓 最終訪問日</p>
 <div class="grid two">
@@ -1918,26 +1939,15 @@
 <input type="text" id="userInfoSourceOther" class="hidden compact-top" placeholder="その他の内容を入力">
 </fieldset>
 
-<fieldset class="full compact-top"><legend>⭐️ 施設の評価</legend>
-<div class="star-rating" id="facilityRatingStars">
-<span class="star" data-star="1">★</span>
-<span class="star" data-star="2">★</span>
-<span class="star" data-star="3">★</span>
-<span class="star" data-star="4">★</span>
-<span class="star" data-star="5">★</span>
-</div>
-<input type="hidden" id="facilityRating" value="0">
-</fieldset>
-
 <label class="full compact-top">📝 自分の感想<textarea id="myImpression" rows="4"></textarea></label>
 
 <div class="full compact-top"><p class="field-title">📷 写真投稿</p><p class="note-inline">今後実装予定です。</p></div>
 
 </section>
-<section class="form-section"><h3>公式情報・SNS</h3><div class="grid two">
+<section class="form-section" data-tab="basic"><h3>公式情報・SNS</h3><div class="grid two">
 <label>公式サイト<input id="website" type="url"></label><label>Instagram<input id="instagram" type="url"></label><label>X（旧Twitter）<input id="twitter" type="url"></label><label>Facebook<input id="facebook" type="url"></label>
 </div></section>
-<section class="form-section"><h3>位置情報・メモ</h3><div class="grid two"><label>緯度<input id="lat" type="number" step="any"></label><label>経度<input id="lng" type="number" step="any"></label><label class="full">Googleマップのリンク<input id="googleMapsUrl" type="url" placeholder="https://maps.app.goo.gl/..."></label><label class="full">Appleマップのリンク<input id="appleMapsUrl" type="url" placeholder="https://maps.apple.com/..."></label><label class="full">メモ・施設紹介<textarea id="note" rows="5"></textarea></label></div></section>
+<section class="form-section" data-tab="user"><h3>位置情報・メモ</h3><div class="grid two"><label>緯度<input id="lat" type="number" step="any"></label><label>経度<input id="lng" type="number" step="any"></label><label class="full">Googleマップのリンク<input id="googleMapsUrl" type="url" placeholder="https://maps.app.goo.gl/..."></label><label class="full">Appleマップのリンク<input id="appleMapsUrl" type="url" placeholder="https://maps.apple.com/..."></label><label class="full">メモ・施設紹介<textarea id="note" rows="5"></textarea></label></div></section>
 <div class="form-actions"><button type="button" id="cancel" class="secondary">キャンセル</button><button type="submit" class="primary submit">登録する</button></div>
 </form></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

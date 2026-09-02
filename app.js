@@ -2158,10 +2158,25 @@
             : ""
         }
       </div>
+      <div class="tab-bar" id="detailTabBar">
+        <button type="button" class="tab-btn" data-tab-target="basic">基本情報</button>
+        <button type="button" class="tab-btn" data-tab-target="price">料金・決済方法</button>
+        <button type="button" class="tab-btn" data-tab-target="facility">施設情報</button>
+        <button type="button" class="tab-btn" data-tab-target="onsen">温泉情報</button>
+        <button type="button" class="tab-btn" data-tab-target="sauna">サウナ関連</button>
+        <button type="button" class="tab-btn" data-tab-target="amenity">シャワー・アメニティ</button>
+        <button type="button" class="tab-btn" data-tab-target="locker">ロッカー・靴箱</button>
+        <button type="button" class="tab-btn" data-tab-target="toilet">トイレ・バリアフリー</button>
+        <button type="button" class="tab-btn" data-tab-target="dining">お食事処・売店・自動販売機</button>
+        <button type="button" class="tab-btn" data-tab-target="rest-massage">休憩スペース・マッサージ</button>
+        <button type="button" class="tab-btn" data-tab-target="rental-misc">レンタルスペース・その他の施設</button>
+        <button type="button" class="tab-btn" data-tab-target="parking">駐車場</button>
+        <button type="button" class="tab-btn" data-tab-target="user">ユーザー情報・地図情報</button>
+      </div>
       <div class="detail-body">
 
         <!-- 基本情報（営業時間・料金・公式SNS・メモを含む） -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="basic">
           <h3>🏷️ 基本情報</h3>
 
           ${detailSubhead("🏢 施設業態")}
@@ -2248,7 +2263,7 @@
         </section>
 
         <!-- 料金（入浴料・その他料金区分・決済方法など） -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="price">
           <h3>💰 料金・決済方法</h3>
 
           ${detailSubhead("♨️ 入浴料")}
@@ -2287,7 +2302,7 @@
         </section>
 
         <!-- 施設情報（浴場・浴槽） -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="facility">
           <h3>🛀 施設情報</h3>
 
           ${detailSubhead("♨️ 浴場・浴槽の形状")}
@@ -2337,7 +2352,7 @@
 
 
         <!-- 温泉情報 -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="onsen">
           <h3>♨️ 温泉情報</h3>
 
           ${detailSubhead("♨️ 泉質")}
@@ -2403,7 +2418,7 @@
 
 
         <!-- サウナ関連 -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="sauna">
           <h3>🧖‍♀️ サウナ関連</h3>
 
           ${detailSubhead("🧖‍♀️ サウナ設備")}
@@ -2583,7 +2598,7 @@
         </section>
 
         <!-- シャワー -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="amenity">
           <h3>🚿 シャワー</h3>
           <div class="detail-grid">
             ${detailField("🚿 シャワーの数", item.shower_count)}
@@ -2603,7 +2618,7 @@
         </section>
 
         <!-- アメニティ -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="amenity">
           <h3>🧴 アメニティ・備品</h3>
           <div class="detail-grid">
             ${detailField("🧴 シャンプー・コンディショナー", item.shampoo_conditioner)}
@@ -2648,7 +2663,7 @@
         </section>
 
         <!-- ロッカー -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="locker">
           <h3>🔐 ロッカー</h3>
           <div class="detail-grid">
             ${detailField("🔐 ロッカー数", item.locker_count)}
@@ -2674,7 +2689,7 @@
         </section>
 
         <!-- 靴箱 -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="locker">
           <h3>👟 靴箱</h3>
           <div class="detail-grid">
             ${detailField("👟 靴箱数", item.shoebox_count)}
@@ -2688,7 +2703,7 @@
         </section>
 
         <!-- トイレ・バリアフリー -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="toilet">
           <h3>🚻 トイレ・バリアフリー</h3>
 
           <p class="field-subtitle">🚻 トイレの設置場所</p>
@@ -2722,9 +2737,9 @@
         </section>
 
 
-        <!-- お食事処・休憩スペース等の施設 -->
-        <section class="detail-section">
-          <h3>🛋 お食事処・休憩スペース等の施設</h3>
+        <!-- お食事処・売店・自動販売機 -->
+        <section class="detail-section" data-tab="dining">
+          <h3>🛋 お食事処・売店・自動販売機</h3>
 
           <div class="detail-grid">
             ${detailField("🍴 お食事処", item.restaurant_status)}
@@ -2752,6 +2767,41 @@
           ${item.restaurant_note ? `<p class="detail-note">${escapeHtml(item.restaurant_note)}</p>` : ""}
 
           <div class="detail-gap"></div>
+
+          <div class="detail-grid">
+            ${detailField("🥤 自動販売機", item.vending_machine_status)}
+            ${detailField("🚮 リサイクルボックス", item.recycle_box_status)}
+          </div>
+          <p class="field-subtitle">🥤 自動販売機の種類</p>
+          ${detailTags(item.vending_machine_types) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">🥤 設置場所</p>
+          ${detailTags(item.vending_machine_location) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.vending_machine_note ? `<p class="detail-note">${escapeHtml(item.vending_machine_note)}</p>` : ""}
+
+          <div class="detail-gap"></div>
+
+          <div class="detail-grid">
+            ${detailField("🛍 売店コーナー", item.shop_status)}
+            ${detailField("🕒 営業時間（売店）", item.shop_hours_type)}
+          </div>
+          ${
+            item.shop_hours_type === "利用時間あり"
+              ? `<div class="detail-grid">
+                  ${detailField("開始", item.shop_hours_open)}
+                  ${detailField("終了", item.shop_hours_close)}
+                </div>`
+              : ""
+          }
+          <p class="field-subtitle">🛍 売店コーナーの品揃え</p>
+          ${detailTags(item.shop_items) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">💴 決済方法（売店）</p>
+          ${detailTags(item.shop_payment) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.shop_note ? `<p class="detail-note">${escapeHtml(item.shop_note)}</p>` : ""}
+        </section>
+
+        <!-- 休憩スペース・マッサージ -->
+        <section class="detail-section" data-tab="rest-massage">
+          <h3>🛋 休憩スペース・マッサージ</h3>
 
           <div class="detail-grid">
             ${detailField("🛋 休憩スペース", item.rest_space_status)}
@@ -2828,8 +2878,11 @@
             )}
           </div>
           ${item.massage_note ? `<p class="detail-note">${escapeHtml(item.massage_note)}</p>` : ""}
+        </section>
 
-          <div class="detail-gap"></div>
+        <!-- レンタルスペース・その他の施設 -->
+        <section class="detail-section" data-tab="rental-misc">
+          <h3>🛋 レンタルスペース・その他の施設</h3>
 
           <div class="detail-grid">
             ${detailField("💬 レンタルスペース", item.rental_space_status)}
@@ -2838,38 +2891,6 @@
           <p class="field-subtitle">👩🏻‍💻 レンタル・コワーキングスペースの特徴</p>
           ${detailTags(item.coworking_features) || `<p class="detail-note-tight">情報がありません。</p>`}
           ${item.coworking_note ? `<p class="detail-note">${escapeHtml(item.coworking_note)}</p>` : ""}
-
-          <div class="detail-gap"></div>
-
-          <div class="detail-grid">
-            ${detailField("🥤 自動販売機", item.vending_machine_status)}
-            ${detailField("🚮 リサイクルボックス", item.recycle_box_status)}
-          </div>
-          <p class="field-subtitle">🥤 自動販売機の種類</p>
-          ${detailTags(item.vending_machine_types) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-subtitle">🥤 設置場所</p>
-          ${detailTags(item.vending_machine_location) || `<p class="detail-note-tight">情報がありません。</p>`}
-          ${item.vending_machine_note ? `<p class="detail-note">${escapeHtml(item.vending_machine_note)}</p>` : ""}
-
-          <div class="detail-gap"></div>
-
-          <div class="detail-grid">
-            ${detailField("🛍 売店コーナー", item.shop_status)}
-            ${detailField("🕒 営業時間（売店）", item.shop_hours_type)}
-          </div>
-          ${
-            item.shop_hours_type === "利用時間あり"
-              ? `<div class="detail-grid">
-                  ${detailField("開始", item.shop_hours_open)}
-                  ${detailField("終了", item.shop_hours_close)}
-                </div>`
-              : ""
-          }
-          <p class="field-subtitle">🛍 売店コーナーの品揃え</p>
-          ${detailTags(item.shop_items) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-subtitle">💴 決済方法（売店）</p>
-          ${detailTags(item.shop_payment) || `<p class="detail-note-tight">情報がありません。</p>`}
-          ${item.shop_note ? `<p class="detail-note">${escapeHtml(item.shop_note)}</p>` : ""}
 
           <div class="detail-gap"></div>
 
@@ -2905,7 +2926,7 @@
         </section>
 
         <!-- 駐車場・駐輪場 -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="parking">
           <h3>🅿️ 駐車場・駐輪場</h3>
           <div class="detail-grid">
             ${detailField("🅿️ 駐車場", item.parking_status)}
@@ -2932,7 +2953,7 @@
         ${
           item.notice_info || item.event_info
             ? `
-              <section class="detail-section">
+              <section class="detail-section" data-tab="user">
                 <h3>📢 お知らせ・イベント情報</h3>
                 ${item.notice_info ? `<p class="field-title">📢 施設からのお知らせ情報</p><p class="detail-note">${escapeHtml(item.notice_info)}</p>` : ""}
                 ${item.event_info ? `<p class="field-title">📢 イベント情報・期間限定情報</p><p class="detail-note">${escapeHtml(item.event_info)}</p>` : ""}
@@ -2942,7 +2963,7 @@
         }
 
         <!-- ユーザー情報 -->
-        <section class="detail-section">
+        <section class="detail-section" data-tab="user">
           <h3>⭐️ ユーザー情報</h3>
           <p class="field-subtitle">✍️ 情報源</p>
           ${detailTags(item.user_info_source) || `<p class="detail-note-tight">情報がありません。</p>`}
@@ -2953,7 +2974,7 @@
         ${
           item.lat != null || item.lng != null || item.google_maps_url || item.apple_maps_url
             ? `
-              <section class="detail-section">
+              <section class="detail-section" data-tab="user">
                 <h3>地図情報</h3>
                 <div class="detail-grid">
                   ${detailField("緯度", item.lat)}
@@ -2984,6 +3005,18 @@
     `;
   }
 
+  function switchDetailTab(tabKey) {
+    document.querySelectorAll('.detail-section[data-tab]').forEach((section) => {
+      section.classList.toggle("tab-active", section.dataset.tab === tabKey);
+    });
+    document.querySelectorAll("#detailTabBar .tab-btn").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.tabTarget === tabKey);
+    });
+    const detailView = $("detailView");
+    if (detailView) detailView.scrollTop = 0;
+    window.scrollTo(0, 0);
+  }
+
   async function showDetail(id) {
     const listView = $("listView");
     const detailView = $("detailView");
@@ -3011,6 +3044,11 @@
 
     detailView.innerHTML = renderDetailHTML(item);
 
+    document.querySelectorAll("#detailTabBar .tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => switchDetailTab(btn.dataset.tabTarget));
+    });
+    switchDetailTab("basic");
+
     $("detailBack")?.addEventListener("click", () => {
       location.hash = "";
     });
@@ -3027,6 +3065,7 @@
         modal.setAttribute("aria-hidden", "false");
         document.body.classList.add("modal-open");
       }
+      switchFormTab("basic");
 
       const titleEl = $("modalTitle");
       if (titleEl) titleEl.textContent = "温泉を編集";
@@ -3371,6 +3410,7 @@
       modal.classList.remove("hidden");
       modal.setAttribute("aria-hidden", "false");
       document.body.classList.add("modal-open");
+      switchFormTab("basic");
 
       // レンタル品欄が空なら、まず1行用意しておく（フォーカスは奪わない）
       const rentalRows = $("rentalRows");
@@ -3601,6 +3641,10 @@
       button.closest(".rental-row")?.remove();
     });
 
+    document.querySelectorAll("#formTabBar .tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => switchFormTab(btn.dataset.tabTarget));
+    });
+
     $("close")?.addEventListener("click", closeModal);
     $("cancel")?.addEventListener("click", closeModal);
 
@@ -3643,6 +3687,17 @@
     });
 
     window.addEventListener("hashchange", route);
+  }
+
+  function switchFormTab(tabKey) {
+    document.querySelectorAll('.form-section[data-tab]').forEach((section) => {
+      section.classList.toggle("tab-active", section.dataset.tab === tabKey);
+    });
+    document.querySelectorAll("#formTabBar .tab-btn").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.tabTarget === tabKey);
+    });
+    const dialog = document.querySelector(".dialog");
+    if (dialog) dialog.scrollTop = 0;
   }
 
   function closeModal() {
