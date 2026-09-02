@@ -36,6 +36,7 @@ body.modal-open{overflow:hidden}.primary{background:#875020;color:#fff}.secondar
 .detail-heading-block h2{margin:0 0 12px;font-size:26px}
 .status-badge{display:inline-block;padding:6px 13px;border-radius:99px;font-size:13px;font-weight:700;border:1px solid transparent}
 .detail-visit-dates{margin:8px 0 0;font-size:12px;color:#807972}
+.detail-visit-dates + .detail-visit-dates{margin-top:2px}
 .status-open{background:#e5f5ec;color:#177144;border-color:#b9e4cc}
 .status-closed-hours{background:#fff7e0;color:#8a6d1a;border-color:#f0dfa0}
 .status-holiday{background:#fdecea;color:#b5473c;border-color:#f0c9c5}
