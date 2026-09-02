@@ -2154,7 +2154,7 @@
         ${status ? `<span class="status-badge ${status.className}">${escapeHtml(status.label)}</span>` : ""}
         ${
           item.last_visit_date || item.last_info_check_date
-            ? `<p class="detail-visit-dates">🗓 最終訪問日：${escapeHtml(item.last_visit_date || "未記録")}　🕒 最終情報確認日：${escapeHtml(item.last_info_check_date || "未記録")}</p>`
+            ? `<p class="detail-visit-dates">🗓 最終訪問日：${escapeHtml(item.last_visit_date || "未記録")}</p><p class="detail-visit-dates">🕒 最終情報確認日：${escapeHtml(item.last_info_check_date || "未記録")}</p>`
             : ""
         }
       </div>
