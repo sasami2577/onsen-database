@@ -933,7 +933,6 @@
           ? [value("userInfoSourceOther") || "その他"]
           : [])
       ],
-      facility_rating: numberValue("facilityRating"),
       my_impression: value("myImpression"),
 
       // 📍 位置情報・メモ
@@ -1003,15 +1002,6 @@
     if ($(`${prefix}Year`)) $(`${prefix}Year`).value = y || "";
     if ($(`${prefix}Month`)) $(`${prefix}Month`).value = m ? String(Number(m)) : "";
     if ($(`${prefix}Day`)) $(`${prefix}Day`).value = d ? String(Number(d)) : "";
-  }
-
-  function setStarRating(value) {
-    const ratingStars = $("facilityRatingStars");
-    if (!ratingStars) return;
-    ratingStars.querySelectorAll(".star").forEach((star) => {
-      star.classList.toggle("filled", Number(star.dataset.star) <= value);
-    });
-    if ($("facilityRating")) $("facilityRating").value = String(value);
   }
 
   function populateFeeRows(containerId, fees) {
@@ -1717,7 +1707,6 @@
       "userInfoSourceOtherCheck",
       "userInfoSourceOther"
     );
-    setStarRating(item.facility_rating || 0);
     setValue("myImpression", item.my_impression);
 
     // 📍 位置情報・メモ
@@ -2163,6 +2152,11 @@
         ${place ? `<p class="detail-location">📍 ${escapeHtml(place)}</p>` : ""}
         <h2>${escapeHtml(item.name || "名称未設定")}</h2>
         ${status ? `<span class="status-badge ${status.className}">${escapeHtml(status.label)}</span>` : ""}
+        ${
+          item.last_visit_date || item.last_info_check_date
+            ? `<p class="detail-visit-dates">🗓 最終訪問日：${escapeHtml(item.last_visit_date || "未記録")}　🕒 最終情報確認日：${escapeHtml(item.last_info_check_date || "未記録")}</p>`
+            : ""
+        }
       </div>
       <div class="detail-body">
 
@@ -2925,6 +2919,7 @@
           ${detailTags(item.parking_types) || `<p class="detail-note-tight">情報がありません。</p>`}
           <p class="field-subtitle">♿️ バリアフリー・大型車対応</p>
           ${detailTags(item.parking_accessible) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-gap"></div>
           <div class="detail-grid">
             ${detailField("🚗 多忙期の臨時駐車場", item.parking_temporary)}
             ${detailField("🏍 バイク駐車場", item.motorcycle_parking)}
@@ -2949,14 +2944,8 @@
         <!-- ユーザー情報 -->
         <section class="detail-section">
           <h3>⭐️ ユーザー情報</h3>
-          <div class="detail-grid">
-            ${detailField("🗓 最終訪問日", item.last_visit_date)}
-            ${detailField("🕒 最終情報確認日", item.last_info_check_date)}
-          </div>
           <p class="field-subtitle">✍️ 情報源</p>
           ${detailTags(item.user_info_source) || `<p class="detail-note-tight">情報がありません。</p>`}
-          <p class="field-title">⭐️ 施設の評価</p>
-          <p class="detail-note-tight">${item.facility_rating ? "★".repeat(item.facility_rating) + "☆".repeat(5 - item.facility_rating) : "評価なし"}</p>
           ${item.my_impression ? `<p class="field-title">📝 自分の感想</p><p class="detail-note">${escapeHtml(item.my_impression)}</p>` : ""}
         </section>
 
@@ -3036,6 +3025,7 @@
       if (modal) {
         modal.classList.remove("hidden");
         modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
       }
 
       const titleEl = $("modalTitle");
@@ -3350,7 +3340,6 @@
     $("parkingTypesOther")?.classList.add("hidden");
     $("parkingAccessibleOther")?.classList.add("hidden");
     $("userInfoSourceOther")?.classList.add("hidden");
-    setStarRating(0);
     $("shopHoursWrap")?.classList.add("hidden");
     $("wifiFeeWrap")?.classList.add("hidden");
     $("chargingFeeWrap")?.classList.add("hidden");
@@ -3381,6 +3370,7 @@
 
       modal.classList.remove("hidden");
       modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
 
       // レンタル品欄が空なら、まず1行用意しておく（フォーカスは奪わない）
       const rentalRows = $("rentalRows");
@@ -3539,19 +3529,6 @@
       });
     });
 
-    // 施設の評価：星をタップして0〜5段階評価
-    const ratingStars = $("facilityRatingStars");
-    if (ratingStars) {
-      ratingStars.querySelectorAll(".star").forEach((star) => {
-        star.addEventListener("click", () => {
-          const value = Number(star.dataset.star);
-          const current = Number($("facilityRating")?.value || 0);
-          // 同じ星をもう一度押すと評価を0に戻す
-          setStarRating(current === value ? 0 : value);
-        });
-      });
-    }
-
     [
       ["bathShapeOtherCheck", "bathShapeOther"],
       ["bathFunctionOtherCheck", "bathFunctionOther"],
@@ -3627,10 +3604,20 @@
     $("close")?.addEventListener("click", closeModal);
     $("cancel")?.addEventListener("click", closeModal);
 
+    // 背景（バックドロップ）を押し始めて、そのまま押し終えた時だけ閉じる。
+    // ダイアログ内をスクロールした際に指が背景側で離れて誤って閉じてしまう
+    // モバイルでの不具合を防ぐため、押し始めた場所も背景かどうかを確認する。
+    let modalPressStartedOnBackdrop = false;
+
+    $("modal")?.addEventListener("pointerdown", (event) => {
+      modalPressStartedOnBackdrop = event.target === $("modal");
+    });
+
     $("modal")?.addEventListener("click", (event) => {
-      if (event.target === $("modal")) {
+      if (event.target === $("modal") && modalPressStartedOnBackdrop) {
         closeModal();
       }
+      modalPressStartedOnBackdrop = false;
     });
 
     // カードクリック・Enterキーで詳細画面へ
@@ -3664,6 +3651,7 @@
 
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
 
     // 編集状態やフォームの内容が残らないよう、閉じるたびに初期状態へ戻す
     editingId = null;
