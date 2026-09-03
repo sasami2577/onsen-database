@@ -523,6 +523,7 @@
       sauna_hourglass: radioValue("saunaHourglass"),
       sauna_tv: radioValue("saunaTv"),
       sauna_tv_remote: radioValue("saunaTvRemote"),
+      sauna_emergency_button: radioValue("saunaEmergencyButton"),
       sauna_stones: radioValue("saunaStones"),
       sauna_stove_type:
         radioValue("saunaStoveType") === "その他" && value("saunaStoveTypeOther")
@@ -1251,6 +1252,7 @@
     setRadioValue("saunaHourglass", item.sauna_hourglass);
     setRadioValue("saunaTv", item.sauna_tv);
     setRadioValue("saunaTvRemote", item.sauna_tv_remote);
+    setRadioValue("saunaEmergencyButton", item.sauna_emergency_button);
     setRadioValue("saunaStones", item.sauna_stones);
 
     if (["電気ストーブ", "薪ストーブ", "ガスストーブ", "遠赤外線ストーブ", "ハイブリッド"].includes(item.sauna_stove_type)) {
@@ -2161,8 +2163,8 @@
       <div class="tab-bar" id="detailTabBar">
         <button type="button" class="tab-btn" data-tab-target="basic">基本情報</button>
         <button type="button" class="tab-btn" data-tab-target="price">料金・決済方法</button>
-        <button type="button" class="tab-btn" data-tab-target="facility">施設情報</button>
         <button type="button" class="tab-btn" data-tab-target="onsen">温泉情報</button>
+        <button type="button" class="tab-btn" data-tab-target="facility">浴場情報</button>
         <button type="button" class="tab-btn" data-tab-target="sauna">サウナ関連</button>
         <button type="button" class="tab-btn" data-tab-target="amenity">シャワー・アメニティ</button>
         <button type="button" class="tab-btn" data-tab-target="locker">ロッカー・靴箱</button>
@@ -2237,6 +2239,16 @@
           ${item.closed_days_note ? `<p class="detail-note">${escapeHtml(item.closed_days_note)}</p>` : ""}
 
           ${
+            item.notice_info || item.event_info
+              ? `
+                ${detailSubhead("📢 お知らせ・イベント情報")}
+                ${item.notice_info ? `<p class="field-title">📢 施設からのお知らせ情報</p><p class="detail-note">${escapeHtml(item.notice_info)}</p>` : ""}
+                ${item.event_info ? `<p class="field-title">📢 イベント情報・期間限定情報</p><p class="detail-note">${escapeHtml(item.event_info)}</p>` : ""}
+              `
+              : ""
+          }
+
+          ${
             links.length
               ? `
                 ${detailSubhead("📱 公式情報・SNS")}
@@ -2303,7 +2315,7 @@
 
         <!-- 施設情報（浴場・浴槽） -->
         <section class="detail-section" data-tab="facility">
-          <h3>🛀 施設情報</h3>
+          <h3>🛀 浴場情報</h3>
 
           ${detailSubhead("♨️ 浴場・浴槽の形状")}
           ${detailTags(item.bath_shape) || `<p class="detail-note-tight">情報がありません。</p>`}
@@ -2487,6 +2499,7 @@
             ${detailField("⏳ 砂時計", item.sauna_hourglass)}
             ${detailField("📺 テレビ", item.sauna_tv)}
             ${detailField("📺 テレビリモコン", item.sauna_tv_remote)}
+            ${detailField("🚨 サウナ室内の非常ボタン", item.sauna_emergency_button)}
             ${detailField("🪨 サウナストーン", item.sauna_stones)}
             ${detailField("🔥 ストーブタイプ", item.sauna_stove_type)}
             ${detailField(
@@ -2948,19 +2961,6 @@
           </div>
           ${item.parking_note ? `<p class="detail-note">${escapeHtml(item.parking_note)}</p>` : ""}
         </section>
-
-        <!-- お知らせ・イベント情報 -->
-        ${
-          item.notice_info || item.event_info
-            ? `
-              <section class="detail-section" data-tab="user">
-                <h3>📢 お知らせ・イベント情報</h3>
-                ${item.notice_info ? `<p class="field-title">📢 施設からのお知らせ情報</p><p class="detail-note">${escapeHtml(item.notice_info)}</p>` : ""}
-                ${item.event_info ? `<p class="field-title">📢 イベント情報・期間限定情報</p><p class="detail-note">${escapeHtml(item.event_info)}</p>` : ""}
-              </section>
-            `
-            : ""
-        }
 
         <!-- ユーザー情報 -->
         <section class="detail-section" data-tab="user">

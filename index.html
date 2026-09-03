@@ -31,8 +31,8 @@
 <div class="tab-bar" id="formTabBar">
 <button type="button" class="tab-btn" data-tab-target="basic">基本情報</button>
 <button type="button" class="tab-btn" data-tab-target="price">料金・決済方法</button>
-<button type="button" class="tab-btn" data-tab-target="facility">施設情報</button>
 <button type="button" class="tab-btn" data-tab-target="onsen">温泉情報</button>
+<button type="button" class="tab-btn" data-tab-target="facility">浴場情報</button>
 <button type="button" class="tab-btn" data-tab-target="sauna">サウナ関連</button>
 <button type="button" class="tab-btn" data-tab-target="amenity">シャワー・アメニティ</button>
 <button type="button" class="tab-btn" data-tab-target="locker">ロッカー・靴箱</button>
@@ -45,7 +45,7 @@
 </div>
 <form id="form">
 <section class="form-section" data-tab="basic"><h3>基本情報</h3><div class="grid two">
-<label class="full">温泉名 <em>必須</em><input id="name" required maxlength="100" placeholder="例：○○温泉"></label>
+<label class="full">温泉・施設名 <em>必須</em><input id="name" required maxlength="100" placeholder="例：○○温泉"></label>
 <label>都道府県<select id="prefecture"><option value="">選択してください</option><option>北海道</option><option>青森県</option><option>岩手県</option><option>宮城県</option><option>秋田県</option><option>山形県</option><option>福島県</option><option>茨城県</option><option>栃木県</option><option>群馬県</option><option>埼玉県</option><option>千葉県</option><option>東京都</option><option>神奈川県</option><option>新潟県</option><option>富山県</option><option>石川県</option><option>福井県</option><option>山梨県</option><option>長野県</option><option>岐阜県</option><option>静岡県</option><option>愛知県</option><option>三重県</option><option>滋賀県</option><option>京都府</option><option>大阪府</option><option>兵庫県</option><option>奈良県</option><option>和歌山県</option><option>鳥取県</option><option>島根県</option><option>岡山県</option><option>広島県</option><option>山口県</option><option>徳島県</option><option>香川県</option><option>愛媛県</option><option>高知県</option><option>福岡県</option><option>佐賀県</option><option>長崎県</option><option>熊本県</option><option>大分県</option><option>宮崎県</option><option>鹿児島県</option><option>沖縄県</select></label>
 <label>市区町村・地域<input id="area" placeholder="例：草津町"></label>
 
@@ -163,7 +163,7 @@
 <label class="full compact-top">その他料金・決済方法に関する補足事項<textarea id="priceNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section" data-tab="facility"><h3>🛀 施設情報</h3>
+<section class="form-section" data-tab="facility"><h3>🛀 浴場情報</h3>
 
 <fieldset class="full"><legend>♨️ 浴場・浴槽の形状</legend><div class="checks">
 <label><input type="checkbox" name="bathShape" value="大浴場">大浴場</label>
@@ -485,9 +485,11 @@
 
 <fieldset class="full compact-top"><legend>🧖‍♀️ サウナ設備の場所</legend>
 <div class="checks">
-<label><input type="radio" name="saunaFacilityLocation" value="屋内" checked>屋内</label>
+<label><input type="radio" name="saunaFacilityLocation" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaFacilityLocation" value="屋内">屋内</label>
 <label><input type="radio" name="saunaFacilityLocation" value="屋外">屋外</label>
 <label><input type="radio" name="saunaFacilityLocation" value="両方設置">両方設置</label>
+<label><input type="radio" name="saunaFacilityLocation" value="なし">なし</label>
 <label><input type="radio" name="saunaFacilityLocation" value="その他">その他</label>
 </div>
 <input type="text" id="saunaFacilityLocationOther" class="hidden compact-top" placeholder="その他の内容を入力">
@@ -576,6 +578,13 @@
 <label><input type="radio" name="saunaTvRemote" value="不明" checked>不明</label>
 <label><input type="radio" name="saunaTvRemote" value="あり">あり</label>
 <label><input type="radio" name="saunaTvRemote" value="なし">なし</label>
+</div></fieldset>
+
+<fieldset class="full compact-top"><legend>🚨 サウナ室内の非常ボタン</legend>
+<div class="checks">
+<label><input type="radio" name="saunaEmergencyButton" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaEmergencyButton" value="あり">あり</label>
+<label><input type="radio" name="saunaEmergencyButton" value="なし">なし</label>
 </div></fieldset>
 
 <fieldset class="full compact-top"><legend>🪨 サウナストーン</legend>
@@ -714,7 +723,8 @@
 
 <fieldset class="full compact-top"><legend>🚪 サウナ室のドア</legend>
 <div class="checks">
-<label><input type="radio" name="saunaDoorType" value="押し引きタイプ" checked>押し引きタイプ</label>
+<label><input type="radio" name="saunaDoorType" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaDoorType" value="押し引きタイプ">押し引きタイプ</label>
 <label><input type="radio" name="saunaDoorType" value="取っ手を回すタイプ">取っ手を回すタイプ</label>
 <label><input type="radio" name="saunaDoorType" value="その他">その他</label>
 </div>
@@ -723,14 +733,16 @@
 
 <fieldset class="full compact-top"><legend>🚪 サウナ室内から出る際</legend>
 <div class="checks">
-<label><input type="radio" name="saunaExitDirection" value="押して出る" checked>押して出る</label>
+<label><input type="radio" name="saunaExitDirection" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaExitDirection" value="押して出る">押して出る</label>
 <label><input type="radio" name="saunaExitDirection" value="引いて出る">引いて出る</label>
 </div>
 </fieldset>
 
 <fieldset class="full compact-top"><legend>💡 照明の明るさ</legend>
 <div class="checks">
-<label><input type="radio" name="saunaLightBrightness" value="明るい" checked>明るい</label>
+<label><input type="radio" name="saunaLightBrightness" value="不明" checked>不明</label>
+<label><input type="radio" name="saunaLightBrightness" value="明るい">明るい</label>
 <label><input type="radio" name="saunaLightBrightness" value="暗い">暗い</label>
 </div>
 </fieldset>
@@ -904,7 +916,8 @@
 
 <fieldset class="full compact-top"><legend>🏠 屋根・雨対策</legend>
 <div class="checks">
-<label><input type="radio" name="roofRainProtection" value="全設置あり" checked>全設置あり</label>
+<label><input type="radio" name="roofRainProtection" value="不明" checked>不明</label>
+<label><input type="radio" name="roofRainProtection" value="全設置あり">全設置あり</label>
 <label><input type="radio" name="roofRainProtection" value="一部あり">一部あり</label>
 <label><input type="radio" name="roofRainProtection" value="なし">なし</label>
 </div>
@@ -912,7 +925,8 @@
 
 <fieldset class="full compact-top"><legend>☀️ 日なた・日陰</legend>
 <div class="checks">
-<label><input type="radio" name="sunShade" value="日なた" checked>日なた</label>
+<label><input type="radio" name="sunShade" value="不明" checked>不明</label>
+<label><input type="radio" name="sunShade" value="日なた">日なた</label>
 <label><input type="radio" name="sunShade" value="一部日陰">一部日陰</label>
 <label><input type="radio" name="sunShade" value="日陰">日陰</label>
 </div>
@@ -1004,6 +1018,7 @@
 <label><input type="radio" name="shampooConditioner" value="シャンプーのみ">シャンプーのみ</label>
 <label><input type="radio" name="shampooConditioner" value="コンディショナーのみ">コンディショナーのみ</label>
 <label><input type="radio" name="shampooConditioner" value="両方別々に設置">両方別々に設置</label>
+<label><input type="radio" name="shampooConditioner" value="両方なし">両方なし</label>
 <label><input type="radio" name="shampooConditioner" value="リンスインシャンプー">リンスインシャンプー</label>
 </div></fieldset>
 
@@ -1895,13 +1910,6 @@
 <label class="full compact-top">🅿️ 備考（駐車場・駐輪場）<textarea id="parkingNote" rows="3"></textarea></label>
 
 </section>
-<section class="form-section" data-tab="user"><h3>📢 お知らせ・イベント情報</h3>
-
-<label class="full">📢 施設からのお知らせ情報<textarea id="noticeInfo" rows="3"></textarea></label>
-
-<label class="full compact-top">📢 イベント情報・期間限定情報<textarea id="eventInfo" rows="3"></textarea></label>
-
-</section>
 <section class="form-section" data-tab="user"><h3>⭐️ ユーザー情報</h3>
 
 <fieldset class="full"><p class="field-title">🗓 最終訪問日</p>
@@ -1942,6 +1950,13 @@
 <label class="full compact-top">📝 自分の感想<textarea id="myImpression" rows="4"></textarea></label>
 
 <div class="full compact-top"><p class="field-title">📷 写真投稿</p><p class="note-inline">今後実装予定です。</p></div>
+
+</section>
+<section class="form-section" data-tab="basic"><h3>📢 お知らせ・イベント情報</h3>
+
+<label class="full">📢 施設からのお知らせ情報<textarea id="noticeInfo" rows="3"></textarea></label>
+
+<label class="full compact-top">📢 イベント情報・期間限定情報<textarea id="eventInfo" rows="3"></textarea></label>
 
 </section>
 <section class="form-section" data-tab="basic"><h3>公式情報・SNS</h3><div class="grid two">
