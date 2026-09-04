@@ -5103,6 +5103,28 @@
     return null;
   }
 
+  function buildMapPinIcon(businessType) {
+    const style = BUSINESS_TYPE_STYLES[businessType] || {
+      emoji: "📍",
+      bg: "#8a968f"
+    };
+
+    const html = `
+      <div class="map-pin">
+        <div class="map-pin-head" style="background:${style.bg}">${style.emoji}</div>
+        <div class="map-pin-tip" style="border-top-color:${style.bg}"></div>
+      </div>
+    `;
+
+    return L.divIcon({
+      html,
+      className: "map-pin-wrapper",
+      iconSize: [34, 46],
+      iconAnchor: [17, 46],
+      popupAnchor: [0, -44]
+    });
+  }
+
   function updateMap(list) {
     if (!window.L || !$("mapContainer")) return;
     if (!leafletMap) initMap();
@@ -5120,12 +5142,27 @@
     }
 
     items.forEach((item) => {
-      const marker = L.marker([Number(item.lat), Number(item.lng)]);
+      const marker = L.marker([Number(item.lat), Number(item.lng)], {
+        icon: buildMapPinIcon(item.business_type)
+      });
+
       const name = escapeHtml(item.name || "名称未設定");
       const place = escapeHtml([item.prefecture, item.area].filter(Boolean).join(" "));
+      const status = getOpenStatus(item);
+      const mapsUrl = item.google_maps_url
+        ? item.google_maps_url
+        : `https://www.google.com/maps?q=${item.lat},${item.lng}`;
 
       marker.bindPopup(
-        `<div class="map-popup"><b>📍 ${name}</b>${place ? `${place}<br>` : ""}<a href="#detail-${encodeURIComponent(item.id)}">詳細を見る</a></div>`
+        `<div class="map-popup">
+          <b>${name}</b>
+          ${place ? `<p class="map-popup-place">📍 ${place}</p>` : ""}
+          ${status ? `<span class="status-badge ${status.className}">${escapeHtml(status.label)}</span>` : ""}
+          <div class="map-popup-links">
+            <a href="#detail-${encodeURIComponent(item.id)}">施設詳細を見る</a>
+            <a href="${escapeHtml(mapsUrl)}" target="_blank" rel="noopener">Googleマップで見る</a>
+          </div>
+        </div>`
       );
       marker.addTo(leafletMarkerGroup);
     });
@@ -5145,10 +5182,17 @@
 
   window.__onsenData = [];
 
+  function updateFacilityCount(list) {
+    const el = $("facilityCount");
+    if (!el) return;
+    el.textContent = Array.isArray(list) ? String(list.length) : "0";
+  }
+
   function renderCardsWithData(list) {
     window.__onsenData = Array.isArray(list) ? list : [];
     originalRenderCards(window.__onsenData);
     updateMap(window.__onsenData);
+    updateFacilityCount(window.__onsenData);
   }
 
   // ---------------------------------------------------------
@@ -5192,6 +5236,7 @@
       originalRenderCards(data);
       updateMigrateBanner();
       updateMap(data);
+      updateFacilityCount(data);
 
       if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
         setStatus(
@@ -5211,6 +5256,7 @@
       originalRenderCards(localData);
       updateMigrateBanner();
       updateMap(localData);
+      updateFacilityCount(localData);
 
       setStatus(
         `一覧の読込に失敗しました：${error.message || "不明なエラー"}`,
