@@ -4069,6 +4069,7 @@
 
     let successCount = 0;
     const failed = [];
+    const errorMessages = new Set();
 
     for (const item of localData) {
       const payload = { ...item };
@@ -4080,6 +4081,7 @@
       } catch (error) {
         console.error("移行失敗:", item.name, error);
         failed.push(item);
+        errorMessages.add(error.message || "不明なエラー");
       }
     }
 
@@ -4094,7 +4096,8 @@
     if (failed.length) {
       alert(
         `${successCount}件を移行しました。\n` +
-        `${failed.length}件は移行できませんでした（この端末には残っています）。`
+        `${failed.length}件は移行できませんでした（この端末には残っています）。\n\n` +
+        `エラー内容：\n${[...errorMessages].join("\n")}`
       );
     } else {
       alert(`${successCount}件すべてSupabaseに移行しました。`);
