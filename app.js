@@ -124,8 +124,8 @@
 
   let rentalRowSeq = 0;
 
-  function addRentalRow(name = "", price = "", { focus = true } = {}) {
-    const rows = $("rentalRows");
+  function addRentalRow(containerId, name = "", price = "", { focus = true } = {}) {
+    const rows = $(containerId);
     if (!rows) return;
 
     const rowId = `rental-${++rentalRowSeq}`;
@@ -145,8 +145,8 @@
     }
   }
 
-  function collectRentalItems() {
-    const rows = $("rentalRows");
+  function collectRentalItems(containerId) {
+    const rows = $(containerId);
     if (!rows) return [];
 
     const result = [];
@@ -391,36 +391,67 @@
       twitter: value("twitter"),
       facebook: value("facebook"),
 
-      bath_shape: [
-        ...checkedValues("bathShape"),
-        ...(checkedBool("bathShapeOtherCheck")
-          ? [value("bathShapeOther") || "その他の形状"]
+      bath_shape_male: [
+        ...checkedValues("maleBathShape"),
+        ...(checkedBool("maleBathShapeOtherCheck")
+          ? [value("maleBathShapeOther") || "その他の形状"]
           : [])
       ],
-      bath_function: [
-        ...checkedValues("bathFunction"),
-        ...(checkedBool("bathFunctionOtherCheck")
-          ? [value("bathFunctionOther") || "その他の機能・種類"]
+      bath_function_male: [
+        ...checkedValues("maleBathFunction"),
+        ...(checkedBool("maleBathFunctionOtherCheck")
+          ? [value("maleBathFunctionOther") || "その他の機能・種類"]
           : [])
       ],
-      private_bath_duration: numberValue("privateBathDuration"),
-      private_bath_capacity_status: radioValue("privateBathCapacityStatus"),
-      private_bath_capacity: numberValue("privateBathCapacity"),
-      private_bath_note: value("privateBathNote"),
-      bath_location: [
-        ...checkedValues("bathLocation"),
-        ...(checkedBool("bathLocationOtherCheck")
-          ? [value("bathLocationOther") || "その他"]
+      private_bath_duration_male: numberValue("malePrivateBathDuration"),
+      private_bath_capacity_status_male: radioValue("malePrivateBathCapacityStatus"),
+      private_bath_capacity_male: numberValue("malePrivateBathCapacity"),
+      private_bath_note_male: value("malePrivateBathNote"),
+      bath_location_male: [
+        ...checkedValues("maleBathLocation"),
+        ...(checkedBool("maleBathLocationOtherCheck")
+          ? [value("maleBathLocationOther") || "その他"]
           : [])
       ],
-      bath_handrail: radioValue("bathHandrail"),
-      toiletry_shelf: radioValue("toiletryShelf"),
-      bath_anteroom: radioValue("bathAnteroom"),
-      bath_event: radioValue("bathEvent"),
-      bath_event_detail: value("bathEventDetail"),
-      bath_toys: radioValue("bathToys"),
-      bath_toys_detail: value("bathToysDetail"),
-      bath_note: value("bathNote"),
+      bath_handrail_male: radioValue("maleBathHandrail"),
+      toiletry_shelf_male: radioValue("maleToiletryShelf"),
+      bath_anteroom_male: radioValue("maleBathAnteroom"),
+      bath_event_male: radioValue("maleBathEvent"),
+      bath_event_detail_male: value("maleBathEventDetail"),
+      bath_toys_male: radioValue("maleBathToys"),
+      bath_toys_detail_male: value("maleBathToysDetail"),
+      bath_note_male: value("maleBathNote"),
+
+      bath_shape_female: [
+        ...checkedValues("femaleBathShape"),
+        ...(checkedBool("femaleBathShapeOtherCheck")
+          ? [value("femaleBathShapeOther") || "その他の形状"]
+          : [])
+      ],
+      bath_function_female: [
+        ...checkedValues("femaleBathFunction"),
+        ...(checkedBool("femaleBathFunctionOtherCheck")
+          ? [value("femaleBathFunctionOther") || "その他の機能・種類"]
+          : [])
+      ],
+      private_bath_duration_female: numberValue("femalePrivateBathDuration"),
+      private_bath_capacity_status_female: radioValue("femalePrivateBathCapacityStatus"),
+      private_bath_capacity_female: numberValue("femalePrivateBathCapacity"),
+      private_bath_note_female: value("femalePrivateBathNote"),
+      bath_location_female: [
+        ...checkedValues("femaleBathLocation"),
+        ...(checkedBool("femaleBathLocationOtherCheck")
+          ? [value("femaleBathLocationOther") || "その他"]
+          : [])
+      ],
+      bath_handrail_female: radioValue("femaleBathHandrail"),
+      toiletry_shelf_female: radioValue("femaleToiletryShelf"),
+      bath_anteroom_female: radioValue("femaleBathAnteroom"),
+      bath_event_female: radioValue("femaleBathEvent"),
+      bath_event_detail_female: value("femaleBathEventDetail"),
+      bath_toys_female: radioValue("femaleBathToys"),
+      bath_toys_detail_female: value("femaleBathToysDetail"),
+      bath_note_female: value("femaleBathNote"),
 
       // ♨️ 温泉情報
       spring_types: [
@@ -490,254 +521,504 @@
       child_info_check_date: dateValue("childInfoCheck"),
 
       // 🧖‍♀️ サウナ関連
-      sauna_facility: radioValue("saunaFacility"),
-      sauna_facility_suspended: checkedBool("saunaFacilitySuspended"),
-      sauna_facility_location:
-        radioValue("saunaFacilityLocation") === "その他" && value("saunaFacilityLocationOther")
-          ? value("saunaFacilityLocationOther")
-          : radioValue("saunaFacilityLocation"),
-      sauna_hours_type: radioValue("saunaHoursType"),
-      sauna_hours_weekday_open: timeValue("saunaHoursWeekdayOpen"),
-      sauna_hours_weekday_close: timeValue("saunaHoursWeekdayClose"),
-      sauna_hours_saturday_open: timeValue("saunaHoursSaturdayOpen"),
-      sauna_hours_saturday_close: timeValue("saunaHoursSaturdayClose"),
-      sauna_hours_sunday_open: timeValue("saunaHoursSundayOpen"),
-      sauna_hours_sunday_close: timeValue("saunaHoursSundayClose"),
-      sauna_hours_holiday_open: timeValue("saunaHoursHolidayOpen"),
-      sauna_hours_holiday_close: timeValue("saunaHoursHolidayClose"),
-      sauna_types: [
-        ...checkedValues("saunaTypes"),
-        ...(checkedBool("saunaTypesOtherCheck")
-          ? [value("saunaTypesOther") || "その他"]
+      sauna_facility_male: radioValue("maleSaunaFacility"),
+      sauna_facility_suspended_male: checkedBool("maleSaunaFacilitySuspended"),
+      sauna_facility_location_male:
+        radioValue("maleSaunaFacilityLocation") === "その他" && value("maleSaunaFacilityLocationOther")
+          ? value("maleSaunaFacilityLocationOther")
+          : radioValue("maleSaunaFacilityLocation"),
+      sauna_hours_type_male: radioValue("maleSaunaHoursType"),
+      sauna_hours_weekday_open_male: timeValue("saunaHoursWeekdayOpen"),
+      sauna_hours_weekday_close_male: timeValue("saunaHoursWeekdayClose"),
+      sauna_hours_saturday_open_male: timeValue("saunaHoursSaturdayOpen"),
+      sauna_hours_saturday_close_male: timeValue("saunaHoursSaturdayClose"),
+      sauna_hours_sunday_open_male: timeValue("saunaHoursSundayOpen"),
+      sauna_hours_sunday_close_male: timeValue("saunaHoursSundayClose"),
+      sauna_hours_holiday_open_male: timeValue("saunaHoursHolidayOpen"),
+      sauna_hours_holiday_close_male: timeValue("saunaHoursHolidayClose"),
+      sauna_types_male: [
+        ...checkedValues("maleSaunaTypes"),
+        ...(checkedBool("maleSaunaTypesOtherCheck")
+          ? [value("maleSaunaTypesOther") || "その他"]
           : [])
       ],
-      sauna_temp_min: numberValue("saunaTempMin"),
-      sauna_temp_max: numberValue("saunaTempMax"),
-      sauna_humidity_min: numberValue("saunaHumidityMin"),
-      sauna_humidity_max: numberValue("saunaHumidityMax"),
-      sauna_capacity_number: numberValue("saunaCapacityNumber"),
-      sauna_capacity_range: value("saunaCapacityRange"),
-      sauna_thermometer: radioValue("saunaThermometer"),
-      sauna_clock: radioValue("saunaClock"),
-      sauna_twelve_min_timer: radioValue("saunaTwelveMinTimer"),
-      sauna_hourglass: radioValue("saunaHourglass"),
-      sauna_tv: radioValue("saunaTv"),
-      sauna_tv_remote: radioValue("saunaTvRemote"),
-      sauna_emergency_button: radioValue("saunaEmergencyButton"),
-      sauna_stones: radioValue("saunaStones"),
-      sauna_stove_type:
-        radioValue("saunaStoveType") === "その他" && value("saunaStoveTypeOther")
-          ? value("saunaStoveTypeOther")
-          : radioValue("saunaStoveType"),
-      sauna_stove_count_status: radioValue("saunaStoveCountStatus"),
-      sauna_stove_count: numberValue("saunaStoveCount"),
-      sauna_stove_brand: value("saunaStoveBrand"),
-      sauna_mat_rental: radioValue("saunaMatRental"),
-      sauna_mat_type: [
-        ...checkedValues("saunaMatType"),
-        ...(checkedBool("saunaMatTypeOtherCheck")
-          ? [value("saunaMatTypeOther") || "その他"]
+      sauna_temp_min_male: numberValue("maleSaunaTempMin"),
+      sauna_temp_max_male: numberValue("maleSaunaTempMax"),
+      sauna_humidity_min_male: numberValue("maleSaunaHumidityMin"),
+      sauna_humidity_max_male: numberValue("maleSaunaHumidityMax"),
+      sauna_capacity_number_male: numberValue("maleSaunaCapacityNumber"),
+      sauna_capacity_range_male: value("maleSaunaCapacityRange"),
+      sauna_thermometer_male: radioValue("maleSaunaThermometer"),
+      sauna_clock_male: radioValue("maleSaunaClock"),
+      sauna_twelve_min_timer_male: radioValue("maleSaunaTwelveMinTimer"),
+      sauna_hourglass_male: radioValue("maleSaunaHourglass"),
+      sauna_tv_male: radioValue("maleSaunaTv"),
+      sauna_tv_remote_male: radioValue("maleSaunaTvRemote"),
+      sauna_emergency_button_male: radioValue("maleSaunaEmergencyButton"),
+      sauna_stones_male: radioValue("maleSaunaStones"),
+      sauna_stove_type_male:
+        radioValue("maleSaunaStoveType") === "その他" && value("maleSaunaStoveTypeOther")
+          ? value("maleSaunaStoveTypeOther")
+          : radioValue("maleSaunaStoveType"),
+      sauna_stove_count_status_male: radioValue("maleSaunaStoveCountStatus"),
+      sauna_stove_count_male: numberValue("maleSaunaStoveCount"),
+      sauna_stove_brand_male: value("maleSaunaStoveBrand"),
+      sauna_mat_rental_male: radioValue("maleSaunaMatRental"),
+      sauna_mat_type_male: [
+        ...checkedValues("maleSaunaMatType"),
+        ...(checkedBool("maleSaunaMatTypeOtherCheck")
+          ? [value("maleSaunaMatTypeOther") || "その他"]
           : [])
       ],
-      sauna_mat_placement: [
-        ...checkedValues("saunaMatPlacement"),
-        ...(checkedBool("saunaMatPlacementOtherCheck")
-          ? [value("saunaMatPlacementOther") || "その他"]
+      sauna_mat_placement_male: [
+        ...checkedValues("maleSaunaMatPlacement"),
+        ...(checkedBool("maleSaunaMatPlacementOtherCheck")
+          ? [value("maleSaunaMatPlacementOther") || "その他"]
           : [])
       ],
-      sauna_goods_rental: radioValue("saunaGoodsRental"),
-      sauna_goods_sale: radioValue("saunaGoodsSale"),
-      sauna_loyly: radioValue("saunaLoyly"),
-      sauna_loyly_type: [
-        ...checkedValues("saunaLoylyType"),
-        ...(checkedBool("saunaLoylyTypeOtherCheck")
-          ? [value("saunaLoylyTypeOther") || "その他"]
+      sauna_goods_rental_male: radioValue("maleSaunaGoodsRental"),
+      sauna_goods_sale_male: radioValue("maleSaunaGoodsSale"),
+      sauna_loyly_male: radioValue("maleSaunaLoyly"),
+      sauna_loyly_type_male: [
+        ...checkedValues("maleSaunaLoylyType"),
+        ...(checkedBool("maleSaunaLoylyTypeOtherCheck")
+          ? [value("maleSaunaLoylyTypeOther") || "その他"]
           : [])
       ],
-      sauna_aroma_loyly: radioValue("saunaAromaLoyly"),
-      sauna_aroma_type: value("saunaAromaType"),
-      sauna_aufguss: radioValue("saunaAufguss"),
-      sauna_loyly_frequency: radioValue("saunaLoylyFrequency"),
-      sauna_loyly_interval_minutes: numberValue("saunaLoylyIntervalMinutes"),
-      sauna_loyly_interval_note: value("saunaLoylyIntervalNote"),
-      sauna_loyly_reservation: radioValue("saunaLoylyReservation"),
-      sauna_loyly_note: value("saunaLoylyNote"),
-      sauna_door_type:
-        radioValue("saunaDoorType") === "その他" && value("saunaDoorTypeOther")
-          ? value("saunaDoorTypeOther")
-          : radioValue("saunaDoorType"),
-      sauna_exit_direction: radioValue("saunaExitDirection"),
-      sauna_light_brightness: radioValue("saunaLightBrightness"),
-      sauna_room_note: value("saunaRoomNote"),
+      sauna_aroma_loyly_male: radioValue("maleSaunaAromaLoyly"),
+      sauna_aroma_type_male: value("maleSaunaAromaType"),
+      sauna_aufguss_male: radioValue("maleSaunaAufguss"),
+      sauna_loyly_frequency_male: radioValue("maleSaunaLoylyFrequency"),
+      sauna_loyly_interval_minutes_male: numberValue("maleSaunaLoylyIntervalMinutes"),
+      sauna_loyly_interval_note_male: value("maleSaunaLoylyIntervalNote"),
+      sauna_loyly_reservation_male: radioValue("maleSaunaLoylyReservation"),
+      sauna_loyly_note_male: value("maleSaunaLoylyNote"),
+      sauna_door_type_male:
+        radioValue("maleSaunaDoorType") === "その他" && value("maleSaunaDoorTypeOther")
+          ? value("maleSaunaDoorTypeOther")
+          : radioValue("maleSaunaDoorType"),
+      sauna_exit_direction_male: radioValue("maleSaunaExitDirection"),
+      sauna_light_brightness_male: radioValue("maleSaunaLightBrightness"),
+      sauna_room_note_male: value("maleSaunaRoomNote"),
 
-      cold_bath_availability: radioValue("coldBathAvailability"),
-      cold_bath_count: numberValue("coldBathCount"),
-      cold_bath_shape: checkedValues("coldBathShape"),
-      cold_bath_location: checkedValues("coldBathLocation"),
-      cold_bath_source: [
-        ...checkedValues("coldBathSource"),
-        ...(checkedBool("coldBathSourceOtherCheck")
-          ? [value("coldBathSourceOther") || "その他"]
+      cold_bath_availability_male: radioValue("maleColdBathAvailability"),
+      cold_bath_count_male: numberValue("maleColdBathCount"),
+      cold_bath_shape_male: checkedValues("maleColdBathShape"),
+      cold_bath_location_male: checkedValues("maleColdBathLocation"),
+      cold_bath_source_male: [
+        ...checkedValues("maleColdBathSource"),
+        ...(checkedBool("maleColdBathSourceOtherCheck")
+          ? [value("maleColdBathSourceOther") || "その他"]
           : [])
       ],
-      cold_bath_cooling: [
-        ...checkedValues("coldBathCooling"),
-        ...(checkedBool("coldBathCoolingOtherCheck")
-          ? [value("coldBathCoolingOther") || "その他"]
+      cold_bath_cooling_male: [
+        ...checkedValues("maleColdBathCooling"),
+        ...(checkedBool("maleColdBathCoolingOtherCheck")
+          ? [value("maleColdBathCoolingOther") || "その他"]
           : [])
       ],
-      cold_bath_flow: [
-        ...checkedValues("coldBathFlow"),
-        ...(checkedBool("coldBathFlowOtherCheck")
-          ? [value("coldBathFlowOther") || "その他"]
+      cold_bath_flow_male: [
+        ...checkedValues("maleColdBathFlow"),
+        ...(checkedBool("maleColdBathFlowOtherCheck")
+          ? [value("maleColdBathFlowOther") || "その他"]
           : [])
       ],
-      cold_bath_temp_min: numberValue("coldBathTempMin"),
-      cold_bath_temp_max: numberValue("coldBathTempMax"),
-      cold_bath_capacity: numberValue("coldBathCapacity"),
-      cold_bath_depth: numberValue("coldBathDepth"),
-      cold_shower: radioValue("coldShower"),
-      cold_bath_note: value("coldBathNote"),
+      cold_bath_temp_min_male: numberValue("maleColdBathTempMin"),
+      cold_bath_temp_max_male: numberValue("maleColdBathTempMax"),
+      cold_bath_capacity_male: numberValue("maleColdBathCapacity"),
+      cold_bath_depth_male: numberValue("maleColdBathDepth"),
+      cold_shower_male: radioValue("maleColdShower"),
+      cold_bath_note_male: value("maleColdBathNote"),
 
-      outdoor: radioValue("outdoor"),
-      outdoor_location: [
-        ...checkedValues("outdoorLocation"),
-        ...(checkedBool("outdoorLocationOtherCheck")
-          ? [value("outdoorLocationOther") || "その他"]
+      outdoor_male: radioValue("maleOutdoor"),
+      outdoor_location_male: [
+        ...checkedValues("maleOutdoorLocation"),
+        ...(checkedBool("maleOutdoorLocationOtherCheck")
+          ? [value("maleOutdoorLocationOther") || "その他"]
           : [])
       ],
-      indoor_bathing: radioValue("indoorBathing"),
-      indoor_location: [
-        ...checkedValues("indoorLocation"),
-        ...(checkedBool("indoorLocationOtherCheck")
-          ? [value("indoorLocationOther") || "その他"]
+      indoor_bathing_male: radioValue("maleIndoorBathing"),
+      indoor_location_male: [
+        ...checkedValues("maleIndoorLocation"),
+        ...(checkedBool("maleIndoorLocationOtherCheck")
+          ? [value("maleIndoorLocationOther") || "その他"]
           : [])
       ],
-      tori_toi_chair: radioValue("toriToiChair"),
-      tori_toi_chair_count: numberValue("toriToiChairCount"),
-      recline_chair: radioValue("reclineChair"),
-      recline_chair_count: numberValue("reclineChairCount"),
-      infinity_chair: radioValue("infinityChair"),
-      infinity_chair_count: numberValue("infinityChairCount"),
-      bench: radioValue("bench"),
-      bench_count: numberValue("benchCount"),
-      deck_chair: radioValue("deckChair"),
-      deck_chair_count: numberValue("deckChairCount"),
-      laying_space: radioValue("layingSpace"),
-      laying_space_material: [
-        ...checkedValues("layingSpaceMaterial"),
-        ...(checkedBool("layingSpaceMaterialOtherCheck")
-          ? [value("layingSpaceMaterialOther") || "その他"]
+      tori_toi_chair_male: radioValue("maleToriToiChair"),
+      tori_toi_chair_count_male: numberValue("maleToriToiChairCount"),
+      recline_chair_male: radioValue("maleReclineChair"),
+      recline_chair_count_male: numberValue("maleReclineChairCount"),
+      infinity_chair_male: radioValue("maleInfinityChair"),
+      infinity_chair_count_male: numberValue("maleInfinityChairCount"),
+      bench_male: radioValue("maleBench"),
+      bench_count_male: numberValue("maleBenchCount"),
+      deck_chair_male: radioValue("maleDeckChair"),
+      deck_chair_count_male: numberValue("maleDeckChairCount"),
+      laying_space_male: radioValue("maleLayingSpace"),
+      laying_space_material_male: [
+        ...checkedValues("maleLayingSpaceMaterial"),
+        ...(checkedBool("maleLayingSpaceMaterialOtherCheck")
+          ? [value("maleLayingSpaceMaterialOther") || "その他"]
           : [])
       ],
-      tori_toi_other_note: value("toriToiOtherNote"),
-      roof_rain_protection: radioValue("roofRainProtection"),
-      sun_shade: radioValue("sunShade"),
-      scenery: [
-        ...checkedValues("scenery"),
-        ...(checkedBool("sceneryOtherCheck")
-          ? [value("sceneryOther") || "その他"]
+      tori_toi_other_note_male: value("maleToriToiOtherNote"),
+      roof_rain_protection_male: radioValue("maleRoofRainProtection"),
+      sun_shade_male: radioValue("maleSunShade"),
+      scenery_male: [
+        ...checkedValues("maleScenery"),
+        ...(checkedBool("maleSceneryOtherCheck")
+          ? [value("maleSceneryOther") || "その他"]
           : [])
       ],
-      outdoor_indoor_note: value("outdoorIndoorNote"),
+      outdoor_indoor_note_male: value("maleOutdoorIndoorNote"),
+
+      // 🧖‍♀️ サウナ関連
+      sauna_facility_female: radioValue("femaleSaunaFacility"),
+      sauna_facility_suspended_female: checkedBool("femaleSaunaFacilitySuspended"),
+      sauna_facility_location_female:
+        radioValue("femaleSaunaFacilityLocation") === "その他" && value("femaleSaunaFacilityLocationOther")
+          ? value("femaleSaunaFacilityLocationOther")
+          : radioValue("femaleSaunaFacilityLocation"),
+      sauna_hours_type_female: radioValue("femaleSaunaHoursType"),
+      sauna_hours_weekday_open_female: timeValue("saunaHoursWeekdayOpen"),
+      sauna_hours_weekday_close_female: timeValue("saunaHoursWeekdayClose"),
+      sauna_hours_saturday_open_female: timeValue("saunaHoursSaturdayOpen"),
+      sauna_hours_saturday_close_female: timeValue("saunaHoursSaturdayClose"),
+      sauna_hours_sunday_open_female: timeValue("saunaHoursSundayOpen"),
+      sauna_hours_sunday_close_female: timeValue("saunaHoursSundayClose"),
+      sauna_hours_holiday_open_female: timeValue("saunaHoursHolidayOpen"),
+      sauna_hours_holiday_close_female: timeValue("saunaHoursHolidayClose"),
+      sauna_types_female: [
+        ...checkedValues("femaleSaunaTypes"),
+        ...(checkedBool("femaleSaunaTypesOtherCheck")
+          ? [value("femaleSaunaTypesOther") || "その他"]
+          : [])
+      ],
+      sauna_temp_min_female: numberValue("femaleSaunaTempMin"),
+      sauna_temp_max_female: numberValue("femaleSaunaTempMax"),
+      sauna_humidity_min_female: numberValue("femaleSaunaHumidityMin"),
+      sauna_humidity_max_female: numberValue("femaleSaunaHumidityMax"),
+      sauna_capacity_number_female: numberValue("femaleSaunaCapacityNumber"),
+      sauna_capacity_range_female: value("femaleSaunaCapacityRange"),
+      sauna_thermometer_female: radioValue("femaleSaunaThermometer"),
+      sauna_clock_female: radioValue("femaleSaunaClock"),
+      sauna_twelve_min_timer_female: radioValue("femaleSaunaTwelveMinTimer"),
+      sauna_hourglass_female: radioValue("femaleSaunaHourglass"),
+      sauna_tv_female: radioValue("femaleSaunaTv"),
+      sauna_tv_remote_female: radioValue("femaleSaunaTvRemote"),
+      sauna_emergency_button_female: radioValue("femaleSaunaEmergencyButton"),
+      sauna_stones_female: radioValue("femaleSaunaStones"),
+      sauna_stove_type_female:
+        radioValue("femaleSaunaStoveType") === "その他" && value("femaleSaunaStoveTypeOther")
+          ? value("femaleSaunaStoveTypeOther")
+          : radioValue("femaleSaunaStoveType"),
+      sauna_stove_count_status_female: radioValue("femaleSaunaStoveCountStatus"),
+      sauna_stove_count_female: numberValue("femaleSaunaStoveCount"),
+      sauna_stove_brand_female: value("femaleSaunaStoveBrand"),
+      sauna_mat_rental_female: radioValue("femaleSaunaMatRental"),
+      sauna_mat_type_female: [
+        ...checkedValues("femaleSaunaMatType"),
+        ...(checkedBool("femaleSaunaMatTypeOtherCheck")
+          ? [value("femaleSaunaMatTypeOther") || "その他"]
+          : [])
+      ],
+      sauna_mat_placement_female: [
+        ...checkedValues("femaleSaunaMatPlacement"),
+        ...(checkedBool("femaleSaunaMatPlacementOtherCheck")
+          ? [value("femaleSaunaMatPlacementOther") || "その他"]
+          : [])
+      ],
+      sauna_goods_rental_female: radioValue("femaleSaunaGoodsRental"),
+      sauna_goods_sale_female: radioValue("femaleSaunaGoodsSale"),
+      sauna_loyly_female: radioValue("femaleSaunaLoyly"),
+      sauna_loyly_type_female: [
+        ...checkedValues("femaleSaunaLoylyType"),
+        ...(checkedBool("femaleSaunaLoylyTypeOtherCheck")
+          ? [value("femaleSaunaLoylyTypeOther") || "その他"]
+          : [])
+      ],
+      sauna_aroma_loyly_female: radioValue("femaleSaunaAromaLoyly"),
+      sauna_aroma_type_female: value("femaleSaunaAromaType"),
+      sauna_aufguss_female: radioValue("femaleSaunaAufguss"),
+      sauna_loyly_frequency_female: radioValue("femaleSaunaLoylyFrequency"),
+      sauna_loyly_interval_minutes_female: numberValue("femaleSaunaLoylyIntervalMinutes"),
+      sauna_loyly_interval_note_female: value("femaleSaunaLoylyIntervalNote"),
+      sauna_loyly_reservation_female: radioValue("femaleSaunaLoylyReservation"),
+      sauna_loyly_note_female: value("femaleSaunaLoylyNote"),
+      sauna_door_type_female:
+        radioValue("femaleSaunaDoorType") === "その他" && value("femaleSaunaDoorTypeOther")
+          ? value("femaleSaunaDoorTypeOther")
+          : radioValue("femaleSaunaDoorType"),
+      sauna_exit_direction_female: radioValue("femaleSaunaExitDirection"),
+      sauna_light_brightness_female: radioValue("femaleSaunaLightBrightness"),
+      sauna_room_note_female: value("femaleSaunaRoomNote"),
+
+      cold_bath_availability_female: radioValue("femaleColdBathAvailability"),
+      cold_bath_count_female: numberValue("femaleColdBathCount"),
+      cold_bath_shape_female: checkedValues("femaleColdBathShape"),
+      cold_bath_location_female: checkedValues("femaleColdBathLocation"),
+      cold_bath_source_female: [
+        ...checkedValues("femaleColdBathSource"),
+        ...(checkedBool("femaleColdBathSourceOtherCheck")
+          ? [value("femaleColdBathSourceOther") || "その他"]
+          : [])
+      ],
+      cold_bath_cooling_female: [
+        ...checkedValues("femaleColdBathCooling"),
+        ...(checkedBool("femaleColdBathCoolingOtherCheck")
+          ? [value("femaleColdBathCoolingOther") || "その他"]
+          : [])
+      ],
+      cold_bath_flow_female: [
+        ...checkedValues("femaleColdBathFlow"),
+        ...(checkedBool("femaleColdBathFlowOtherCheck")
+          ? [value("femaleColdBathFlowOther") || "その他"]
+          : [])
+      ],
+      cold_bath_temp_min_female: numberValue("femaleColdBathTempMin"),
+      cold_bath_temp_max_female: numberValue("femaleColdBathTempMax"),
+      cold_bath_capacity_female: numberValue("femaleColdBathCapacity"),
+      cold_bath_depth_female: numberValue("femaleColdBathDepth"),
+      cold_shower_female: radioValue("femaleColdShower"),
+      cold_bath_note_female: value("femaleColdBathNote"),
+
+      outdoor_female: radioValue("femaleOutdoor"),
+      outdoor_location_female: [
+        ...checkedValues("femaleOutdoorLocation"),
+        ...(checkedBool("femaleOutdoorLocationOtherCheck")
+          ? [value("femaleOutdoorLocationOther") || "その他"]
+          : [])
+      ],
+      indoor_bathing_female: radioValue("femaleIndoorBathing"),
+      indoor_location_female: [
+        ...checkedValues("femaleIndoorLocation"),
+        ...(checkedBool("femaleIndoorLocationOtherCheck")
+          ? [value("femaleIndoorLocationOther") || "その他"]
+          : [])
+      ],
+      tori_toi_chair_female: radioValue("femaleToriToiChair"),
+      tori_toi_chair_count_female: numberValue("femaleToriToiChairCount"),
+      recline_chair_female: radioValue("femaleReclineChair"),
+      recline_chair_count_female: numberValue("femaleReclineChairCount"),
+      infinity_chair_female: radioValue("femaleInfinityChair"),
+      infinity_chair_count_female: numberValue("femaleInfinityChairCount"),
+      bench_female: radioValue("femaleBench"),
+      bench_count_female: numberValue("femaleBenchCount"),
+      deck_chair_female: radioValue("femaleDeckChair"),
+      deck_chair_count_female: numberValue("femaleDeckChairCount"),
+      laying_space_female: radioValue("femaleLayingSpace"),
+      laying_space_material_female: [
+        ...checkedValues("femaleLayingSpaceMaterial"),
+        ...(checkedBool("femaleLayingSpaceMaterialOtherCheck")
+          ? [value("femaleLayingSpaceMaterialOther") || "その他"]
+          : [])
+      ],
+      tori_toi_other_note_female: value("femaleToriToiOtherNote"),
+      roof_rain_protection_female: radioValue("femaleRoofRainProtection"),
+      sun_shade_female: radioValue("femaleSunShade"),
+      scenery_female: [
+        ...checkedValues("femaleScenery"),
+        ...(checkedBool("femaleSceneryOtherCheck")
+          ? [value("femaleSceneryOther") || "その他"]
+          : [])
+      ],
+      outdoor_indoor_note_female: value("femaleOutdoorIndoorNote"),
 
       // 🚿 シャワー
-      shower_count: value("showerCount"),
-      shower_type: [
-        ...checkedValues("showerType"),
-        ...(checkedBool("showerTypeOtherCheck")
-          ? [value("showerTypeOther") || "その他"]
+      shower_count_male: value("maleShowerCount"),
+      shower_type_male: [
+        ...checkedValues("maleShowerType"),
+        ...(checkedBool("maleShowerTypeOtherCheck")
+          ? [value("maleShowerTypeOther") || "その他"]
           : [])
       ],
-      shower_head_info: value("showerHeadInfo"),
-      shower_faucet: radioValue("showerFaucet"),
-      shower_booth: radioValue("showerBooth"),
-      wash_area_divider: radioValue("washAreaDivider"),
-      bath_trash_bin: radioValue("bathTrashBin"),
-      pre_rinse_water: radioValue("preRinseWater"),
-      shower_note: value("showerNote"),
+      shower_head_info_male: value("maleShowerHeadInfo"),
+      shower_faucet_male: radioValue("maleShowerFaucet"),
+      shower_booth_male: radioValue("maleShowerBooth"),
+      wash_area_divider_male: radioValue("maleWashAreaDivider"),
+      bath_trash_bin_male: radioValue("maleBathTrashBin"),
+      pre_rinse_water_male: radioValue("malePreRinseWater"),
+      shower_note_male: value("maleShowerNote"),
 
       // 🧴 アメニティ・備品
-      shampoo_conditioner: radioValue("shampooConditioner"),
-      body_soap: radioValue("bodySoap"),
-      soap: radioValue("soap"),
-      face_wash: radioValue("faceWash"),
-      cleansing: radioValue("cleansing"),
-      basin: radioValue("basin"),
-      bath_chair: radioValue("bathChair"),
-      shower_chair: radioValue("showerChair"),
-      rental_items: collectRentalItems(),
-      dryer_status: radioValue("dryerStatus"),
-      dryer_count: value("dryerCount"),
-      dryer_fee: radioValue("dryerFee"),
-      dryer_brand: value("dryerBrand"),
-      dryer_bring_own: radioValue("dryerBringOwn"),
-      tissue: radioValue("tissue"),
-      cotton_swab: radioValue("cottonSwab"),
-      cosmetics: radioValue("cosmetics"),
-      hair_tie: radioValue("hairTie"),
-      powder_room: radioValue("powderRoom"),
-      vanity: radioValue("vanity"),
-      water_cooler: radioValue("waterCooler"),
-      fan: radioValue("fan"),
-      scale: radioValue("scale"),
-      blood_pressure_monitor: radioValue("bloodPressureMonitor"),
-      trash_bin: radioValue("trashBin"),
-      locker_room_chair: radioValue("lockerRoomChair"),
-      baby_chair: radioValue("babyChair"),
-      baby_bed: radioValue("babyBed"),
-      amenity_note: value("amenityNote"),
+      shampoo_conditioner_male: radioValue("maleShampooConditioner"),
+      body_soap_male: radioValue("maleBodySoap"),
+      soap_male: radioValue("maleSoap"),
+      face_wash_male: radioValue("maleFaceWash"),
+      cleansing_male: radioValue("maleCleansing"),
+      basin_male: radioValue("maleBasin"),
+      bath_chair_male: radioValue("maleBathChair"),
+      shower_chair_male: radioValue("maleShowerChair"),
+      rental_items_male: collectRentalItems("maleRentalRows"),
+      dryer_status_male: radioValue("maleDryerStatus"),
+      dryer_count_male: value("maleDryerCount"),
+      dryer_fee_male: radioValue("maleDryerFee"),
+      dryer_brand_male: value("maleDryerBrand"),
+      dryer_bring_own_male: radioValue("maleDryerBringOwn"),
+      tissue_male: radioValue("maleTissue"),
+      cotton_swab_male: radioValue("maleCottonSwab"),
+      cosmetics_male: radioValue("maleCosmetics"),
+      hair_tie_male: radioValue("maleHairTie"),
+      powder_room_male: radioValue("malePowderRoom"),
+      vanity_male: radioValue("maleVanity"),
+      water_cooler_male: radioValue("maleWaterCooler"),
+      fan_male: radioValue("maleFan"),
+      scale_male: radioValue("maleScale"),
+      blood_pressure_monitor_male: radioValue("maleBloodPressureMonitor"),
+      trash_bin_male: radioValue("maleTrashBin"),
+      locker_room_chair_male: radioValue("maleLockerRoomChair"),
+      baby_chair_male: radioValue("maleBabyChair"),
+      baby_bed_male: radioValue("maleBabyBed"),
+      amenity_note_male: value("maleAmenityNote"),
+
+      // 🚿 シャワー
+      shower_count_female: value("femaleShowerCount"),
+      shower_type_female: [
+        ...checkedValues("femaleShowerType"),
+        ...(checkedBool("femaleShowerTypeOtherCheck")
+          ? [value("femaleShowerTypeOther") || "その他"]
+          : [])
+      ],
+      shower_head_info_female: value("femaleShowerHeadInfo"),
+      shower_faucet_female: radioValue("femaleShowerFaucet"),
+      shower_booth_female: radioValue("femaleShowerBooth"),
+      wash_area_divider_female: radioValue("femaleWashAreaDivider"),
+      bath_trash_bin_female: radioValue("femaleBathTrashBin"),
+      pre_rinse_water_female: radioValue("femalePreRinseWater"),
+      shower_note_female: value("femaleShowerNote"),
+
+      // 🧴 アメニティ・備品
+      shampoo_conditioner_female: radioValue("femaleShampooConditioner"),
+      body_soap_female: radioValue("femaleBodySoap"),
+      soap_female: radioValue("femaleSoap"),
+      face_wash_female: radioValue("femaleFaceWash"),
+      cleansing_female: radioValue("femaleCleansing"),
+      basin_female: radioValue("femaleBasin"),
+      bath_chair_female: radioValue("femaleBathChair"),
+      shower_chair_female: radioValue("femaleShowerChair"),
+      rental_items_female: collectRentalItems("femaleRentalRows"),
+      dryer_status_female: radioValue("femaleDryerStatus"),
+      dryer_count_female: value("femaleDryerCount"),
+      dryer_fee_female: radioValue("femaleDryerFee"),
+      dryer_brand_female: value("femaleDryerBrand"),
+      dryer_bring_own_female: radioValue("femaleDryerBringOwn"),
+      tissue_female: radioValue("femaleTissue"),
+      cotton_swab_female: radioValue("femaleCottonSwab"),
+      cosmetics_female: radioValue("femaleCosmetics"),
+      hair_tie_female: radioValue("femaleHairTie"),
+      powder_room_female: radioValue("femalePowderRoom"),
+      vanity_female: radioValue("femaleVanity"),
+      water_cooler_female: radioValue("femaleWaterCooler"),
+      fan_female: radioValue("femaleFan"),
+      scale_female: radioValue("femaleScale"),
+      blood_pressure_monitor_female: radioValue("femaleBloodPressureMonitor"),
+      trash_bin_female: radioValue("femaleTrashBin"),
+      locker_room_chair_female: radioValue("femaleLockerRoomChair"),
+      baby_chair_female: radioValue("femaleBabyChair"),
+      baby_bed_female: radioValue("femaleBabyBed"),
+      amenity_note_female: value("femaleAmenityNote"),
 
       // 🔐 ロッカー
-      locker_count: value("lockerCount"),
-      locker_key_type: [
-        ...checkedValues("lockerKeyType"),
-        ...(checkedBool("lockerKeyTypeOtherCheck")
-          ? [value("lockerKeyTypeOther") || "その他"]
+      locker_count_male: value("maleLockerCount"),
+      locker_key_type_male: [
+        ...checkedValues("maleLockerKeyType"),
+        ...(checkedBool("maleLockerKeyTypeOtherCheck")
+          ? [value("maleLockerKeyTypeOther") || "その他"]
           : [])
       ],
-      locker_wristband_type: [
-        ...checkedValues("lockerWristbandType"),
-        ...(checkedBool("lockerWristbandTypeOtherCheck")
-          ? [value("lockerWristbandTypeOther") || "その他"]
+      locker_wristband_type_male: [
+        ...checkedValues("maleLockerWristbandType"),
+        ...(checkedBool("maleLockerWristbandTypeOtherCheck")
+          ? [value("maleLockerWristbandTypeOther") || "その他"]
           : [])
       ],
-      locker_wristband_use: [
-        ...checkedValues("lockerWristbandUse"),
-        ...(checkedBool("lockerWristbandUseOtherCheck")
-          ? [value("lockerWristbandUseOther") || "その他"]
+      locker_wristband_use_male: [
+        ...checkedValues("maleLockerWristbandUse"),
+        ...(checkedBool("maleLockerWristbandUseOtherCheck")
+          ? [value("maleLockerWristbandUseOther") || "その他"]
           : [])
       ],
-      locker_size: [
-        ...checkedValues("lockerSize"),
-        ...(checkedBool("lockerSizeOtherCheck")
-          ? [value("lockerSizeOther") || "その他"]
+      locker_size_male: [
+        ...checkedValues("maleLockerSize"),
+        ...(checkedBool("maleLockerSizeOtherCheck")
+          ? [value("maleLockerSizeOther") || "その他"]
           : [])
       ],
-      locker_divider: radioValue("lockerDivider"),
-      locker_hanger: radioValue("lockerHanger"),
-      locker_small_item_box: radioValue("lockerSmallItemBox"),
-      locker_valuables: radioValue("lockerValuables"),
-      locker_rental: radioValue("lockerRental"),
-      locker_suitcase: radioValue("lockerSuitcase"),
-      locker_note: value("lockerNote"),
+      locker_divider_male: radioValue("maleLockerDivider"),
+      locker_hanger_male: radioValue("maleLockerHanger"),
+      locker_small_item_box_male: radioValue("maleLockerSmallItemBox"),
+      locker_valuables_male: radioValue("maleLockerValuables"),
+      locker_rental_male: radioValue("maleLockerRental"),
+      locker_suitcase_male: radioValue("maleLockerSuitcase"),
+      locker_note_male: value("maleLockerNote"),
 
       // 👟 靴箱
-      shoebox_count: value("shoeboxCount"),
-      shoebox_type: [
-        ...checkedValues("shoeboxType"),
-        ...(checkedBool("shoeboxTypeOtherCheck")
-          ? [value("shoeboxTypeOther") || "その他"]
+      shoebox_count_male: value("maleShoeboxCount"),
+      shoebox_type_male: [
+        ...checkedValues("maleShoeboxType"),
+        ...(checkedBool("maleShoeboxTypeOtherCheck")
+          ? [value("maleShoeboxTypeOther") || "その他"]
           : [])
       ],
-      shoebox_key_type: [
-        ...checkedValues("shoeboxKeyType"),
-        ...(checkedBool("shoeboxKeyTypeOtherCheck")
-          ? [value("shoeboxKeyTypeOther") || "その他"]
+      shoebox_key_type_male: [
+        ...checkedValues("maleShoeboxKeyType"),
+        ...(checkedBool("maleShoeboxKeyTypeOtherCheck")
+          ? [value("maleShoeboxKeyTypeOther") || "その他"]
           : [])
       ],
-      shoebox_fee: radioValue("shoeboxFee"),
-      shoebox_note: value("shoeboxNote"),
+      shoebox_fee_male: radioValue("maleShoeboxFee"),
+      shoebox_note_male: value("maleShoeboxNote"),
+
+      // 🔐 ロッカー
+      locker_count_female: value("femaleLockerCount"),
+      locker_key_type_female: [
+        ...checkedValues("femaleLockerKeyType"),
+        ...(checkedBool("femaleLockerKeyTypeOtherCheck")
+          ? [value("femaleLockerKeyTypeOther") || "その他"]
+          : [])
+      ],
+      locker_wristband_type_female: [
+        ...checkedValues("femaleLockerWristbandType"),
+        ...(checkedBool("femaleLockerWristbandTypeOtherCheck")
+          ? [value("femaleLockerWristbandTypeOther") || "その他"]
+          : [])
+      ],
+      locker_wristband_use_female: [
+        ...checkedValues("femaleLockerWristbandUse"),
+        ...(checkedBool("femaleLockerWristbandUseOtherCheck")
+          ? [value("femaleLockerWristbandUseOther") || "その他"]
+          : [])
+      ],
+      locker_size_female: [
+        ...checkedValues("femaleLockerSize"),
+        ...(checkedBool("femaleLockerSizeOtherCheck")
+          ? [value("femaleLockerSizeOther") || "その他"]
+          : [])
+      ],
+      locker_divider_female: radioValue("femaleLockerDivider"),
+      locker_hanger_female: radioValue("femaleLockerHanger"),
+      locker_small_item_box_female: radioValue("femaleLockerSmallItemBox"),
+      locker_valuables_female: radioValue("femaleLockerValuables"),
+      locker_rental_female: radioValue("femaleLockerRental"),
+      locker_suitcase_female: radioValue("femaleLockerSuitcase"),
+      locker_note_female: value("femaleLockerNote"),
+
+      // 👟 靴箱
+      shoebox_count_female: value("femaleShoeboxCount"),
+      shoebox_type_female: [
+        ...checkedValues("femaleShoeboxType"),
+        ...(checkedBool("femaleShoeboxTypeOtherCheck")
+          ? [value("femaleShoeboxTypeOther") || "その他"]
+          : [])
+      ],
+      shoebox_key_type_female: [
+        ...checkedValues("femaleShoeboxKeyType"),
+        ...(checkedBool("femaleShoeboxKeyTypeOtherCheck")
+          ? [value("femaleShoeboxKeyTypeOther") || "その他"]
+          : [])
+      ],
+      shoebox_fee_female: radioValue("femaleShoeboxFee"),
+      shoebox_note_female: value("femaleShoeboxNote"),
 
       // 🚻 トイレ・バリアフリー
       toilet_location_lobby: radioValue("toiletLocationLobby"),
@@ -1016,8 +1297,8 @@
     );
   }
 
-  function populateRentalItems(items) {
-    const rows = $("rentalRows");
+  function populateRentalItems(containerId, items) {
+    const rows = $(containerId);
     if (!rows) return;
     rows.innerHTML = "";
     if (!Array.isArray(items) || !items.length) return;
@@ -1025,9 +1306,9 @@
     items.forEach((entry) => {
       const match = /^(.*)（(\d+)円）$/.exec(entry);
       if (match) {
-        addRentalRow(match[1], match[2], { focus: false });
+        addRentalRow(containerId, match[1], match[2], { focus: false });
       } else {
-        addRentalRow(entry, "", { focus: false });
+        addRentalRow(containerId, entry, "", { focus: false });
       }
     });
   }
@@ -1101,41 +1382,77 @@
     setValue("facebook", item.facebook);
 
     setCheckboxGroup(
-      "bathShape",
+      "maleBathShape",
       ["大浴場", "個別風呂", "露天風呂・半露天風呂", "展望風呂", "貸切風呂", "家族風呂", "内湯（宿泊者限定）", "壺湯", "釜風呂", "檜風呂", "岩風呂・石風呂", "寝湯・寝ころび湯", "立ち湯", "腰掛け湯", "洞窟風呂", "海水風呂"],
-      item.bath_shape,
-      "bathShapeOtherCheck",
-      "bathShapeOther"
+      item.bath_shape_male,
+      "maleBathShapeOtherCheck",
+      "maleBathShapeOther"
     );
     setCheckboxGroup(
-      "bathFunction",
+      "maleBathFunction",
       ["炭酸泉・人工炭酸泉", "電気風呂", "ジェットバス", "バイブラバス", "打たせ湯", "薬湯", "香り湯", "源泉掛け流し浴槽", "循環浴槽", "加温浴槽", "高温湯", "ぬるま湯", "水風呂", "冷泉湯", "砂湯", "泥湯"],
-      item.bath_function,
-      "bathFunctionOtherCheck",
-      "bathFunctionOther"
+      item.bath_function_male,
+      "maleBathFunctionOtherCheck",
+      "maleBathFunctionOther"
     );
-    setValue("privateBathDuration", item.private_bath_duration);
-    setRadioValue("privateBathCapacityStatus", item.private_bath_capacity_status);
-    setValue("privateBathCapacity", item.private_bath_capacity);
-    if (item.private_bath_capacity_status === "人数あり") {
-      $("privateBathCapacityWrap")?.classList.remove("hidden");
+    setValue("malePrivateBathDuration", item.private_bath_duration_male);
+    setRadioValue("malePrivateBathCapacityStatus", item.private_bath_capacity_status_male);
+    setValue("malePrivateBathCapacity", item.private_bath_capacity_male);
+    if (item.private_bath_capacity_status_male === "人数あり") {
+      $("malePrivateBathCapacityWrap")?.classList.remove("hidden");
     }
-    setValue("privateBathNote", item.private_bath_note);
+    setValue("malePrivateBathNote", item.private_bath_note_male);
     setCheckboxGroup(
-      "bathLocation",
+      "maleBathLocation",
       ["固定", "日替わり", "週替わり", "隔週", "時間交代制", "男湯のみ", "女湯のみ", "混浴"],
-      item.bath_location,
-      "bathLocationOtherCheck",
-      "bathLocationOther"
+      item.bath_location_male,
+      "maleBathLocationOtherCheck",
+      "maleBathLocationOther"
     );
-    setRadioValue("bathHandrail", item.bath_handrail);
-    setRadioValue("toiletryShelf", item.toiletry_shelf);
-    setRadioValue("bathAnteroom", item.bath_anteroom);
-    setRadioValue("bathEvent", item.bath_event);
-    setValue("bathEventDetail", item.bath_event_detail);
-    setRadioValue("bathToys", item.bath_toys);
-    setValue("bathToysDetail", item.bath_toys_detail);
-    setValue("bathNote", item.bath_note);
+    setRadioValue("maleBathHandrail", item.bath_handrail_male);
+    setRadioValue("maleToiletryShelf", item.toiletry_shelf_male);
+    setRadioValue("maleBathAnteroom", item.bath_anteroom_male);
+    setRadioValue("maleBathEvent", item.bath_event_male);
+    setValue("maleBathEventDetail", item.bath_event_detail_male);
+    setRadioValue("maleBathToys", item.bath_toys_male);
+    setValue("maleBathToysDetail", item.bath_toys_detail_male);
+    setValue("maleBathNote", item.bath_note_male);
+    setCheckboxGroup(
+      "femaleBathShape",
+      ["大浴場", "個別風呂", "露天風呂・半露天風呂", "展望風呂", "貸切風呂", "家族風呂", "内湯（宿泊者限定）", "壺湯", "釜風呂", "檜風呂", "岩風呂・石風呂", "寝湯・寝ころび湯", "立ち湯", "腰掛け湯", "洞窟風呂", "海水風呂"],
+      item.bath_shape_female,
+      "femaleBathShapeOtherCheck",
+      "femaleBathShapeOther"
+    );
+    setCheckboxGroup(
+      "femaleBathFunction",
+      ["炭酸泉・人工炭酸泉", "電気風呂", "ジェットバス", "バイブラバス", "打たせ湯", "薬湯", "香り湯", "源泉掛け流し浴槽", "循環浴槽", "加温浴槽", "高温湯", "ぬるま湯", "水風呂", "冷泉湯", "砂湯", "泥湯"],
+      item.bath_function_female,
+      "femaleBathFunctionOtherCheck",
+      "femaleBathFunctionOther"
+    );
+    setValue("femalePrivateBathDuration", item.private_bath_duration_female);
+    setRadioValue("femalePrivateBathCapacityStatus", item.private_bath_capacity_status_female);
+    setValue("femalePrivateBathCapacity", item.private_bath_capacity_female);
+    if (item.private_bath_capacity_status_female === "人数あり") {
+      $("femalePrivateBathCapacityWrap")?.classList.remove("hidden");
+    }
+    setValue("femalePrivateBathNote", item.private_bath_note_female);
+    setCheckboxGroup(
+      "femaleBathLocation",
+      ["固定", "日替わり", "週替わり", "隔週", "時間交代制", "男湯のみ", "女湯のみ", "混浴"],
+      item.bath_location_female,
+      "femaleBathLocationOtherCheck",
+      "femaleBathLocationOther"
+    );
+    setRadioValue("femaleBathHandrail", item.bath_handrail_female);
+    setRadioValue("femaleToiletryShelf", item.toiletry_shelf_female);
+    setRadioValue("femaleBathAnteroom", item.bath_anteroom_female);
+    setRadioValue("femaleBathEvent", item.bath_event_female);
+    setValue("femaleBathEventDetail", item.bath_event_detail_female);
+    setRadioValue("femaleBathToys", item.bath_toys_female);
+    setValue("femaleBathToysDetail", item.bath_toys_detail_female);
+    setValue("femaleBathNote", item.bath_note_female);
 
     setCheckboxGroup(
       "springTypes",
@@ -1209,248 +1526,487 @@
     );
     setDateValue("childInfoCheck", item.child_info_check_date);
 
-    setRadioValue("saunaFacility", item.sauna_facility);
-    if (item.sauna_facility_suspended) $("saunaFacilitySuspended").checked = true;
+    setRadioValue("maleSaunaFacility", item.sauna_facility_male);
+    if (item.sauna_facility_suspended_male) $("maleSaunaFacilitySuspended").checked = true;
 
-    if (["屋内", "屋外", "両方設置"].includes(item.sauna_facility_location)) {
-      setRadioValue("saunaFacilityLocation", item.sauna_facility_location);
-    } else if (item.sauna_facility_location) {
-      setRadioValue("saunaFacilityLocation", "その他");
-      setValue("saunaFacilityLocationOther", item.sauna_facility_location);
-      $("saunaFacilityLocationOther")?.classList.remove("hidden");
+    if (["屋内", "屋外", "両方設置"].includes(item.sauna_facility_location_male)) {
+      setRadioValue("maleSaunaFacilityLocation", item.sauna_facility_location_male);
+    } else if (item.sauna_facility_location_male) {
+      setRadioValue("maleSaunaFacilityLocation", "その他");
+      setValue("maleSaunaFacilityLocationOther", item.sauna_facility_location_male);
+      $("maleSaunaFacilityLocationOther")?.classList.remove("hidden");
     }
 
-    setRadioValue("saunaHoursType", item.sauna_hours_type);
-    if (item.sauna_hours_type === "利用時間あり") {
-      $("saunaHoursWrap")?.classList.remove("hidden");
+    setRadioValue("maleSaunaHoursType", item.sauna_hours_type_male);
+    if (item.sauna_hours_type_male === "利用時間あり") {
+      $("maleSaunaHoursWrap")?.classList.remove("hidden");
     }
-    setTimeValue("saunaHoursWeekdayOpen", item.sauna_hours_weekday_open);
-    setTimeValue("saunaHoursWeekdayClose", item.sauna_hours_weekday_close);
-    setTimeValue("saunaHoursSaturdayOpen", item.sauna_hours_saturday_open);
-    setTimeValue("saunaHoursSaturdayClose", item.sauna_hours_saturday_close);
-    setTimeValue("saunaHoursSundayOpen", item.sauna_hours_sunday_open);
-    setTimeValue("saunaHoursSundayClose", item.sauna_hours_sunday_close);
-    setTimeValue("saunaHoursHolidayOpen", item.sauna_hours_holiday_open);
-    setTimeValue("saunaHoursHolidayClose", item.sauna_hours_holiday_close);
+    setTimeValue("saunaHoursWeekdayOpen", item.sauna_hours_weekday_open_male);
+    setTimeValue("saunaHoursWeekdayClose", item.sauna_hours_weekday_close_male);
+    setTimeValue("saunaHoursSaturdayOpen", item.sauna_hours_saturday_open_male);
+    setTimeValue("saunaHoursSaturdayClose", item.sauna_hours_saturday_close_male);
+    setTimeValue("saunaHoursSundayOpen", item.sauna_hours_sunday_open_male);
+    setTimeValue("saunaHoursSundayClose", item.sauna_hours_sunday_close_male);
+    setTimeValue("saunaHoursHolidayOpen", item.sauna_hours_holiday_open_male);
+    setTimeValue("saunaHoursHolidayClose", item.sauna_hours_holiday_close_male);
 
     setCheckboxGroup(
-      "saunaTypes",
+      "maleSaunaTypes",
       ["遠赤外線サウナ", "ドライサウナ", "スチームサウナ", "ミストサウナ", "フィンランド式サウナ（ロウリュ）", "テントサウナ", "個室サウナ", "塩サウナ", "薬草サウナ"],
-      item.sauna_types,
-      "saunaTypesOtherCheck",
-      "saunaTypesOther"
+      item.sauna_types_male,
+      "maleSaunaTypesOtherCheck",
+      "maleSaunaTypesOther"
     );
-    setValue("saunaTempMin", item.sauna_temp_min);
-    setValue("saunaTempMax", item.sauna_temp_max);
-    setValue("saunaHumidityMin", item.sauna_humidity_min);
-    setValue("saunaHumidityMax", item.sauna_humidity_max);
-    setValue("saunaCapacityNumber", item.sauna_capacity_number);
-    setValue("saunaCapacityRange", item.sauna_capacity_range);
-    setRadioValue("saunaThermometer", item.sauna_thermometer);
-    setRadioValue("saunaClock", item.sauna_clock);
-    setRadioValue("saunaTwelveMinTimer", item.sauna_twelve_min_timer);
-    setRadioValue("saunaHourglass", item.sauna_hourglass);
-    setRadioValue("saunaTv", item.sauna_tv);
-    setRadioValue("saunaTvRemote", item.sauna_tv_remote);
-    setRadioValue("saunaEmergencyButton", item.sauna_emergency_button);
-    setRadioValue("saunaStones", item.sauna_stones);
+    setValue("maleSaunaTempMin", item.sauna_temp_min_male);
+    setValue("maleSaunaTempMax", item.sauna_temp_max_male);
+    setValue("maleSaunaHumidityMin", item.sauna_humidity_min_male);
+    setValue("maleSaunaHumidityMax", item.sauna_humidity_max_male);
+    setValue("maleSaunaCapacityNumber", item.sauna_capacity_number_male);
+    setValue("maleSaunaCapacityRange", item.sauna_capacity_range_male);
+    setRadioValue("maleSaunaThermometer", item.sauna_thermometer_male);
+    setRadioValue("maleSaunaClock", item.sauna_clock_male);
+    setRadioValue("maleSaunaTwelveMinTimer", item.sauna_twelve_min_timer_male);
+    setRadioValue("maleSaunaHourglass", item.sauna_hourglass_male);
+    setRadioValue("maleSaunaTv", item.sauna_tv_male);
+    setRadioValue("maleSaunaTvRemote", item.sauna_tv_remote_male);
+    setRadioValue("maleSaunaEmergencyButton", item.sauna_emergency_button_male);
+    setRadioValue("maleSaunaStones", item.sauna_stones_male);
 
-    if (["電気ストーブ", "薪ストーブ", "ガスストーブ", "遠赤外線ストーブ", "ハイブリッド"].includes(item.sauna_stove_type)) {
-      setRadioValue("saunaStoveType", item.sauna_stove_type);
-    } else if (item.sauna_stove_type) {
-      setRadioValue("saunaStoveType", "その他");
-      setValue("saunaStoveTypeOther", item.sauna_stove_type);
-      $("saunaStoveTypeOther")?.classList.remove("hidden");
+    if (["電気ストーブ", "薪ストーブ", "ガスストーブ", "遠赤外線ストーブ", "ハイブリッド"].includes(item.sauna_stove_type_male)) {
+      setRadioValue("maleSaunaStoveType", item.sauna_stove_type_male);
+    } else if (item.sauna_stove_type_male) {
+      setRadioValue("maleSaunaStoveType", "その他");
+      setValue("maleSaunaStoveTypeOther", item.sauna_stove_type_male);
+      $("maleSaunaStoveTypeOther")?.classList.remove("hidden");
     }
-    setRadioValue("saunaStoveCountStatus", item.sauna_stove_count_status);
-    setRadioValue("saunaStoveCountStatus", item.sauna_stove_count_status);
-    setValue("saunaStoveCount", item.sauna_stove_count);
-    if (item.sauna_stove_count_status === "台数あり") {
-      $("saunaStoveCountWrap")?.classList.remove("hidden");
+    setRadioValue("maleSaunaStoveCountStatus", item.sauna_stove_count_status_male);
+    setRadioValue("maleSaunaStoveCountStatus", item.sauna_stove_count_status_male);
+    setValue("maleSaunaStoveCount", item.sauna_stove_count_male);
+    if (item.sauna_stove_count_status_male === "台数あり") {
+      $("maleSaunaStoveCountWrap")?.classList.remove("hidden");
     }
-    if (item.sauna_stove_count_status === "台数あり") {
-      $("saunaStoveCountWrap")?.classList.remove("hidden");
+    if (item.sauna_stove_count_status_male === "台数あり") {
+      $("maleSaunaStoveCountWrap")?.classList.remove("hidden");
     }
-    setValue("saunaStoveBrand", item.sauna_stove_brand);
+    setValue("maleSaunaStoveBrand", item.sauna_stove_brand_male);
 
-    setRadioValue("saunaMatRental", item.sauna_mat_rental);
+    setRadioValue("maleSaunaMatRental", item.sauna_mat_rental_male);
     setCheckboxGroup(
-      "saunaMatType",
+      "maleSaunaMatType",
       ["ビート板タイプ", "ウレタンタイプ", "ジョイントマットタイプ", "タオル・布製タイプ", "木製・すのこタイプ", "樹脂・ゴム製タイプ"],
-      item.sauna_mat_type,
-      "saunaMatTypeOtherCheck",
-      "saunaMatTypeOther"
+      item.sauna_mat_type_male,
+      "maleSaunaMatTypeOtherCheck",
+      "maleSaunaMatTypeOther"
     );
     setCheckboxGroup(
-      "saunaMatPlacement",
+      "maleSaunaMatPlacement",
       ["サウナ室内に設置", "サウナ室入口前に設置", "浴場内に設置", "浴場入口に設置", "自由に利用可能", "個人用貸し出し", "持参可能", "持参必要", "水洗い場所あり", "消毒スプレーあり"],
-      item.sauna_mat_placement,
-      "saunaMatPlacementOtherCheck",
-      "saunaMatPlacementOther"
+      item.sauna_mat_placement_male,
+      "maleSaunaMatPlacementOtherCheck",
+      "maleSaunaMatPlacementOther"
     );
-    setRadioValue("saunaGoodsRental", item.sauna_goods_rental);
-    setRadioValue("saunaGoodsSale", item.sauna_goods_sale);
+    setRadioValue("maleSaunaGoodsRental", item.sauna_goods_rental_male);
+    setRadioValue("maleSaunaGoodsSale", item.sauna_goods_sale_male);
 
-    setRadioValue("saunaLoyly", item.sauna_loyly);
+    setRadioValue("maleSaunaLoyly", item.sauna_loyly_male);
     setCheckboxGroup(
-      "saunaLoylyType",
+      "maleSaunaLoylyType",
       ["セルフロウリュ", "スタッフロウリュ", "オートロウリュ"],
-      item.sauna_loyly_type,
-      "saunaLoylyTypeOtherCheck",
-      "saunaLoylyTypeOther"
+      item.sauna_loyly_type_male,
+      "maleSaunaLoylyTypeOtherCheck",
+      "maleSaunaLoylyTypeOther"
     );
-    setRadioValue("saunaAromaLoyly", item.sauna_aroma_loyly);
-    setValue("saunaAromaType", item.sauna_aroma_type);
-    setRadioValue("saunaAufguss", item.sauna_aufguss);
-    setRadioValue("saunaLoylyFrequency", item.sauna_loyly_frequency);
-    setValue("saunaLoylyIntervalMinutes", item.sauna_loyly_interval_minutes);
-    setValue("saunaLoylyIntervalNote", item.sauna_loyly_interval_note);
-    setRadioValue("saunaLoylyReservation", item.sauna_loyly_reservation);
-    setValue("saunaLoylyNote", item.sauna_loyly_note);
+    setRadioValue("maleSaunaAromaLoyly", item.sauna_aroma_loyly_male);
+    setValue("maleSaunaAromaType", item.sauna_aroma_type_male);
+    setRadioValue("maleSaunaAufguss", item.sauna_aufguss_male);
+    setRadioValue("maleSaunaLoylyFrequency", item.sauna_loyly_frequency_male);
+    setValue("maleSaunaLoylyIntervalMinutes", item.sauna_loyly_interval_minutes_male);
+    setValue("maleSaunaLoylyIntervalNote", item.sauna_loyly_interval_note_male);
+    setRadioValue("maleSaunaLoylyReservation", item.sauna_loyly_reservation_male);
+    setValue("maleSaunaLoylyNote", item.sauna_loyly_note_male);
 
-    if (["押し引きタイプ", "取っ手を回すタイプ"].includes(item.sauna_door_type)) {
-      setRadioValue("saunaDoorType", item.sauna_door_type);
-    } else if (item.sauna_door_type) {
-      setRadioValue("saunaDoorType", "その他");
-      setValue("saunaDoorTypeOther", item.sauna_door_type);
-      $("saunaDoorTypeOther")?.classList.remove("hidden");
+    if (["押し引きタイプ", "取っ手を回すタイプ"].includes(item.sauna_door_type_male)) {
+      setRadioValue("maleSaunaDoorType", item.sauna_door_type_male);
+    } else if (item.sauna_door_type_male) {
+      setRadioValue("maleSaunaDoorType", "その他");
+      setValue("maleSaunaDoorTypeOther", item.sauna_door_type_male);
+      $("maleSaunaDoorTypeOther")?.classList.remove("hidden");
     }
-    setRadioValue("saunaExitDirection", item.sauna_exit_direction);
-    setRadioValue("saunaLightBrightness", item.sauna_light_brightness);
-    setValue("saunaRoomNote", item.sauna_room_note);
+    setRadioValue("maleSaunaExitDirection", item.sauna_exit_direction_male);
+    setRadioValue("maleSaunaLightBrightness", item.sauna_light_brightness_male);
+    setValue("maleSaunaRoomNote", item.sauna_room_note_male);
 
-    setRadioValue("coldBathAvailability", item.cold_bath_availability);
-    setValue("coldBathCount", item.cold_bath_count);
-    setCheckboxGroup("coldBathShape", ["一般的タイプ", "浅めタイプ", "深めタイプ", "壺タイプ", "1人用タイプ", "大型・プール"], item.cold_bath_shape, null, null);
-    setCheckboxGroup("coldBathLocation", ["屋内", "屋外", "両方設置"], item.cold_bath_location, null, null);
-    setCheckboxGroup("coldBathSource", ["水道水", "地下水", "天然水", "井戸水", "不明"], item.cold_bath_source, "coldBathSourceOtherCheck", "coldBathSourceOther");
-    setCheckboxGroup("coldBathCooling", ["チラー冷却", "自然冷却", "不明"], item.cold_bath_cooling, "coldBathCoolingOtherCheck", "coldBathCoolingOther");
-    setCheckboxGroup("coldBathFlow", ["なし", "バイブラ", "ジェット", "不明"], item.cold_bath_flow, "coldBathFlowOtherCheck", "coldBathFlowOther");
-    setValue("coldBathTempMin", item.cold_bath_temp_min);
-    setValue("coldBathTempMax", item.cold_bath_temp_max);
-    setValue("coldBathCapacity", item.cold_bath_capacity);
-    setValue("coldBathDepth", item.cold_bath_depth);
-    setRadioValue("coldShower", item.cold_shower);
-    setValue("coldBathNote", item.cold_bath_note);
+    setRadioValue("maleColdBathAvailability", item.cold_bath_availability_male);
+    setValue("maleColdBathCount", item.cold_bath_count_male);
+    setCheckboxGroup("maleColdBathShape", ["一般的タイプ", "浅めタイプ", "深めタイプ", "壺タイプ", "1人用タイプ", "大型・プール"], item.cold_bath_shape_male, null, null);
+    setCheckboxGroup("maleColdBathLocation", ["屋内", "屋外", "両方設置"], item.cold_bath_location_male, null, null);
+    setCheckboxGroup("maleColdBathSource", ["水道水", "地下水", "天然水", "井戸水", "不明"], item.cold_bath_source_male, "maleColdBathSourceOtherCheck", "maleColdBathSourceOther");
+    setCheckboxGroup("maleColdBathCooling", ["チラー冷却", "自然冷却", "不明"], item.cold_bath_cooling_male, "maleColdBathCoolingOtherCheck", "maleColdBathCoolingOther");
+    setCheckboxGroup("maleColdBathFlow", ["なし", "バイブラ", "ジェット", "不明"], item.cold_bath_flow_male, "maleColdBathFlowOtherCheck", "maleColdBathFlowOther");
+    setValue("maleColdBathTempMin", item.cold_bath_temp_min_male);
+    setValue("maleColdBathTempMax", item.cold_bath_temp_max_male);
+    setValue("maleColdBathCapacity", item.cold_bath_capacity_male);
+    setValue("maleColdBathDepth", item.cold_bath_depth_male);
+    setRadioValue("maleColdShower", item.cold_shower_male);
+    setValue("maleColdBathNote", item.cold_bath_note_male);
 
-    setRadioValue("outdoor", item.outdoor);
-    setCheckboxGroup("outdoorLocation", ["露天エリア", "専用外気浴スペース", "ベランダ・テラス"], item.outdoor_location, "outdoorLocationOtherCheck", "outdoorLocationOther");
-    setRadioValue("indoorBathing", item.indoor_bathing);
-    setCheckboxGroup("indoorLocation", ["浴場内エリア", "専用内気浴スペース"], item.indoor_location, "indoorLocationOtherCheck", "indoorLocationOther");
-    setRadioValue("toriToiChair", item.tori_toi_chair);
-    setValue("toriToiChairCount", item.tori_toi_chair_count);
-    setRadioValue("reclineChair", item.recline_chair);
-    setValue("reclineChairCount", item.recline_chair_count);
-    setRadioValue("infinityChair", item.infinity_chair);
-    setValue("infinityChairCount", item.infinity_chair_count);
-    setRadioValue("bench", item.bench);
-    setValue("benchCount", item.bench_count);
-    setRadioValue("deckChair", item.deck_chair);
-    setValue("deckChairCount", item.deck_chair_count);
-    setRadioValue("layingSpace", item.laying_space);
-    setCheckboxGroup("layingSpaceMaterial", ["畳", "木製"], item.laying_space_material, "layingSpaceMaterialOtherCheck", "layingSpaceMaterialOther");
-    setValue("toriToiOtherNote", item.tori_toi_other_note);
-    setRadioValue("roofRainProtection", item.roof_rain_protection);
-    setRadioValue("sunShade", item.sun_shade);
-    setCheckboxGroup("scenery", ["山・自然", "海・湖", "街並み", "庭園", "星空"], item.scenery, "sceneryOtherCheck", "sceneryOther");
-    setValue("outdoorIndoorNote", item.outdoor_indoor_note);
+    setRadioValue("maleOutdoor", item.outdoor_male);
+    setCheckboxGroup("maleOutdoorLocation", ["露天エリア", "専用外気浴スペース", "ベランダ・テラス"], item.outdoor_location_male, "maleOutdoorLocationOtherCheck", "maleOutdoorLocationOther");
+    setRadioValue("maleIndoorBathing", item.indoor_bathing_male);
+    setCheckboxGroup("maleIndoorLocation", ["浴場内エリア", "専用内気浴スペース"], item.indoor_location_male, "maleIndoorLocationOtherCheck", "maleIndoorLocationOther");
+    setRadioValue("maleToriToiChair", item.tori_toi_chair_male);
+    setValue("maleToriToiChairCount", item.tori_toi_chair_count_male);
+    setRadioValue("maleReclineChair", item.recline_chair_male);
+    setValue("maleReclineChairCount", item.recline_chair_count_male);
+    setRadioValue("maleInfinityChair", item.infinity_chair_male);
+    setValue("maleInfinityChairCount", item.infinity_chair_count_male);
+    setRadioValue("maleBench", item.bench_male);
+    setValue("maleBenchCount", item.bench_count_male);
+    setRadioValue("maleDeckChair", item.deck_chair_male);
+    setValue("maleDeckChairCount", item.deck_chair_count_male);
+    setRadioValue("maleLayingSpace", item.laying_space_male);
+    setCheckboxGroup("maleLayingSpaceMaterial", ["畳", "木製"], item.laying_space_material_male, "maleLayingSpaceMaterialOtherCheck", "maleLayingSpaceMaterialOther");
+    setValue("maleToriToiOtherNote", item.tori_toi_other_note_male);
+    setRadioValue("maleRoofRainProtection", item.roof_rain_protection_male);
+    setRadioValue("maleSunShade", item.sun_shade_male);
+    setCheckboxGroup("maleScenery", ["山・自然", "海・湖", "街並み", "庭園", "星空"], item.scenery_male, "maleSceneryOtherCheck", "maleSceneryOther");
+    setValue("maleOutdoorIndoorNote", item.outdoor_indoor_note_male);
+    setRadioValue("femaleSaunaFacility", item.sauna_facility_female);
+    if (item.sauna_facility_suspended_female) $("femaleSaunaFacilitySuspended").checked = true;
 
-    setValue("showerCount", item.shower_count);
-    setCheckboxGroup("showerType", ["押すタイプ", "レバータイプ", "不明"], item.shower_type, "showerTypeOtherCheck", "showerTypeOther");
-    setValue("showerHeadInfo", item.shower_head_info);
-    setRadioValue("showerFaucet", item.shower_faucet);
-    setRadioValue("showerBooth", item.shower_booth);
-    setRadioValue("washAreaDivider", item.wash_area_divider);
-    setRadioValue("bathTrashBin", item.bath_trash_bin);
-    setRadioValue("preRinseWater", item.pre_rinse_water);
-    setValue("showerNote", item.shower_note);
+    if (["屋内", "屋外", "両方設置"].includes(item.sauna_facility_location_female)) {
+      setRadioValue("femaleSaunaFacilityLocation", item.sauna_facility_location_female);
+    } else if (item.sauna_facility_location_female) {
+      setRadioValue("femaleSaunaFacilityLocation", "その他");
+      setValue("femaleSaunaFacilityLocationOther", item.sauna_facility_location_female);
+      $("femaleSaunaFacilityLocationOther")?.classList.remove("hidden");
+    }
 
-    setRadioValue("shampooConditioner", item.shampoo_conditioner);
-    setRadioValue("bodySoap", item.body_soap);
-    setRadioValue("soap", item.soap);
-    setRadioValue("faceWash", item.face_wash);
-    setRadioValue("cleansing", item.cleansing);
-    setRadioValue("basin", item.basin);
-    setRadioValue("bathChair", item.bath_chair);
-    setRadioValue("showerChair", item.shower_chair);
-    populateRentalItems(item.rental_items);
-    setRadioValue("dryerStatus", item.dryer_status);
-    setValue("dryerCount", item.dryer_count);
-    setRadioValue("dryerFee", item.dryer_fee);
-    setValue("dryerBrand", item.dryer_brand);
-    setRadioValue("dryerBringOwn", item.dryer_bring_own);
-    setRadioValue("tissue", item.tissue);
-    setRadioValue("cottonSwab", item.cotton_swab);
-    setRadioValue("cosmetics", item.cosmetics);
-    setRadioValue("hairTie", item.hair_tie);
-    setRadioValue("powderRoom", item.powder_room);
-    setRadioValue("vanity", item.vanity);
-    setRadioValue("waterCooler", item.water_cooler);
-    setRadioValue("fan", item.fan);
-    setRadioValue("scale", item.scale);
-    setRadioValue("bloodPressureMonitor", item.blood_pressure_monitor);
-    setRadioValue("trashBin", item.trash_bin);
-    setRadioValue("lockerRoomChair", item.locker_room_chair);
-    setRadioValue("babyChair", item.baby_chair);
-    setRadioValue("babyBed", item.baby_bed);
-    setValue("amenityNote", item.amenity_note);
+    setRadioValue("femaleSaunaHoursType", item.sauna_hours_type_female);
+    if (item.sauna_hours_type_female === "利用時間あり") {
+      $("femaleSaunaHoursWrap")?.classList.remove("hidden");
+    }
+    setTimeValue("saunaHoursWeekdayOpen", item.sauna_hours_weekday_open_female);
+    setTimeValue("saunaHoursWeekdayClose", item.sauna_hours_weekday_close_female);
+    setTimeValue("saunaHoursSaturdayOpen", item.sauna_hours_saturday_open_female);
+    setTimeValue("saunaHoursSaturdayClose", item.sauna_hours_saturday_close_female);
+    setTimeValue("saunaHoursSundayOpen", item.sauna_hours_sunday_open_female);
+    setTimeValue("saunaHoursSundayClose", item.sauna_hours_sunday_close_female);
+    setTimeValue("saunaHoursHolidayOpen", item.sauna_hours_holiday_open_female);
+    setTimeValue("saunaHoursHolidayClose", item.sauna_hours_holiday_close_female);
+
+    setCheckboxGroup(
+      "femaleSaunaTypes",
+      ["遠赤外線サウナ", "ドライサウナ", "スチームサウナ", "ミストサウナ", "フィンランド式サウナ（ロウリュ）", "テントサウナ", "個室サウナ", "塩サウナ", "薬草サウナ"],
+      item.sauna_types_female,
+      "femaleSaunaTypesOtherCheck",
+      "femaleSaunaTypesOther"
+    );
+    setValue("femaleSaunaTempMin", item.sauna_temp_min_female);
+    setValue("femaleSaunaTempMax", item.sauna_temp_max_female);
+    setValue("femaleSaunaHumidityMin", item.sauna_humidity_min_female);
+    setValue("femaleSaunaHumidityMax", item.sauna_humidity_max_female);
+    setValue("femaleSaunaCapacityNumber", item.sauna_capacity_number_female);
+    setValue("femaleSaunaCapacityRange", item.sauna_capacity_range_female);
+    setRadioValue("femaleSaunaThermometer", item.sauna_thermometer_female);
+    setRadioValue("femaleSaunaClock", item.sauna_clock_female);
+    setRadioValue("femaleSaunaTwelveMinTimer", item.sauna_twelve_min_timer_female);
+    setRadioValue("femaleSaunaHourglass", item.sauna_hourglass_female);
+    setRadioValue("femaleSaunaTv", item.sauna_tv_female);
+    setRadioValue("femaleSaunaTvRemote", item.sauna_tv_remote_female);
+    setRadioValue("femaleSaunaEmergencyButton", item.sauna_emergency_button_female);
+    setRadioValue("femaleSaunaStones", item.sauna_stones_female);
+
+    if (["電気ストーブ", "薪ストーブ", "ガスストーブ", "遠赤外線ストーブ", "ハイブリッド"].includes(item.sauna_stove_type_female)) {
+      setRadioValue("femaleSaunaStoveType", item.sauna_stove_type_female);
+    } else if (item.sauna_stove_type_female) {
+      setRadioValue("femaleSaunaStoveType", "その他");
+      setValue("femaleSaunaStoveTypeOther", item.sauna_stove_type_female);
+      $("femaleSaunaStoveTypeOther")?.classList.remove("hidden");
+    }
+    setRadioValue("femaleSaunaStoveCountStatus", item.sauna_stove_count_status_female);
+    setRadioValue("femaleSaunaStoveCountStatus", item.sauna_stove_count_status_female);
+    setValue("femaleSaunaStoveCount", item.sauna_stove_count_female);
+    if (item.sauna_stove_count_status_female === "台数あり") {
+      $("femaleSaunaStoveCountWrap")?.classList.remove("hidden");
+    }
+    if (item.sauna_stove_count_status_female === "台数あり") {
+      $("femaleSaunaStoveCountWrap")?.classList.remove("hidden");
+    }
+    setValue("femaleSaunaStoveBrand", item.sauna_stove_brand_female);
+
+    setRadioValue("femaleSaunaMatRental", item.sauna_mat_rental_female);
+    setCheckboxGroup(
+      "femaleSaunaMatType",
+      ["ビート板タイプ", "ウレタンタイプ", "ジョイントマットタイプ", "タオル・布製タイプ", "木製・すのこタイプ", "樹脂・ゴム製タイプ"],
+      item.sauna_mat_type_female,
+      "femaleSaunaMatTypeOtherCheck",
+      "femaleSaunaMatTypeOther"
+    );
+    setCheckboxGroup(
+      "femaleSaunaMatPlacement",
+      ["サウナ室内に設置", "サウナ室入口前に設置", "浴場内に設置", "浴場入口に設置", "自由に利用可能", "個人用貸し出し", "持参可能", "持参必要", "水洗い場所あり", "消毒スプレーあり"],
+      item.sauna_mat_placement_female,
+      "femaleSaunaMatPlacementOtherCheck",
+      "femaleSaunaMatPlacementOther"
+    );
+    setRadioValue("femaleSaunaGoodsRental", item.sauna_goods_rental_female);
+    setRadioValue("femaleSaunaGoodsSale", item.sauna_goods_sale_female);
+
+    setRadioValue("femaleSaunaLoyly", item.sauna_loyly_female);
+    setCheckboxGroup(
+      "femaleSaunaLoylyType",
+      ["セルフロウリュ", "スタッフロウリュ", "オートロウリュ"],
+      item.sauna_loyly_type_female,
+      "femaleSaunaLoylyTypeOtherCheck",
+      "femaleSaunaLoylyTypeOther"
+    );
+    setRadioValue("femaleSaunaAromaLoyly", item.sauna_aroma_loyly_female);
+    setValue("femaleSaunaAromaType", item.sauna_aroma_type_female);
+    setRadioValue("femaleSaunaAufguss", item.sauna_aufguss_female);
+    setRadioValue("femaleSaunaLoylyFrequency", item.sauna_loyly_frequency_female);
+    setValue("femaleSaunaLoylyIntervalMinutes", item.sauna_loyly_interval_minutes_female);
+    setValue("femaleSaunaLoylyIntervalNote", item.sauna_loyly_interval_note_female);
+    setRadioValue("femaleSaunaLoylyReservation", item.sauna_loyly_reservation_female);
+    setValue("femaleSaunaLoylyNote", item.sauna_loyly_note_female);
+
+    if (["押し引きタイプ", "取っ手を回すタイプ"].includes(item.sauna_door_type_female)) {
+      setRadioValue("femaleSaunaDoorType", item.sauna_door_type_female);
+    } else if (item.sauna_door_type_female) {
+      setRadioValue("femaleSaunaDoorType", "その他");
+      setValue("femaleSaunaDoorTypeOther", item.sauna_door_type_female);
+      $("femaleSaunaDoorTypeOther")?.classList.remove("hidden");
+    }
+    setRadioValue("femaleSaunaExitDirection", item.sauna_exit_direction_female);
+    setRadioValue("femaleSaunaLightBrightness", item.sauna_light_brightness_female);
+    setValue("femaleSaunaRoomNote", item.sauna_room_note_female);
+
+    setRadioValue("femaleColdBathAvailability", item.cold_bath_availability_female);
+    setValue("femaleColdBathCount", item.cold_bath_count_female);
+    setCheckboxGroup("femaleColdBathShape", ["一般的タイプ", "浅めタイプ", "深めタイプ", "壺タイプ", "1人用タイプ", "大型・プール"], item.cold_bath_shape_female, null, null);
+    setCheckboxGroup("femaleColdBathLocation", ["屋内", "屋外", "両方設置"], item.cold_bath_location_female, null, null);
+    setCheckboxGroup("femaleColdBathSource", ["水道水", "地下水", "天然水", "井戸水", "不明"], item.cold_bath_source_female, "femaleColdBathSourceOtherCheck", "femaleColdBathSourceOther");
+    setCheckboxGroup("femaleColdBathCooling", ["チラー冷却", "自然冷却", "不明"], item.cold_bath_cooling_female, "femaleColdBathCoolingOtherCheck", "femaleColdBathCoolingOther");
+    setCheckboxGroup("femaleColdBathFlow", ["なし", "バイブラ", "ジェット", "不明"], item.cold_bath_flow_female, "femaleColdBathFlowOtherCheck", "femaleColdBathFlowOther");
+    setValue("femaleColdBathTempMin", item.cold_bath_temp_min_female);
+    setValue("femaleColdBathTempMax", item.cold_bath_temp_max_female);
+    setValue("femaleColdBathCapacity", item.cold_bath_capacity_female);
+    setValue("femaleColdBathDepth", item.cold_bath_depth_female);
+    setRadioValue("femaleColdShower", item.cold_shower_female);
+    setValue("femaleColdBathNote", item.cold_bath_note_female);
+
+    setRadioValue("femaleOutdoor", item.outdoor_female);
+    setCheckboxGroup("femaleOutdoorLocation", ["露天エリア", "専用外気浴スペース", "ベランダ・テラス"], item.outdoor_location_female, "femaleOutdoorLocationOtherCheck", "femaleOutdoorLocationOther");
+    setRadioValue("femaleIndoorBathing", item.indoor_bathing_female);
+    setCheckboxGroup("femaleIndoorLocation", ["浴場内エリア", "専用内気浴スペース"], item.indoor_location_female, "femaleIndoorLocationOtherCheck", "femaleIndoorLocationOther");
+    setRadioValue("femaleToriToiChair", item.tori_toi_chair_female);
+    setValue("femaleToriToiChairCount", item.tori_toi_chair_count_female);
+    setRadioValue("femaleReclineChair", item.recline_chair_female);
+    setValue("femaleReclineChairCount", item.recline_chair_count_female);
+    setRadioValue("femaleInfinityChair", item.infinity_chair_female);
+    setValue("femaleInfinityChairCount", item.infinity_chair_count_female);
+    setRadioValue("femaleBench", item.bench_female);
+    setValue("femaleBenchCount", item.bench_count_female);
+    setRadioValue("femaleDeckChair", item.deck_chair_female);
+    setValue("femaleDeckChairCount", item.deck_chair_count_female);
+    setRadioValue("femaleLayingSpace", item.laying_space_female);
+    setCheckboxGroup("femaleLayingSpaceMaterial", ["畳", "木製"], item.laying_space_material_female, "femaleLayingSpaceMaterialOtherCheck", "femaleLayingSpaceMaterialOther");
+    setValue("femaleToriToiOtherNote", item.tori_toi_other_note_female);
+    setRadioValue("femaleRoofRainProtection", item.roof_rain_protection_female);
+    setRadioValue("femaleSunShade", item.sun_shade_female);
+    setCheckboxGroup("femaleScenery", ["山・自然", "海・湖", "街並み", "庭園", "星空"], item.scenery_female, "femaleSceneryOtherCheck", "femaleSceneryOther");
+    setValue("femaleOutdoorIndoorNote", item.outdoor_indoor_note_female);
+
+    setValue("maleShowerCount", item.shower_count_male);
+    setCheckboxGroup("maleShowerType", ["押すタイプ", "レバータイプ", "不明"], item.shower_type_male, "maleShowerTypeOtherCheck", "maleShowerTypeOther");
+    setValue("maleShowerHeadInfo", item.shower_head_info_male);
+    setRadioValue("maleShowerFaucet", item.shower_faucet_male);
+    setRadioValue("maleShowerBooth", item.shower_booth_male);
+    setRadioValue("maleWashAreaDivider", item.wash_area_divider_male);
+    setRadioValue("maleBathTrashBin", item.bath_trash_bin_male);
+    setRadioValue("malePreRinseWater", item.pre_rinse_water_male);
+    setValue("maleShowerNote", item.shower_note_male);
+
+    setRadioValue("maleShampooConditioner", item.shampoo_conditioner_male);
+    setRadioValue("maleBodySoap", item.body_soap_male);
+    setRadioValue("maleSoap", item.soap_male);
+    setRadioValue("maleFaceWash", item.face_wash_male);
+    setRadioValue("maleCleansing", item.cleansing_male);
+    setRadioValue("maleBasin", item.basin_male);
+    setRadioValue("maleBathChair", item.bath_chair_male);
+    setRadioValue("maleShowerChair", item.shower_chair_male);
+    populateRentalItems("maleRentalRows", item.rental_items_male);
+    setRadioValue("maleDryerStatus", item.dryer_status_male);
+    setValue("maleDryerCount", item.dryer_count_male);
+    setRadioValue("maleDryerFee", item.dryer_fee_male);
+    setValue("maleDryerBrand", item.dryer_brand_male);
+    setRadioValue("maleDryerBringOwn", item.dryer_bring_own_male);
+    setRadioValue("maleTissue", item.tissue_male);
+    setRadioValue("maleCottonSwab", item.cotton_swab_male);
+    setRadioValue("maleCosmetics", item.cosmetics_male);
+    setRadioValue("maleHairTie", item.hair_tie_male);
+    setRadioValue("malePowderRoom", item.powder_room_male);
+    setRadioValue("maleVanity", item.vanity_male);
+    setRadioValue("maleWaterCooler", item.water_cooler_male);
+    setRadioValue("maleFan", item.fan_male);
+    setRadioValue("maleScale", item.scale_male);
+    setRadioValue("maleBloodPressureMonitor", item.blood_pressure_monitor_male);
+    setRadioValue("maleTrashBin", item.trash_bin_male);
+    setRadioValue("maleLockerRoomChair", item.locker_room_chair_male);
+    setRadioValue("maleBabyChair", item.baby_chair_male);
+    setRadioValue("maleBabyBed", item.baby_bed_male);
+    setValue("maleAmenityNote", item.amenity_note_male);
+    setValue("femaleShowerCount", item.shower_count_female);
+    setCheckboxGroup("femaleShowerType", ["押すタイプ", "レバータイプ", "不明"], item.shower_type_female, "femaleShowerTypeOtherCheck", "femaleShowerTypeOther");
+    setValue("femaleShowerHeadInfo", item.shower_head_info_female);
+    setRadioValue("femaleShowerFaucet", item.shower_faucet_female);
+    setRadioValue("femaleShowerBooth", item.shower_booth_female);
+    setRadioValue("femaleWashAreaDivider", item.wash_area_divider_female);
+    setRadioValue("femaleBathTrashBin", item.bath_trash_bin_female);
+    setRadioValue("femalePreRinseWater", item.pre_rinse_water_female);
+    setValue("femaleShowerNote", item.shower_note_female);
+
+    setRadioValue("femaleShampooConditioner", item.shampoo_conditioner_female);
+    setRadioValue("femaleBodySoap", item.body_soap_female);
+    setRadioValue("femaleSoap", item.soap_female);
+    setRadioValue("femaleFaceWash", item.face_wash_female);
+    setRadioValue("femaleCleansing", item.cleansing_female);
+    setRadioValue("femaleBasin", item.basin_female);
+    setRadioValue("femaleBathChair", item.bath_chair_female);
+    setRadioValue("femaleShowerChair", item.shower_chair_female);
+    populateRentalItems("femaleRentalRows", item.rental_items_female);
+    setRadioValue("femaleDryerStatus", item.dryer_status_female);
+    setValue("femaleDryerCount", item.dryer_count_female);
+    setRadioValue("femaleDryerFee", item.dryer_fee_female);
+    setValue("femaleDryerBrand", item.dryer_brand_female);
+    setRadioValue("femaleDryerBringOwn", item.dryer_bring_own_female);
+    setRadioValue("femaleTissue", item.tissue_female);
+    setRadioValue("femaleCottonSwab", item.cotton_swab_female);
+    setRadioValue("femaleCosmetics", item.cosmetics_female);
+    setRadioValue("femaleHairTie", item.hair_tie_female);
+    setRadioValue("femalePowderRoom", item.powder_room_female);
+    setRadioValue("femaleVanity", item.vanity_female);
+    setRadioValue("femaleWaterCooler", item.water_cooler_female);
+    setRadioValue("femaleFan", item.fan_female);
+    setRadioValue("femaleScale", item.scale_female);
+    setRadioValue("femaleBloodPressureMonitor", item.blood_pressure_monitor_female);
+    setRadioValue("femaleTrashBin", item.trash_bin_female);
+    setRadioValue("femaleLockerRoomChair", item.locker_room_chair_female);
+    setRadioValue("femaleBabyChair", item.baby_chair_female);
+    setRadioValue("femaleBabyBed", item.baby_bed_female);
+    setValue("femaleAmenityNote", item.amenity_note_female);
 
     // 🔐 ロッカー
-    setValue("lockerCount", item.locker_count);
+    setValue("maleLockerCount", item.locker_count_male);
     setCheckboxGroup(
-      "lockerKeyType",
+      "maleLockerKeyType",
       ["不明", "鍵", "リストバンド", "靴箱の鍵と交換方式", "コイン式（有料）", "コイン返却式", "IC・電子キー", "暗証番号", "ダイヤル", "施錠なし（カゴ・棚）"],
-      item.locker_key_type,
-      "lockerKeyTypeOtherCheck",
-      "lockerKeyTypeOther"
+      item.locker_key_type_male,
+      "maleLockerKeyTypeOtherCheck",
+      "maleLockerKeyTypeOther"
     );
     setCheckboxGroup(
-      "lockerWristbandType",
+      "maleLockerWristbandType",
       ["不明", "ゴム・シリコン型", "スパイラル型", "マジックテープ型", "バックル型"],
-      item.locker_wristband_type,
-      "lockerWristbandTypeOtherCheck",
-      "lockerWristbandTypeOther"
+      item.locker_wristband_type_male,
+      "maleLockerWristbandTypeOtherCheck",
+      "maleLockerWristbandTypeOther"
     );
     setCheckboxGroup(
-      "lockerWristbandUse",
+      "maleLockerWristbandUse",
       ["不明", "なし", "ロッカーキー", "館内決済", "入退館管理"],
-      item.locker_wristband_use,
-      "lockerWristbandUseOtherCheck",
-      "lockerWristbandUseOther"
+      item.locker_wristband_use_male,
+      "maleLockerWristbandUseOtherCheck",
+      "maleLockerWristbandUseOther"
     );
     setCheckboxGroup(
-      "lockerSize",
+      "maleLockerSize",
       ["正方形タイプ", "縦長タイプ", "通常型タイプ", "小型タイプ", "大型タイプ", "キャリーケース対応タイプ", "かごタイプ", "棚タイプ"],
-      item.locker_size,
-      "lockerSizeOtherCheck",
-      "lockerSizeOther"
+      item.locker_size_male,
+      "maleLockerSizeOtherCheck",
+      "maleLockerSizeOther"
     );
-    setRadioValue("lockerDivider", item.locker_divider);
-    setRadioValue("lockerHanger", item.locker_hanger);
-    setRadioValue("lockerSmallItemBox", item.locker_small_item_box);
-    setRadioValue("lockerValuables", item.locker_valuables);
-    setRadioValue("lockerRental", item.locker_rental);
-    setRadioValue("lockerSuitcase", item.locker_suitcase);
-    setValue("lockerNote", item.locker_note);
+    setRadioValue("maleLockerDivider", item.locker_divider_male);
+    setRadioValue("maleLockerHanger", item.locker_hanger_male);
+    setRadioValue("maleLockerSmallItemBox", item.locker_small_item_box_male);
+    setRadioValue("maleLockerValuables", item.locker_valuables_male);
+    setRadioValue("maleLockerRental", item.locker_rental_male);
+    setRadioValue("maleLockerSuitcase", item.locker_suitcase_male);
+    setValue("maleLockerNote", item.locker_note_male);
 
     // 👟 靴箱
-    setValue("shoeboxCount", item.shoebox_count);
+    setValue("maleShoeboxCount", item.shoebox_count_male);
     setCheckboxGroup(
-      "shoeboxType",
+      "maleShoeboxType",
       ["不明", "個別靴箱", "オープン棚", "靴カゴ", "大型靴箱", "車いす・大型荷物対応スペース"],
-      item.shoebox_type,
-      "shoeboxTypeOtherCheck",
-      "shoeboxTypeOther"
+      item.shoebox_type_male,
+      "maleShoeboxTypeOtherCheck",
+      "maleShoeboxTypeOther"
     );
     setCheckboxGroup(
-      "shoeboxKeyType",
+      "maleShoeboxKeyType",
       ["不明", "鍵", "リストバンド", "コイン式", "コイン返却式", "IC・電子キー", "暗証番号", "ダイヤル", "施錠なし"],
-      item.shoebox_key_type,
-      "shoeboxKeyTypeOtherCheck",
-      "shoeboxKeyTypeOther"
+      item.shoebox_key_type_male,
+      "maleShoeboxKeyTypeOtherCheck",
+      "maleShoeboxKeyTypeOther"
     );
-    setRadioValue("shoeboxFee", item.shoebox_fee);
-    setValue("shoeboxNote", item.shoebox_note);
+    setRadioValue("maleShoeboxFee", item.shoebox_fee_male);
+    setValue("maleShoeboxNote", item.shoebox_note_male);
+    setValue("femaleLockerCount", item.locker_count_female);
+    setCheckboxGroup(
+      "femaleLockerKeyType",
+      ["不明", "鍵", "リストバンド", "靴箱の鍵と交換方式", "コイン式（有料）", "コイン返却式", "IC・電子キー", "暗証番号", "ダイヤル", "施錠なし（カゴ・棚）"],
+      item.locker_key_type_female,
+      "femaleLockerKeyTypeOtherCheck",
+      "femaleLockerKeyTypeOther"
+    );
+    setCheckboxGroup(
+      "femaleLockerWristbandType",
+      ["不明", "ゴム・シリコン型", "スパイラル型", "マジックテープ型", "バックル型"],
+      item.locker_wristband_type_female,
+      "femaleLockerWristbandTypeOtherCheck",
+      "femaleLockerWristbandTypeOther"
+    );
+    setCheckboxGroup(
+      "femaleLockerWristbandUse",
+      ["不明", "なし", "ロッカーキー", "館内決済", "入退館管理"],
+      item.locker_wristband_use_female,
+      "femaleLockerWristbandUseOtherCheck",
+      "femaleLockerWristbandUseOther"
+    );
+    setCheckboxGroup(
+      "femaleLockerSize",
+      ["正方形タイプ", "縦長タイプ", "通常型タイプ", "小型タイプ", "大型タイプ", "キャリーケース対応タイプ", "かごタイプ", "棚タイプ"],
+      item.locker_size_female,
+      "femaleLockerSizeOtherCheck",
+      "femaleLockerSizeOther"
+    );
+    setRadioValue("femaleLockerDivider", item.locker_divider_female);
+    setRadioValue("femaleLockerHanger", item.locker_hanger_female);
+    setRadioValue("femaleLockerSmallItemBox", item.locker_small_item_box_female);
+    setRadioValue("femaleLockerValuables", item.locker_valuables_female);
+    setRadioValue("femaleLockerRental", item.locker_rental_female);
+    setRadioValue("femaleLockerSuitcase", item.locker_suitcase_female);
+    setValue("femaleLockerNote", item.locker_note_female);
+
+    // 👟 靴箱
+    setValue("femaleShoeboxCount", item.shoebox_count_female);
+    setCheckboxGroup(
+      "femaleShoeboxType",
+      ["不明", "個別靴箱", "オープン棚", "靴カゴ", "大型靴箱", "車いす・大型荷物対応スペース"],
+      item.shoebox_type_female,
+      "femaleShoeboxTypeOtherCheck",
+      "femaleShoeboxTypeOther"
+    );
+    setCheckboxGroup(
+      "femaleShoeboxKeyType",
+      ["不明", "鍵", "リストバンド", "コイン式", "コイン返却式", "IC・電子キー", "暗証番号", "ダイヤル", "施錠なし"],
+      item.shoebox_key_type_female,
+      "femaleShoeboxKeyTypeOtherCheck",
+      "femaleShoeboxKeyTypeOther"
+    );
+    setRadioValue("femaleShoeboxFee", item.shoebox_fee_female);
+    setValue("femaleShoeboxNote", item.shoebox_note_female);
 
     // 🚻 トイレ・バリアフリー
     setRadioValue("toiletLocationLobby", item.toilet_location_lobby);
@@ -2164,10 +2720,14 @@
         <button type="button" class="tab-btn" data-tab-target="basic">基本情報</button>
         <button type="button" class="tab-btn" data-tab-target="price">料金・決済方法</button>
         <button type="button" class="tab-btn" data-tab-target="onsen">温泉情報</button>
-        <button type="button" class="tab-btn" data-tab-target="facility">浴場情報</button>
-        <button type="button" class="tab-btn" data-tab-target="sauna">サウナ関連</button>
-        <button type="button" class="tab-btn" data-tab-target="amenity">シャワー・アメニティ</button>
-        <button type="button" class="tab-btn" data-tab-target="locker">ロッカー・靴箱</button>
+        <button type="button" class="tab-btn" data-tab-target="facility-male">🚹 男性 浴場情報</button>
+        <button type="button" class="tab-btn" data-tab-target="facility-female">🚺 女性 浴場情報</button>
+        <button type="button" class="tab-btn" data-tab-target="sauna-male">🚹 男性 サウナ関連</button>
+        <button type="button" class="tab-btn" data-tab-target="sauna-female">🚺 女性 サウナ関連</button>
+        <button type="button" class="tab-btn" data-tab-target="amenity-male">🚹 男性 シャワー・アメニティ</button>
+        <button type="button" class="tab-btn" data-tab-target="amenity-female">🚺 女性 シャワー・アメニティ</button>
+        <button type="button" class="tab-btn" data-tab-target="locker-male">🚹 男性 ロッカー・靴箱</button>
+        <button type="button" class="tab-btn" data-tab-target="locker-female">🚺 女性 ロッカー・靴箱</button>
         <button type="button" class="tab-btn" data-tab-target="toilet">トイレ・バリアフリー</button>
         <button type="button" class="tab-btn" data-tab-target="dining">お食事処・売店・自動販売機</button>
         <button type="button" class="tab-btn" data-tab-target="rest-massage">休憩スペース・マッサージ</button>
@@ -2314,50 +2874,97 @@
         </section>
 
         <!-- 施設情報（浴場・浴槽） -->
-        <section class="detail-section" data-tab="facility">
-          <h3>🛀 浴場情報</h3>
+        <section class="detail-section" data-tab="facility-male">
+          <h3>🚹 男性 浴場情報</h3>
 
           ${detailSubhead("♨️ 浴場・浴槽の形状")}
-          ${detailTags(item.bath_shape) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.bath_shape_male) || `<p class="detail-note-tight">情報がありません。</p>`}
 
           ${detailSubhead("🛀 浴槽の機能・種類")}
-          ${detailTags(item.bath_function) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.bath_function_male) || `<p class="detail-note-tight">情報がありません。</p>`}
 
           ${detailSubhead("👨‍👩‍👧‍👦 家族風呂・貸切風呂の詳細情報")}
           <div class="detail-grid">
-            ${detailField("時間", item.private_bath_duration != null ? `${item.private_bath_duration}分` : "")}
+            ${detailField("時間", item.private_bath_duration_male != null ? `${item.private_bath_duration_male}分` : "")}
             ${detailField(
               "👤 定員",
-              item.private_bath_capacity_status === "人数あり" && item.private_bath_capacity != null
-                ? `${item.private_bath_capacity}人`
-                : item.private_bath_capacity_status || ""
+              item.private_bath_capacity_status_male === "人数あり" && item.private_bath_capacity_male != null
+                ? `${item.private_bath_capacity_male}人`
+                : item.private_bath_capacity_status_male || ""
             )}
           </div>
-          ${item.private_bath_note ? `<p class="detail-note">${escapeHtml(item.private_bath_note)}</p>` : ""}
+          ${item.private_bath_note_male ? `<p class="detail-note">${escapeHtml(item.private_bath_note_male)}</p>` : ""}
 
           ${detailSubhead("♨️ 浴場の場所")}
-          ${detailTags(item.bath_location) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.bath_location_male) || `<p class="detail-note-tight">情報がありません。</p>`}
 
           ${detailSubhead("🛀 浴場内の手すり")}
-          <p class="detail-note-tight">${escapeHtml(item.bath_handrail || "不明")}</p>
+          <p class="detail-note-tight">${escapeHtml(item.bath_handrail_male || "不明")}</p>
 
           ${detailSubhead("🪣 洗面用具置き")}
-          <p class="detail-note-tight">${escapeHtml(item.toiletry_shelf || "不明")}</p>
+          <p class="detail-note-tight">${escapeHtml(item.toiletry_shelf_male || "不明")}</p>
 
           ${detailSubhead("♨️ 浴場前室")}
-          <p class="detail-note-tight">${escapeHtml(item.bath_anteroom || "不明")}</p>
+          <p class="detail-note-tight">${escapeHtml(item.bath_anteroom_male || "不明")}</p>
 
           ${detailSubhead("♨️ 浴場・浴槽内の期間限定イベント")}
-          <p class="detail-note-tight">${escapeHtml(item.bath_event || "不明")}</p>
-          ${item.bath_event_detail ? `<p class="detail-note">${escapeHtml(item.bath_event_detail)}</p>` : ""}
+          <p class="detail-note-tight">${escapeHtml(item.bath_event_male || "不明")}</p>
+          ${item.bath_event_detail_male ? `<p class="detail-note">${escapeHtml(item.bath_event_detail_male)}</p>` : ""}
 
           ${detailSubhead("♨️ 浴槽内の小物（ゆず、あひる等）")}
-          <p class="detail-note-tight">${escapeHtml(item.bath_toys || "不明")}</p>
-          ${item.bath_toys_detail ? `<p class="detail-note">${escapeHtml(item.bath_toys_detail)}</p>` : ""}
+          <p class="detail-note-tight">${escapeHtml(item.bath_toys_male || "不明")}</p>
+          ${item.bath_toys_detail_male ? `<p class="detail-note">${escapeHtml(item.bath_toys_detail_male)}</p>` : ""}
 
           ${
-            item.bath_note
-              ? `${detailSubhead("♨️ その他 浴場・浴槽の補足事項")}<p class="detail-note">${escapeHtml(item.bath_note)}</p>`
+            item.bath_note_male
+              ? `${detailSubhead("♨️ その他 浴場・浴槽の補足事項")}<p class="detail-note">${escapeHtml(item.bath_note_male)}</p>`
+              : ""
+          }
+        </section>
+        <section class="detail-section" data-tab="facility-female">
+          <h3>🚺 女性 浴場情報</h3>
+
+          ${detailSubhead("♨️ 浴場・浴槽の形状")}
+          ${detailTags(item.bath_shape_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          ${detailSubhead("🛀 浴槽の機能・種類")}
+          ${detailTags(item.bath_function_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          ${detailSubhead("👨‍👩‍👧‍👦 家族風呂・貸切風呂の詳細情報")}
+          <div class="detail-grid">
+            ${detailField("時間", item.private_bath_duration_female != null ? `${item.private_bath_duration_female}分` : "")}
+            ${detailField(
+              "👤 定員",
+              item.private_bath_capacity_status_female === "人数あり" && item.private_bath_capacity_female != null
+                ? `${item.private_bath_capacity_female}人`
+                : item.private_bath_capacity_status_female || ""
+            )}
+          </div>
+          ${item.private_bath_note_female ? `<p class="detail-note">${escapeHtml(item.private_bath_note_female)}</p>` : ""}
+
+          ${detailSubhead("♨️ 浴場の場所")}
+          ${detailTags(item.bath_location_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          ${detailSubhead("🛀 浴場内の手すり")}
+          <p class="detail-note-tight">${escapeHtml(item.bath_handrail_female || "不明")}</p>
+
+          ${detailSubhead("🪣 洗面用具置き")}
+          <p class="detail-note-tight">${escapeHtml(item.toiletry_shelf_female || "不明")}</p>
+
+          ${detailSubhead("♨️ 浴場前室")}
+          <p class="detail-note-tight">${escapeHtml(item.bath_anteroom_female || "不明")}</p>
+
+          ${detailSubhead("♨️ 浴場・浴槽内の期間限定イベント")}
+          <p class="detail-note-tight">${escapeHtml(item.bath_event_female || "不明")}</p>
+          ${item.bath_event_detail_female ? `<p class="detail-note">${escapeHtml(item.bath_event_detail_female)}</p>` : ""}
+
+          ${detailSubhead("♨️ 浴槽内の小物（ゆず、あひる等）")}
+          <p class="detail-note-tight">${escapeHtml(item.bath_toys_female || "不明")}</p>
+          ${item.bath_toys_detail_female ? `<p class="detail-note">${escapeHtml(item.bath_toys_detail_female)}</p>` : ""}
+
+          ${
+            item.bath_note_female
+              ? `${detailSubhead("♨️ その他 浴場・浴槽の補足事項")}<p class="detail-note">${escapeHtml(item.bath_note_female)}</p>`
               : ""
           }
         </section>
@@ -2430,46 +3037,46 @@
 
 
         <!-- サウナ関連 -->
-        <section class="detail-section" data-tab="sauna">
-          <h3>🧖‍♀️ サウナ関連</h3>
+        <section class="detail-section" data-tab="sauna-male">
+          <h3>🚹 男性 サウナ関連</h3>
 
           ${detailSubhead("🧖‍♀️ サウナ設備")}
           <div class="detail-grid">
-            ${detailField("🧖‍♀️ サウナ設備", item.sauna_facility)}
-            ${detailField("🧖‍♀️ サウナ設備の場所", item.sauna_facility_location)}
+            ${detailField("🧖‍♀️ サウナ設備", item.sauna_facility_male)}
+            ${detailField("🧖‍♀️ サウナ設備の場所", item.sauna_facility_location_male)}
           </div>
-          ${item.sauna_facility_suspended ? `<p class="detail-note">⚠️ 現在休止中</p>` : ""}
+          ${item.sauna_facility_suspended_male ? `<p class="detail-note">⚠️ 現在休止中</p>` : ""}
           <p class="field-title">🧖‍♀️ サウナの種類</p>
-          ${detailTags(item.sauna_types) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.sauna_types_male) || `<p class="detail-note-tight">情報がありません。</p>`}
 
           <p class="field-subtitle">🕒 サウナの利用時間</p>
-          <p class="detail-note-tight">${escapeHtml(item.sauna_hours_type || "不明")}</p>
+          <p class="detail-note-tight">${escapeHtml(item.sauna_hours_type_male || "不明")}</p>
           ${
-            item.sauna_hours_type === "利用時間あり"
+            item.sauna_hours_type_male === "利用時間あり"
               ? `
                 <div class="detail-grid">
                   ${detailField(
                     "平日",
-                    item.sauna_hours_weekday_open || item.sauna_hours_weekday_close
-                      ? `${item.sauna_hours_weekday_open || "?"}〜${item.sauna_hours_weekday_close || "?"}`
+                    item.sauna_hours_weekday_open_male || item.sauna_hours_weekday_close_male
+                      ? `${item.sauna_hours_weekday_open_male || "?"}〜${item.sauna_hours_weekday_close_male || "?"}`
                       : ""
                   )}
                   ${detailField(
                     "土曜日",
-                    item.sauna_hours_saturday_open || item.sauna_hours_saturday_close
-                      ? `${item.sauna_hours_saturday_open || "?"}〜${item.sauna_hours_saturday_close || "?"}`
+                    item.sauna_hours_saturday_open_male || item.sauna_hours_saturday_close_male
+                      ? `${item.sauna_hours_saturday_open_male || "?"}〜${item.sauna_hours_saturday_close_male || "?"}`
                       : ""
                   )}
                   ${detailField(
                     "日曜日",
-                    item.sauna_hours_sunday_open || item.sauna_hours_sunday_close
-                      ? `${item.sauna_hours_sunday_open || "?"}〜${item.sauna_hours_sunday_close || "?"}`
+                    item.sauna_hours_sunday_open_male || item.sauna_hours_sunday_close_male
+                      ? `${item.sauna_hours_sunday_open_male || "?"}〜${item.sauna_hours_sunday_close_male || "?"}`
                       : ""
                   )}
                   ${detailField(
                     "祝日",
-                    item.sauna_hours_holiday_open || item.sauna_hours_holiday_close
-                      ? `${item.sauna_hours_holiday_open || "?"}〜${item.sauna_hours_holiday_close || "?"}`
+                    item.sauna_hours_holiday_open_male || item.sauna_hours_holiday_close_male
+                      ? `${item.sauna_hours_holiday_open_male || "?"}〜${item.sauna_hours_holiday_close_male || "?"}`
                       : ""
                   )}
                 </div>
@@ -2481,238 +3088,518 @@
           <div class="detail-grid">
             ${detailField(
               "🌡 サウナ室内の温度",
-              item.sauna_temp_min != null || item.sauna_temp_max != null
-                ? `${item.sauna_temp_min ?? "?"}℃〜${item.sauna_temp_max ?? "?"}℃`
+              item.sauna_temp_min_male != null || item.sauna_temp_max_male != null
+                ? `${item.sauna_temp_min_male ?? "?"}℃〜${item.sauna_temp_max_male ?? "?"}℃`
                 : ""
             )}
             ${detailField(
               "💧 サウナ室内の湿度",
-              item.sauna_humidity_min != null || item.sauna_humidity_max != null
-                ? `${item.sauna_humidity_min ?? "?"}%〜${item.sauna_humidity_max ?? "?"}%`
+              item.sauna_humidity_min_male != null || item.sauna_humidity_max_male != null
+                ? `${item.sauna_humidity_min_male ?? "?"}%〜${item.sauna_humidity_max_male ?? "?"}%`
                 : ""
             )}
-            ${detailField("👤 サウナ室内の定員", item.sauna_capacity_number != null ? `${item.sauna_capacity_number}人` : "")}
-            ${detailField("定員の目安", item.sauna_capacity_range)}
-            ${detailField("🌡 温度計・湿度計", item.sauna_thermometer)}
-            ${detailField("🕒 時計（現在時刻表示）", item.sauna_clock)}
-            ${detailField("🕒 12分計", item.sauna_twelve_min_timer)}
-            ${detailField("⏳ 砂時計", item.sauna_hourglass)}
-            ${detailField("📺 テレビ", item.sauna_tv)}
-            ${detailField("📺 テレビリモコン", item.sauna_tv_remote)}
-            ${detailField("🚨 サウナ室内の非常ボタン", item.sauna_emergency_button)}
-            ${detailField("🪨 サウナストーン", item.sauna_stones)}
-            ${detailField("🔥 ストーブタイプ", item.sauna_stove_type)}
+            ${detailField("👤 サウナ室内の定員", item.sauna_capacity_number_male != null ? `${item.sauna_capacity_number_male}人` : "")}
+            ${detailField("定員の目安", item.sauna_capacity_range_male)}
+            ${detailField("🌡 温度計・湿度計", item.sauna_thermometer_male)}
+            ${detailField("🕒 時計（現在時刻表示）", item.sauna_clock_male)}
+            ${detailField("🕒 12分計", item.sauna_twelve_min_timer_male)}
+            ${detailField("⏳ 砂時計", item.sauna_hourglass_male)}
+            ${detailField("📺 テレビ", item.sauna_tv_male)}
+            ${detailField("📺 テレビリモコン", item.sauna_tv_remote_male)}
+            ${detailField("🚨 サウナ室内の非常ボタン", item.sauna_emergency_button_male)}
+            ${detailField("🪨 サウナストーン", item.sauna_stones_male)}
+            ${detailField("🔥 ストーブタイプ", item.sauna_stove_type_male)}
             ${detailField(
               "→ ストーブの台数",
-              item.sauna_stove_count_status === "台数あり" && item.sauna_stove_count != null
-                ? `${item.sauna_stove_count}台`
-                : item.sauna_stove_count_status || ""
+              item.sauna_stove_count_status_male === "台数あり" && item.sauna_stove_count_male != null
+                ? `${item.sauna_stove_count_male}台`
+                : item.sauna_stove_count_status_male || ""
             )}
-            ${detailField("ストーブの製品名・メーカー", item.sauna_stove_brand)}
+            ${detailField("ストーブの製品名・メーカー", item.sauna_stove_brand_male)}
           </div>
 
           ${detailSubhead("🧖‍♀️ サウナマット・用品")}
           <div class="detail-grid">
-            ${detailField("🧖‍♀️ サウナマットの貸し出し", item.sauna_mat_rental)}
-            ${detailField("🧖‍♀️ サウナ用品のレンタル", item.sauna_goods_rental)}
-            ${detailField("🧖‍♀️ サウナ用品の販売（施設内）", item.sauna_goods_sale)}
+            ${detailField("🧖‍♀️ サウナマットの貸し出し", item.sauna_mat_rental_male)}
+            ${detailField("🧖‍♀️ サウナ用品のレンタル", item.sauna_goods_rental_male)}
+            ${detailField("🧖‍♀️ サウナ用品の販売（施設内）", item.sauna_goods_sale_male)}
           </div>
-          ${item.sauna_mat_rental === "あり" ? `<p class="field-title">→ サウナマットの種類</p>` : ""}
-          ${detailTags(item.sauna_mat_type)}
-          ${item.sauna_mat_rental === "あり" ? `<p class="field-title">→ サウナマットの設置場所・利用方法</p>` : ""}
-          ${detailTags(item.sauna_mat_placement)}
+          ${item.sauna_mat_rental_male === "あり" ? `<p class="field-title">→ サウナマットの種類</p>` : ""}
+          ${detailTags(item.sauna_mat_type_male)}
+          ${item.sauna_mat_rental_male === "あり" ? `<p class="field-title">→ サウナマットの設置場所・利用方法</p>` : ""}
+          ${detailTags(item.sauna_mat_placement_male)}
 
           ${detailSubhead("🔥 ロウリュ・アウフグース")}
           <div class="detail-grid">
-            ${detailField("🔥 ロウリュ", item.sauna_loyly)}
-            ${detailField("→ アロマロウリュ", item.sauna_aroma_loyly)}
-            ${detailField("アロマの種類", item.sauna_aroma_type)}
-            ${detailField("→ アウフグース・熱波", item.sauna_aufguss)}
-            ${detailField("→ 開催頻度", item.sauna_loyly_frequency)}
-            ${detailField("開催時間", item.sauna_loyly_interval_minutes != null ? `${item.sauna_loyly_interval_minutes}分おき` : "")}
-            ${detailField("→ 予約", item.sauna_loyly_reservation)}
+            ${detailField("🔥 ロウリュ", item.sauna_loyly_male)}
+            ${detailField("→ アロマロウリュ", item.sauna_aroma_loyly_male)}
+            ${detailField("アロマの種類", item.sauna_aroma_type_male)}
+            ${detailField("→ アウフグース・熱波", item.sauna_aufguss_male)}
+            ${detailField("→ 開催頻度", item.sauna_loyly_frequency_male)}
+            ${detailField("開催時間", item.sauna_loyly_interval_minutes_male != null ? `${item.sauna_loyly_interval_minutes_male}分おき` : "")}
+            ${detailField("→ 予約", item.sauna_loyly_reservation_male)}
           </div>
-          ${item.sauna_loyly === "あり" ? `<p class="field-title">→ ロウリュの種類</p>` : ""}
-          ${detailTags(item.sauna_loyly_type)}
-          ${item.sauna_loyly_interval_note ? `<p class="detail-note">${escapeHtml(item.sauna_loyly_interval_note)}</p>` : ""}
-          ${item.sauna_loyly_note ? `<p class="detail-note">${escapeHtml(item.sauna_loyly_note)}</p>` : ""}
+          ${item.sauna_loyly_male === "あり" ? `<p class="field-title">→ ロウリュの種類</p>` : ""}
+          ${detailTags(item.sauna_loyly_type_male)}
+          ${item.sauna_loyly_interval_note_male ? `<p class="detail-note">${escapeHtml(item.sauna_loyly_interval_note_male)}</p>` : ""}
+          ${item.sauna_loyly_note_male ? `<p class="detail-note">${escapeHtml(item.sauna_loyly_note_male)}</p>` : ""}
 
           ${detailSubhead("🚪 サウナ室の出入り・照明")}
           <div class="detail-grid">
-            ${detailField("🚪 サウナ室のドア", item.sauna_door_type)}
-            ${detailField("🚪 サウナ室内から出る際", item.sauna_exit_direction)}
-            ${detailField("💡 照明の明るさ", item.sauna_light_brightness)}
+            ${detailField("🚪 サウナ室のドア", item.sauna_door_type_male)}
+            ${detailField("🚪 サウナ室内から出る際", item.sauna_exit_direction_male)}
+            ${detailField("💡 照明の明るさ", item.sauna_light_brightness_male)}
           </div>
-          ${item.sauna_room_note ? `<p class="detail-note">${escapeHtml(item.sauna_room_note)}</p>` : ""}
+          ${item.sauna_room_note_male ? `<p class="detail-note">${escapeHtml(item.sauna_room_note_male)}</p>` : ""}
 
           ${detailSubhead("💧 水風呂")}
           <div class="detail-grid">
-            ${detailField("💧 水風呂", item.cold_bath_availability)}
-            ${detailField("💧 水風呂の個数", item.cold_bath_count != null ? `${item.cold_bath_count}個` : "")}
+            ${detailField("💧 水風呂", item.cold_bath_availability_male)}
+            ${detailField("💧 水風呂の個数", item.cold_bath_count_male != null ? `${item.cold_bath_count_male}個` : "")}
             ${detailField(
               "🌡 水風呂の温度",
-              item.cold_bath_temp_min != null || item.cold_bath_temp_max != null
-                ? `${item.cold_bath_temp_min ?? "?"}℃〜${item.cold_bath_temp_max ?? "?"}℃`
+              item.cold_bath_temp_min_male != null || item.cold_bath_temp_max_male != null
+                ? `${item.cold_bath_temp_min_male ?? "?"}℃〜${item.cold_bath_temp_max_male ?? "?"}℃`
                 : ""
             )}
-            ${detailField("👤 水風呂の定員", item.cold_bath_capacity != null ? `${item.cold_bath_capacity}人` : "")}
-            ${detailField("💧 水風呂の深さ", item.cold_bath_depth != null ? `およそ${item.cold_bath_depth}cm` : "")}
-            ${detailField("🚿 冷水シャワー", item.cold_shower)}
+            ${detailField("👤 水風呂の定員", item.cold_bath_capacity_male != null ? `${item.cold_bath_capacity_male}人` : "")}
+            ${detailField("💧 水風呂の深さ", item.cold_bath_depth_male != null ? `およそ${item.cold_bath_depth_male}cm` : "")}
+            ${detailField("🚿 冷水シャワー", item.cold_shower_male)}
           </div>
           <p class="field-subtitle">💧 水風呂の形状</p>
-          ${detailTags(item.cold_bath_shape) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.cold_bath_shape_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <p class="field-subtitle">💧 水風呂の設置場所</p>
-          ${detailTags(item.cold_bath_location) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.cold_bath_location_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <p class="field-subtitle">💧 水風呂の水源</p>
-          ${detailTags(item.cold_bath_source) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.cold_bath_source_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <p class="field-subtitle">💧 水風呂の冷却方法</p>
-          ${detailTags(item.cold_bath_cooling) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.cold_bath_cooling_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <p class="field-subtitle">💧 水風呂の水流</p>
-          ${detailTags(item.cold_bath_flow) || `<p class="detail-note-tight">情報がありません。</p>`}
-          ${item.cold_bath_note ? `<p class="detail-note">${escapeHtml(item.cold_bath_note)}</p>` : ""}
+          ${detailTags(item.cold_bath_flow_male) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.cold_bath_note_male ? `<p class="detail-note">${escapeHtml(item.cold_bath_note_male)}</p>` : ""}
 
           ${detailSubhead("🌿 外気浴・内気浴")}
           <div class="detail-grid">
-            ${detailField("🌿 外気浴", item.outdoor)}
-            ${detailField("🌿 内気浴", item.indoor_bathing)}
+            ${detailField("🌿 外気浴", item.outdoor_male)}
+            ${detailField("🌿 内気浴", item.indoor_bathing_male)}
           </div>
-          ${item.outdoor === "あり" ? `<p class="field-subtitle">→ 外気浴の設置場所</p>` : ""}
-          ${detailTags(item.outdoor_location)}
-          ${item.indoor_bathing === "あり" ? `<p class="field-subtitle">→ 内気浴の設置場所</p>` : ""}
-          ${detailTags(item.indoor_location)}
+          ${item.outdoor_male === "あり" ? `<p class="field-subtitle">→ 外気浴の設置場所</p>` : ""}
+          ${detailTags(item.outdoor_location_male)}
+          ${item.indoor_bathing_male === "あり" ? `<p class="field-subtitle">→ 内気浴の設置場所</p>` : ""}
+          ${detailTags(item.indoor_location_male)}
 
           ${detailSubhead("🪑 ととのい椅子・設備")}
           <div class="detail-grid">
-            ${detailField("🪑 ととのい椅子", item.tori_toi_chair)}
-            ${detailField("ととのい椅子の数", item.tori_toi_chair_count != null ? `${item.tori_toi_chair_count}脚` : "")}
-            ${detailField("🪑 リクライニングチェア", item.recline_chair)}
-            ${detailField("リクライニングチェアの数", item.recline_chair_count != null ? `${item.recline_chair_count}脚` : "")}
-            ${detailField("🪑 インフィニティチェア", item.infinity_chair)}
-            ${detailField("インフィニティチェアの数", item.infinity_chair_count != null ? `${item.infinity_chair_count}脚` : "")}
-            ${detailField("🪑 ベンチ", item.bench)}
-            ${detailField("ベンチの数", item.bench_count != null ? `${item.bench_count}脚` : "")}
-            ${detailField("🪑 デッキチェア", item.deck_chair)}
-            ${detailField("デッキチェアの数", item.deck_chair_count != null ? `${item.deck_chair_count}脚` : "")}
-            ${detailField("🌿 寝ころびスペース", item.laying_space)}
+            ${detailField("🪑 ととのい椅子", item.tori_toi_chair_male)}
+            ${detailField("ととのい椅子の数", item.tori_toi_chair_count_male != null ? `${item.tori_toi_chair_count_male}脚` : "")}
+            ${detailField("🪑 リクライニングチェア", item.recline_chair_male)}
+            ${detailField("リクライニングチェアの数", item.recline_chair_count_male != null ? `${item.recline_chair_count_male}脚` : "")}
+            ${detailField("🪑 インフィニティチェア", item.infinity_chair_male)}
+            ${detailField("インフィニティチェアの数", item.infinity_chair_count_male != null ? `${item.infinity_chair_count_male}脚` : "")}
+            ${detailField("🪑 ベンチ", item.bench_male)}
+            ${detailField("ベンチの数", item.bench_count_male != null ? `${item.bench_count_male}脚` : "")}
+            ${detailField("🪑 デッキチェア", item.deck_chair_male)}
+            ${detailField("デッキチェアの数", item.deck_chair_count_male != null ? `${item.deck_chair_count_male}脚` : "")}
+            ${detailField("🌿 寝ころびスペース", item.laying_space_male)}
           </div>
-          ${item.laying_space === "あり" ? `<p class="field-title">→ 材質</p>` : ""}
-          ${detailTags(item.laying_space_material)}
-          ${item.tori_toi_other_note ? `<p class="detail-note">${escapeHtml(item.tori_toi_other_note)}</p>` : ""}
+          ${item.laying_space_male === "あり" ? `<p class="field-title">→ 材質</p>` : ""}
+          ${detailTags(item.laying_space_material_male)}
+          ${item.tori_toi_other_note_male ? `<p class="detail-note">${escapeHtml(item.tori_toi_other_note_male)}</p>` : ""}
 
           ${detailSubhead("🏠 環境")}
           <div class="detail-grid">
-            ${detailField("🏠 屋根・雨対策", item.roof_rain_protection)}
-            ${detailField("☀️ 日なた・日陰", item.sun_shade)}
+            ${detailField("🏠 屋根・雨対策", item.roof_rain_protection_male)}
+            ${detailField("☀️ 日なた・日陰", item.sun_shade_male)}
           </div>
           <p class="field-subtitle">🏞️ 景色・景観</p>
-          ${detailTags(item.scenery) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.scenery_male) || `<p class="detail-note-tight">情報がありません。</p>`}
 
-          ${item.outdoor_indoor_note ? `<p class="detail-note">${escapeHtml(item.outdoor_indoor_note)}</p>` : ""}
+          ${item.outdoor_indoor_note_male ? `<p class="detail-note">${escapeHtml(item.outdoor_indoor_note_male)}</p>` : ""}
+        </section>
+        <section class="detail-section" data-tab="sauna-female">
+          <h3>🚺 女性 サウナ関連</h3>
+
+          ${detailSubhead("🧖‍♀️ サウナ設備")}
+          <div class="detail-grid">
+            ${detailField("🧖‍♀️ サウナ設備", item.sauna_facility_female)}
+            ${detailField("🧖‍♀️ サウナ設備の場所", item.sauna_facility_location_female)}
+          </div>
+          ${item.sauna_facility_suspended_female ? `<p class="detail-note">⚠️ 現在休止中</p>` : ""}
+          <p class="field-title">🧖‍♀️ サウナの種類</p>
+          ${detailTags(item.sauna_types_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          <p class="field-subtitle">🕒 サウナの利用時間</p>
+          <p class="detail-note-tight">${escapeHtml(item.sauna_hours_type_female || "不明")}</p>
+          ${
+            item.sauna_hours_type_female === "利用時間あり"
+              ? `
+                <div class="detail-grid">
+                  ${detailField(
+                    "平日",
+                    item.sauna_hours_weekday_open_female || item.sauna_hours_weekday_close_female
+                      ? `${item.sauna_hours_weekday_open_female || "?"}〜${item.sauna_hours_weekday_close_female || "?"}`
+                      : ""
+                  )}
+                  ${detailField(
+                    "土曜日",
+                    item.sauna_hours_saturday_open_female || item.sauna_hours_saturday_close_female
+                      ? `${item.sauna_hours_saturday_open_female || "?"}〜${item.sauna_hours_saturday_close_female || "?"}`
+                      : ""
+                  )}
+                  ${detailField(
+                    "日曜日",
+                    item.sauna_hours_sunday_open_female || item.sauna_hours_sunday_close_female
+                      ? `${item.sauna_hours_sunday_open_female || "?"}〜${item.sauna_hours_sunday_close_female || "?"}`
+                      : ""
+                  )}
+                  ${detailField(
+                    "祝日",
+                    item.sauna_hours_holiday_open_female || item.sauna_hours_holiday_close_female
+                      ? `${item.sauna_hours_holiday_open_female || "?"}〜${item.sauna_hours_holiday_close_female || "?"}`
+                      : ""
+                  )}
+                </div>
+              `
+              : ""
+          }
+
+          ${detailSubhead("🌡 サウナ室の仕様")}
+          <div class="detail-grid">
+            ${detailField(
+              "🌡 サウナ室内の温度",
+              item.sauna_temp_min_female != null || item.sauna_temp_max_female != null
+                ? `${item.sauna_temp_min_female ?? "?"}℃〜${item.sauna_temp_max_female ?? "?"}℃`
+                : ""
+            )}
+            ${detailField(
+              "💧 サウナ室内の湿度",
+              item.sauna_humidity_min_female != null || item.sauna_humidity_max_female != null
+                ? `${item.sauna_humidity_min_female ?? "?"}%〜${item.sauna_humidity_max_female ?? "?"}%`
+                : ""
+            )}
+            ${detailField("👤 サウナ室内の定員", item.sauna_capacity_number_female != null ? `${item.sauna_capacity_number_female}人` : "")}
+            ${detailField("定員の目安", item.sauna_capacity_range_female)}
+            ${detailField("🌡 温度計・湿度計", item.sauna_thermometer_female)}
+            ${detailField("🕒 時計（現在時刻表示）", item.sauna_clock_female)}
+            ${detailField("🕒 12分計", item.sauna_twelve_min_timer_female)}
+            ${detailField("⏳ 砂時計", item.sauna_hourglass_female)}
+            ${detailField("📺 テレビ", item.sauna_tv_female)}
+            ${detailField("📺 テレビリモコン", item.sauna_tv_remote_female)}
+            ${detailField("🚨 サウナ室内の非常ボタン", item.sauna_emergency_button_female)}
+            ${detailField("🪨 サウナストーン", item.sauna_stones_female)}
+            ${detailField("🔥 ストーブタイプ", item.sauna_stove_type_female)}
+            ${detailField(
+              "→ ストーブの台数",
+              item.sauna_stove_count_status_female === "台数あり" && item.sauna_stove_count_female != null
+                ? `${item.sauna_stove_count_female}台`
+                : item.sauna_stove_count_status_female || ""
+            )}
+            ${detailField("ストーブの製品名・メーカー", item.sauna_stove_brand_female)}
+          </div>
+
+          ${detailSubhead("🧖‍♀️ サウナマット・用品")}
+          <div class="detail-grid">
+            ${detailField("🧖‍♀️ サウナマットの貸し出し", item.sauna_mat_rental_female)}
+            ${detailField("🧖‍♀️ サウナ用品のレンタル", item.sauna_goods_rental_female)}
+            ${detailField("🧖‍♀️ サウナ用品の販売（施設内）", item.sauna_goods_sale_female)}
+          </div>
+          ${item.sauna_mat_rental_female === "あり" ? `<p class="field-title">→ サウナマットの種類</p>` : ""}
+          ${detailTags(item.sauna_mat_type_female)}
+          ${item.sauna_mat_rental_female === "あり" ? `<p class="field-title">→ サウナマットの設置場所・利用方法</p>` : ""}
+          ${detailTags(item.sauna_mat_placement_female)}
+
+          ${detailSubhead("🔥 ロウリュ・アウフグース")}
+          <div class="detail-grid">
+            ${detailField("🔥 ロウリュ", item.sauna_loyly_female)}
+            ${detailField("→ アロマロウリュ", item.sauna_aroma_loyly_female)}
+            ${detailField("アロマの種類", item.sauna_aroma_type_female)}
+            ${detailField("→ アウフグース・熱波", item.sauna_aufguss_female)}
+            ${detailField("→ 開催頻度", item.sauna_loyly_frequency_female)}
+            ${detailField("開催時間", item.sauna_loyly_interval_minutes_female != null ? `${item.sauna_loyly_interval_minutes_female}分おき` : "")}
+            ${detailField("→ 予約", item.sauna_loyly_reservation_female)}
+          </div>
+          ${item.sauna_loyly_female === "あり" ? `<p class="field-title">→ ロウリュの種類</p>` : ""}
+          ${detailTags(item.sauna_loyly_type_female)}
+          ${item.sauna_loyly_interval_note_female ? `<p class="detail-note">${escapeHtml(item.sauna_loyly_interval_note_female)}</p>` : ""}
+          ${item.sauna_loyly_note_female ? `<p class="detail-note">${escapeHtml(item.sauna_loyly_note_female)}</p>` : ""}
+
+          ${detailSubhead("🚪 サウナ室の出入り・照明")}
+          <div class="detail-grid">
+            ${detailField("🚪 サウナ室のドア", item.sauna_door_type_female)}
+            ${detailField("🚪 サウナ室内から出る際", item.sauna_exit_direction_female)}
+            ${detailField("💡 照明の明るさ", item.sauna_light_brightness_female)}
+          </div>
+          ${item.sauna_room_note_female ? `<p class="detail-note">${escapeHtml(item.sauna_room_note_female)}</p>` : ""}
+
+          ${detailSubhead("💧 水風呂")}
+          <div class="detail-grid">
+            ${detailField("💧 水風呂", item.cold_bath_availability_female)}
+            ${detailField("💧 水風呂の個数", item.cold_bath_count_female != null ? `${item.cold_bath_count_female}個` : "")}
+            ${detailField(
+              "🌡 水風呂の温度",
+              item.cold_bath_temp_min_female != null || item.cold_bath_temp_max_female != null
+                ? `${item.cold_bath_temp_min_female ?? "?"}℃〜${item.cold_bath_temp_max_female ?? "?"}℃`
+                : ""
+            )}
+            ${detailField("👤 水風呂の定員", item.cold_bath_capacity_female != null ? `${item.cold_bath_capacity_female}人` : "")}
+            ${detailField("💧 水風呂の深さ", item.cold_bath_depth_female != null ? `およそ${item.cold_bath_depth_female}cm` : "")}
+            ${detailField("🚿 冷水シャワー", item.cold_shower_female)}
+          </div>
+          <p class="field-subtitle">💧 水風呂の形状</p>
+          ${detailTags(item.cold_bath_shape_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">💧 水風呂の設置場所</p>
+          ${detailTags(item.cold_bath_location_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">💧 水風呂の水源</p>
+          ${detailTags(item.cold_bath_source_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">💧 水風呂の冷却方法</p>
+          ${detailTags(item.cold_bath_cooling_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">💧 水風呂の水流</p>
+          ${detailTags(item.cold_bath_flow_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.cold_bath_note_female ? `<p class="detail-note">${escapeHtml(item.cold_bath_note_female)}</p>` : ""}
+
+          ${detailSubhead("🌿 外気浴・内気浴")}
+          <div class="detail-grid">
+            ${detailField("🌿 外気浴", item.outdoor_female)}
+            ${detailField("🌿 内気浴", item.indoor_bathing_female)}
+          </div>
+          ${item.outdoor_female === "あり" ? `<p class="field-subtitle">→ 外気浴の設置場所</p>` : ""}
+          ${detailTags(item.outdoor_location_female)}
+          ${item.indoor_bathing_female === "あり" ? `<p class="field-subtitle">→ 内気浴の設置場所</p>` : ""}
+          ${detailTags(item.indoor_location_female)}
+
+          ${detailSubhead("🪑 ととのい椅子・設備")}
+          <div class="detail-grid">
+            ${detailField("🪑 ととのい椅子", item.tori_toi_chair_female)}
+            ${detailField("ととのい椅子の数", item.tori_toi_chair_count_female != null ? `${item.tori_toi_chair_count_female}脚` : "")}
+            ${detailField("🪑 リクライニングチェア", item.recline_chair_female)}
+            ${detailField("リクライニングチェアの数", item.recline_chair_count_female != null ? `${item.recline_chair_count_female}脚` : "")}
+            ${detailField("🪑 インフィニティチェア", item.infinity_chair_female)}
+            ${detailField("インフィニティチェアの数", item.infinity_chair_count_female != null ? `${item.infinity_chair_count_female}脚` : "")}
+            ${detailField("🪑 ベンチ", item.bench_female)}
+            ${detailField("ベンチの数", item.bench_count_female != null ? `${item.bench_count_female}脚` : "")}
+            ${detailField("🪑 デッキチェア", item.deck_chair_female)}
+            ${detailField("デッキチェアの数", item.deck_chair_count_female != null ? `${item.deck_chair_count_female}脚` : "")}
+            ${detailField("🌿 寝ころびスペース", item.laying_space_female)}
+          </div>
+          ${item.laying_space_female === "あり" ? `<p class="field-title">→ 材質</p>` : ""}
+          ${detailTags(item.laying_space_material_female)}
+          ${item.tori_toi_other_note_female ? `<p class="detail-note">${escapeHtml(item.tori_toi_other_note_female)}</p>` : ""}
+
+          ${detailSubhead("🏠 環境")}
+          <div class="detail-grid">
+            ${detailField("🏠 屋根・雨対策", item.roof_rain_protection_female)}
+            ${detailField("☀️ 日なた・日陰", item.sun_shade_female)}
+          </div>
+          <p class="field-subtitle">🏞️ 景色・景観</p>
+          ${detailTags(item.scenery_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+
+          ${item.outdoor_indoor_note_female ? `<p class="detail-note">${escapeHtml(item.outdoor_indoor_note_female)}</p>` : ""}
         </section>
 
         <!-- シャワー -->
-        <section class="detail-section" data-tab="amenity">
-          <h3>🚿 シャワー</h3>
+        <section class="detail-section" data-tab="amenity-male">
+          <h3>🚹 男性 シャワー</h3>
           <div class="detail-grid">
-            ${detailField("🚿 シャワーの数", item.shower_count)}
+            ${detailField("🚿 シャワーの数", item.shower_count_male)}
           </div>
           <p class="field-subtitle">🚿 シャワーの種類</p>
-          ${detailTags(item.shower_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.shower_type_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <div class="detail-gap"></div>
           <div class="detail-grid">
-            ${detailField("🚿 シャワーヘッドの種類・メーカー等", item.shower_head_info)}
-            ${detailField("🚰 吐水口・カラン", item.shower_faucet)}
-            ${detailField("🚿 シャワーブース", item.shower_booth)}
-            ${detailField("🚿 洗い場仕切り", item.wash_area_divider)}
-            ${detailField("🗑 くず入れ（浴場内）", item.bath_trash_bin)}
-            ${detailField("🚿 かけ湯", item.pre_rinse_water)}
+            ${detailField("🚿 シャワーヘッドの種類・メーカー等", item.shower_head_info_male)}
+            ${detailField("🚰 吐水口・カラン", item.shower_faucet_male)}
+            ${detailField("🚿 シャワーブース", item.shower_booth_male)}
+            ${detailField("🚿 洗い場仕切り", item.wash_area_divider_male)}
+            ${detailField("🗑 くず入れ（浴場内）", item.bath_trash_bin_male)}
+            ${detailField("🚿 かけ湯", item.pre_rinse_water_male)}
           </div>
-          ${item.shower_note ? `<p class="detail-note">${escapeHtml(item.shower_note)}</p>` : ""}
+          ${item.shower_note_male ? `<p class="detail-note">${escapeHtml(item.shower_note_male)}</p>` : ""}
         </section>
 
         <!-- アメニティ -->
-        <section class="detail-section" data-tab="amenity">
-          <h3>🧴 アメニティ・備品</h3>
+        <section class="detail-section" data-tab="amenity-male">
+          <h3>🚹 男性 アメニティ・備品</h3>
           <div class="detail-grid">
-            ${detailField("🧴 シャンプー・コンディショナー", item.shampoo_conditioner)}
-            ${detailField("🧴 ボディソープ", item.body_soap)}
-            ${detailField("🧼 石鹸", item.soap)}
-            ${detailField("🧴 洗顔フォーム（浴場内）", item.face_wash)}
-            ${detailField("🧴 クレンジング（浴場内）", item.cleansing)}
-            ${detailField("🪣 洗面器・桶", item.basin)}
-            ${detailField("🪑 浴場内の椅子", item.bath_chair)}
-            ${detailField("🪑 シャワーチェア", item.shower_chair)}
-            ${detailField("🔌 ドライヤー", item.dryer_status)}
-            ${detailField("ドライヤーの個数", item.dryer_count)}
-            ${detailField("ドライヤー使用料金", item.dryer_fee)}
-            ${detailField("ドライヤーの種類・メーカー", item.dryer_brand)}
-            ${detailField("ドライヤー持ち込み", item.dryer_bring_own)}
-            ${detailField("🪥 ティッシュ", item.tissue)}
-            ${detailField("🪥 綿棒", item.cotton_swab)}
-            ${detailField("🪥 化粧品", item.cosmetics)}
-            ${detailField("🪥 ヘアゴム", item.hair_tie)}
-            ${detailField("💄 パウダールーム", item.powder_room)}
-            ${detailField("💄 洗面台", item.vanity)}
-            ${detailField("🚰 冷水機", item.water_cooler)}
-            ${detailField("🔌 扇風機", item.fan)}
-            ${detailField("🌡 体重計・体脂肪計", item.scale)}
-            ${detailField("🌡 血圧計", item.blood_pressure_monitor)}
-            ${detailField("🗑 ごみ箱", item.trash_bin)}
-            ${detailField("🪑 更衣室内の椅子", item.locker_room_chair)}
-            ${detailField("👶🏻 ベビーチェア", item.baby_chair)}
-            ${detailField("👶🏻 ベビーベッド", item.baby_bed)}
+            ${detailField("🧴 シャンプー・コンディショナー", item.shampoo_conditioner_male)}
+            ${detailField("🧴 ボディソープ", item.body_soap_male)}
+            ${detailField("🧼 石鹸", item.soap_male)}
+            ${detailField("🧴 洗顔フォーム（浴場内）", item.face_wash_male)}
+            ${detailField("🧴 クレンジング（浴場内）", item.cleansing_male)}
+            ${detailField("🪣 洗面器・桶", item.basin_male)}
+            ${detailField("🪑 浴場内の椅子", item.bath_chair_male)}
+            ${detailField("🪑 シャワーチェア", item.shower_chair_male)}
+            ${detailField("🔌 ドライヤー", item.dryer_status_male)}
+            ${detailField("ドライヤーの個数", item.dryer_count_male)}
+            ${detailField("ドライヤー使用料金", item.dryer_fee_male)}
+            ${detailField("ドライヤーの種類・メーカー", item.dryer_brand_male)}
+            ${detailField("ドライヤー持ち込み", item.dryer_bring_own_male)}
+            ${detailField("🪥 ティッシュ", item.tissue_male)}
+            ${detailField("🪥 綿棒", item.cotton_swab_male)}
+            ${detailField("🪥 化粧品", item.cosmetics_male)}
+            ${detailField("🪥 ヘアゴム", item.hair_tie_male)}
+            ${detailField("💄 パウダールーム", item.powder_room_male)}
+            ${detailField("💄 洗面台", item.vanity_male)}
+            ${detailField("🚰 冷水機", item.water_cooler_male)}
+            ${detailField("🔌 扇風機", item.fan_male)}
+            ${detailField("🌡 体重計・体脂肪計", item.scale_male)}
+            ${detailField("🌡 血圧計", item.blood_pressure_monitor_male)}
+            ${detailField("🗑 ごみ箱", item.trash_bin_male)}
+            ${detailField("🪑 更衣室内の椅子", item.locker_room_chair_male)}
+            ${detailField("👶🏻 ベビーチェア", item.baby_chair_male)}
+            ${detailField("👶🏻 ベビーベッド", item.baby_bed_male)}
           </div>
           ${
-            Array.isArray(item.rental_items) && item.rental_items.length
+            Array.isArray(item.rental_items_male) && item.rental_items_male.length
               ? `
                 <p class="field-title">🧴 レンタル品</p>
                 <ul class="rental-list">
-                  ${item.rental_items.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}
+                  ${item.rental_items_male.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}
                 </ul>
               `
               : ""
           }
-          ${item.amenity_note ? `<p class="detail-note">${escapeHtml(item.amenity_note)}</p>` : ""}
+          ${item.amenity_note_male ? `<p class="detail-note">${escapeHtml(item.amenity_note_male)}</p>` : ""}
+        </section>
+        <section class="detail-section" data-tab="amenity-female">
+          <h3>🚺 女性 シャワー</h3>
+          <div class="detail-grid">
+            ${detailField("🚿 シャワーの数", item.shower_count_female)}
+          </div>
+          <p class="field-subtitle">🚿 シャワーの種類</p>
+          ${detailTags(item.shower_type_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-gap"></div>
+          <div class="detail-grid">
+            ${detailField("🚿 シャワーヘッドの種類・メーカー等", item.shower_head_info_female)}
+            ${detailField("🚰 吐水口・カラン", item.shower_faucet_female)}
+            ${detailField("🚿 シャワーブース", item.shower_booth_female)}
+            ${detailField("🚿 洗い場仕切り", item.wash_area_divider_female)}
+            ${detailField("🗑 くず入れ（浴場内）", item.bath_trash_bin_female)}
+            ${detailField("🚿 かけ湯", item.pre_rinse_water_female)}
+          </div>
+          ${item.shower_note_female ? `<p class="detail-note">${escapeHtml(item.shower_note_female)}</p>` : ""}
+        </section>
+
+        <!-- アメニティ -->
+        <section class="detail-section" data-tab="amenity-female">
+          <h3>🚺 女性 アメニティ・備品</h3>
+          <div class="detail-grid">
+            ${detailField("🧴 シャンプー・コンディショナー", item.shampoo_conditioner_female)}
+            ${detailField("🧴 ボディソープ", item.body_soap_female)}
+            ${detailField("🧼 石鹸", item.soap_female)}
+            ${detailField("🧴 洗顔フォーム（浴場内）", item.face_wash_female)}
+            ${detailField("🧴 クレンジング（浴場内）", item.cleansing_female)}
+            ${detailField("🪣 洗面器・桶", item.basin_female)}
+            ${detailField("🪑 浴場内の椅子", item.bath_chair_female)}
+            ${detailField("🪑 シャワーチェア", item.shower_chair_female)}
+            ${detailField("🔌 ドライヤー", item.dryer_status_female)}
+            ${detailField("ドライヤーの個数", item.dryer_count_female)}
+            ${detailField("ドライヤー使用料金", item.dryer_fee_female)}
+            ${detailField("ドライヤーの種類・メーカー", item.dryer_brand_female)}
+            ${detailField("ドライヤー持ち込み", item.dryer_bring_own_female)}
+            ${detailField("🪥 ティッシュ", item.tissue_female)}
+            ${detailField("🪥 綿棒", item.cotton_swab_female)}
+            ${detailField("🪥 化粧品", item.cosmetics_female)}
+            ${detailField("🪥 ヘアゴム", item.hair_tie_female)}
+            ${detailField("💄 パウダールーム", item.powder_room_female)}
+            ${detailField("💄 洗面台", item.vanity_female)}
+            ${detailField("🚰 冷水機", item.water_cooler_female)}
+            ${detailField("🔌 扇風機", item.fan_female)}
+            ${detailField("🌡 体重計・体脂肪計", item.scale_female)}
+            ${detailField("🌡 血圧計", item.blood_pressure_monitor_female)}
+            ${detailField("🗑 ごみ箱", item.trash_bin_female)}
+            ${detailField("🪑 更衣室内の椅子", item.locker_room_chair_female)}
+            ${detailField("👶🏻 ベビーチェア", item.baby_chair_female)}
+            ${detailField("👶🏻 ベビーベッド", item.baby_bed_female)}
+          </div>
+          ${
+            Array.isArray(item.rental_items_female) && item.rental_items_female.length
+              ? `
+                <p class="field-title">🧴 レンタル品</p>
+                <ul class="rental-list">
+                  ${item.rental_items_female.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}
+                </ul>
+              `
+              : ""
+          }
+          ${item.amenity_note_female ? `<p class="detail-note">${escapeHtml(item.amenity_note_female)}</p>` : ""}
         </section>
 
         <!-- ロッカー -->
-        <section class="detail-section" data-tab="locker">
-          <h3>🔐 ロッカー</h3>
+        <section class="detail-section" data-tab="locker-male">
+          <h3>🚹 男性 ロッカー</h3>
           <div class="detail-grid">
-            ${detailField("🔐 ロッカー数", item.locker_count)}
+            ${detailField("🔐 ロッカー数", item.locker_count_male)}
           </div>
           <p class="field-subtitle">🔐 ロッカーキーの仕組み</p>
-          ${detailTags(item.locker_key_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.locker_key_type_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <p class="field-subtitle">⌚️ リストバンドの種類</p>
-          ${detailTags(item.locker_wristband_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.locker_wristband_type_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <p class="field-subtitle">⌚️ リストバンド用途</p>
-          ${detailTags(item.locker_wristband_use) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.locker_wristband_use_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <p class="field-subtitle">🔐 ロッカーの大きさ</p>
-          ${detailTags(item.locker_size) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.locker_size_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <div class="detail-gap"></div>
           <div class="detail-grid">
-            ${detailField("🔐 ロッカー内の仕切り・2段タイプ", item.locker_divider)}
-            ${detailField("👕 ロッカー内のハンガー", item.locker_hanger)}
-            ${detailField("📱 ロッカー内の小物入れ", item.locker_small_item_box)}
-            ${detailField("🔑 貴重品預け用ロッカー", item.locker_valuables)}
-            ${detailField("🔐 レンタルロッカー", item.locker_rental)}
-            ${detailField("👜 キャリーケース預け", item.locker_suitcase)}
+            ${detailField("🔐 ロッカー内の仕切り・2段タイプ", item.locker_divider_male)}
+            ${detailField("👕 ロッカー内のハンガー", item.locker_hanger_male)}
+            ${detailField("📱 ロッカー内の小物入れ", item.locker_small_item_box_male)}
+            ${detailField("🔑 貴重品預け用ロッカー", item.locker_valuables_male)}
+            ${detailField("🔐 レンタルロッカー", item.locker_rental_male)}
+            ${detailField("👜 キャリーケース預け", item.locker_suitcase_male)}
           </div>
-          ${item.locker_note ? `<p class="detail-note">${escapeHtml(item.locker_note)}</p>` : ""}
+          ${item.locker_note_male ? `<p class="detail-note">${escapeHtml(item.locker_note_male)}</p>` : ""}
         </section>
 
         <!-- 靴箱 -->
-        <section class="detail-section" data-tab="locker">
-          <h3>👟 靴箱</h3>
+        <section class="detail-section" data-tab="locker-male">
+          <h3>🚹 男性 靴箱</h3>
           <div class="detail-grid">
-            ${detailField("👟 靴箱数", item.shoebox_count)}
-            ${detailField("🪙 利用料金", item.shoebox_fee)}
+            ${detailField("👟 靴箱数", item.shoebox_count_male)}
+            ${detailField("🪙 利用料金", item.shoebox_fee_male)}
           </div>
           <p class="field-subtitle">👟 靴箱の仕組み</p>
-          ${detailTags(item.shoebox_type) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${detailTags(item.shoebox_type_male) || `<p class="detail-note-tight">情報がありません。</p>`}
           <p class="field-subtitle">🔐 靴箱の鍵の仕組み</p>
-          ${detailTags(item.shoebox_key_type) || `<p class="detail-note-tight">情報がありません。</p>`}
-          ${item.shoebox_note ? `<p class="detail-note">${escapeHtml(item.shoebox_note)}</p>` : ""}
+          ${detailTags(item.shoebox_key_type_male) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.shoebox_note_male ? `<p class="detail-note">${escapeHtml(item.shoebox_note_male)}</p>` : ""}
+        </section>
+        <section class="detail-section" data-tab="locker-female">
+          <h3>🚺 女性 ロッカー</h3>
+          <div class="detail-grid">
+            ${detailField("🔐 ロッカー数", item.locker_count_female)}
+          </div>
+          <p class="field-subtitle">🔐 ロッカーキーの仕組み</p>
+          ${detailTags(item.locker_key_type_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">⌚️ リストバンドの種類</p>
+          ${detailTags(item.locker_wristband_type_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">⌚️ リストバンド用途</p>
+          ${detailTags(item.locker_wristband_use_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">🔐 ロッカーの大きさ</p>
+          ${detailTags(item.locker_size_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <div class="detail-gap"></div>
+          <div class="detail-grid">
+            ${detailField("🔐 ロッカー内の仕切り・2段タイプ", item.locker_divider_female)}
+            ${detailField("👕 ロッカー内のハンガー", item.locker_hanger_female)}
+            ${detailField("📱 ロッカー内の小物入れ", item.locker_small_item_box_female)}
+            ${detailField("🔑 貴重品預け用ロッカー", item.locker_valuables_female)}
+            ${detailField("🔐 レンタルロッカー", item.locker_rental_female)}
+            ${detailField("👜 キャリーケース預け", item.locker_suitcase_female)}
+          </div>
+          ${item.locker_note_female ? `<p class="detail-note">${escapeHtml(item.locker_note_female)}</p>` : ""}
+        </section>
+
+        <!-- 靴箱 -->
+        <section class="detail-section" data-tab="locker-female">
+          <h3>🚺 女性 靴箱</h3>
+          <div class="detail-grid">
+            ${detailField("👟 靴箱数", item.shoebox_count_female)}
+            ${detailField("🪙 利用料金", item.shoebox_fee_female)}
+          </div>
+          <p class="field-subtitle">👟 靴箱の仕組み</p>
+          ${detailTags(item.shoebox_type_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          <p class="field-subtitle">🔐 靴箱の鍵の仕組み</p>
+          ${detailTags(item.shoebox_key_type_female) || `<p class="detail-note-tight">情報がありません。</p>`}
+          ${item.shoebox_note_female ? `<p class="detail-note">${escapeHtml(item.shoebox_note_female)}</p>` : ""}
         </section>
 
         <!-- トイレ・バリアフリー -->
@@ -3306,9 +4193,13 @@
     form.reset();
 
     // 動的なレンタル欄・料金欄は空に戻す
-    const rentalRows = $("rentalRows");
-    if (rentalRows) {
-      rentalRows.innerHTML = "";
+    const maleRentalRows = $("maleRentalRows");
+    if (maleRentalRows) {
+      maleRentalRows.innerHTML = "";
+    }
+    const femaleRentalRows = $("femaleRentalRows");
+    if (femaleRentalRows) {
+      femaleRentalRows.innerHTML = "";
     }
     const bathFeeRows = $("bathFeeRows");
     if (bathFeeRows) {
@@ -3324,39 +4215,66 @@
     $("usageOther")?.classList.add("hidden");
     $("purchaseMethodOtherWrap")?.classList.add("hidden");
     $("paymentOther")?.classList.add("hidden");
-    $("saunaStoveCountWrap")?.classList.add("hidden");
-    $("privateBathCapacityWrap")?.classList.add("hidden");
-    $("saunaStoveCountWrap")?.classList.add("hidden");
-    $("bathShapeOther")?.classList.add("hidden");
-    $("bathFunctionOther")?.classList.add("hidden");
-    $("bathLocationOther")?.classList.add("hidden");
-    $("showerTypeOther")?.classList.add("hidden");
+    $("maleSaunaStoveCountWrap")?.classList.add("hidden");
+    $("femaleSaunaStoveCountWrap")?.classList.add("hidden");
+    $("malePrivateBathCapacityWrap")?.classList.add("hidden");
+    $("femalePrivateBathCapacityWrap")?.classList.add("hidden");
+    $("maleSaunaStoveCountWrap")?.classList.add("hidden");
+    $("femaleSaunaStoveCountWrap")?.classList.add("hidden");
+    $("maleBathShapeOther")?.classList.add("hidden");
+    $("femaleBathShapeOther")?.classList.add("hidden");
+    $("maleBathFunctionOther")?.classList.add("hidden");
+    $("femaleBathFunctionOther")?.classList.add("hidden");
+    $("maleBathLocationOther")?.classList.add("hidden");
+    $("femaleBathLocationOther")?.classList.add("hidden");
+    $("maleShowerTypeOther")?.classList.add("hidden");
+    $("femaleShowerTypeOther")?.classList.add("hidden");
     $("springTypeOther")?.classList.add("hidden");
     $("springColorOther")?.classList.add("hidden");
     $("springSmellOther")?.classList.add("hidden");
     $("springTextureOther")?.classList.add("hidden");
     $("springInfoSourceOther")?.classList.add("hidden");
     $("childInfoSourceOther")?.classList.add("hidden");
-    $("saunaFacilityLocationOther")?.classList.add("hidden");
-    $("saunaTypesOther")?.classList.add("hidden");
-    $("saunaStoveTypeOther")?.classList.add("hidden");
-    $("saunaMatTypeOther")?.classList.add("hidden");
-    $("saunaMatPlacementOther")?.classList.add("hidden");
-    $("saunaLoylyTypeOther")?.classList.add("hidden");
-    $("saunaDoorTypeOther")?.classList.add("hidden");
-    $("coldBathSourceOther")?.classList.add("hidden");
-    $("coldBathCoolingOther")?.classList.add("hidden");
-    $("coldBathFlowOther")?.classList.add("hidden");
-    $("outdoorLocationOther")?.classList.add("hidden");
-    $("indoorLocationOther")?.classList.add("hidden");
-    $("layingSpaceMaterialOther")?.classList.add("hidden");
-    $("sceneryOther")?.classList.add("hidden");
-    $("lockerKeyTypeOther")?.classList.add("hidden");
-    $("lockerWristbandTypeOther")?.classList.add("hidden");
-    $("lockerWristbandUseOther")?.classList.add("hidden");
-    $("lockerSizeOther")?.classList.add("hidden");
-    $("shoeboxTypeOther")?.classList.add("hidden");
-    $("shoeboxKeyTypeOther")?.classList.add("hidden");
+    $("maleSaunaFacilityLocationOther")?.classList.add("hidden");
+    $("femaleSaunaFacilityLocationOther")?.classList.add("hidden");
+    $("maleSaunaTypesOther")?.classList.add("hidden");
+    $("femaleSaunaTypesOther")?.classList.add("hidden");
+    $("maleSaunaStoveTypeOther")?.classList.add("hidden");
+    $("femaleSaunaStoveTypeOther")?.classList.add("hidden");
+    $("maleSaunaMatTypeOther")?.classList.add("hidden");
+    $("femaleSaunaMatTypeOther")?.classList.add("hidden");
+    $("maleSaunaMatPlacementOther")?.classList.add("hidden");
+    $("femaleSaunaMatPlacementOther")?.classList.add("hidden");
+    $("maleSaunaLoylyTypeOther")?.classList.add("hidden");
+    $("femaleSaunaLoylyTypeOther")?.classList.add("hidden");
+    $("maleSaunaDoorTypeOther")?.classList.add("hidden");
+    $("femaleSaunaDoorTypeOther")?.classList.add("hidden");
+    $("maleColdBathSourceOther")?.classList.add("hidden");
+    $("femaleColdBathSourceOther")?.classList.add("hidden");
+    $("maleColdBathCoolingOther")?.classList.add("hidden");
+    $("femaleColdBathCoolingOther")?.classList.add("hidden");
+    $("maleColdBathFlowOther")?.classList.add("hidden");
+    $("femaleColdBathFlowOther")?.classList.add("hidden");
+    $("maleOutdoorLocationOther")?.classList.add("hidden");
+    $("femaleOutdoorLocationOther")?.classList.add("hidden");
+    $("maleIndoorLocationOther")?.classList.add("hidden");
+    $("femaleIndoorLocationOther")?.classList.add("hidden");
+    $("maleLayingSpaceMaterialOther")?.classList.add("hidden");
+    $("femaleLayingSpaceMaterialOther")?.classList.add("hidden");
+    $("maleSceneryOther")?.classList.add("hidden");
+    $("femaleSceneryOther")?.classList.add("hidden");
+    $("maleLockerKeyTypeOther")?.classList.add("hidden");
+    $("femaleLockerKeyTypeOther")?.classList.add("hidden");
+    $("maleLockerWristbandTypeOther")?.classList.add("hidden");
+    $("femaleLockerWristbandTypeOther")?.classList.add("hidden");
+    $("maleLockerWristbandUseOther")?.classList.add("hidden");
+    $("femaleLockerWristbandUseOther")?.classList.add("hidden");
+    $("maleLockerSizeOther")?.classList.add("hidden");
+    $("femaleLockerSizeOther")?.classList.add("hidden");
+    $("maleShoeboxTypeOther")?.classList.add("hidden");
+    $("femaleShoeboxTypeOther")?.classList.add("hidden");
+    $("maleShoeboxKeyTypeOther")?.classList.add("hidden");
+    $("femaleShoeboxKeyTypeOther")?.classList.add("hidden");
     $("toiletTypesOther")?.classList.add("hidden");
     $("restaurantTypesOther")?.classList.add("hidden");
     $("restaurantPaymentOther")?.classList.add("hidden");
@@ -3384,7 +4302,8 @@
     $("chargingFeeWrap")?.classList.add("hidden");
     const massageFeeRows = $("massageFeeRows");
     if (massageFeeRows) massageFeeRows.innerHTML = "";
-    $("saunaHoursWrap")?.classList.add("hidden");
+    $("maleSaunaHoursWrap")?.classList.add("hidden");
+    $("femaleSaunaHoursWrap")?.classList.add("hidden");
   }
 
   // ---------------------------------------------------------
@@ -3413,10 +4332,12 @@
       switchFormTab("basic");
 
       // レンタル品欄が空なら、まず1行用意しておく（フォーカスは奪わない）
-      const rentalRows = $("rentalRows");
-      if (rentalRows && !rentalRows.children.length) {
-        addRentalRow("", "", { focus: false });
-      }
+      ["maleRentalRows", "femaleRentalRows"].forEach((containerId) => {
+        const rows = $(containerId);
+        if (rows && !rows.children.length) {
+          addRentalRow(containerId, "", "", { focus: false });
+        }
+      });
 
       // 入浴料・その他料金区分も、空ならデフォルトの区分名で行を用意しておく
       const bathFeeRows = $("bathFeeRows");
@@ -3442,7 +4363,8 @@
       setTimeout(() => $("name")?.focus(), 0);
     });
 
-    $("addRental")?.addEventListener("click", () => addRentalRow());
+    $("maleAddRental")?.addEventListener("click", () => addRentalRow("maleRentalRows"));
+    $("femaleAddRental")?.addEventListener("click", () => addRentalRow("femaleRentalRows"));
     $("addBathFee")?.addEventListener("click", () => addFeeRow("bathFeeRows"));
     $("addOtherFee")?.addEventListener("click", () => addFeeRow("otherFeeRows"));
 
@@ -3462,16 +4384,31 @@
 
     // ラジオボタン方式の「その他」を選んだ時だけ自由記述欄を表示
     [
-      ["purchaseMethod", "purchaseMethodOtherWrap"],
-      ["saunaFacilityLocation", "saunaFacilityLocationOther"],
-      ["saunaStoveType", "saunaStoveTypeOther"],
-      ["saunaDoorType", "saunaDoorTypeOther"]
+      ["purchaseMethod", "purchaseMethodOtherWrap"]
     ].forEach(([groupName, wrapId]) => {
       document.querySelectorAll(`input[name="${groupName}"]`).forEach((radio) => {
         radio.addEventListener("change", () => {
           const wrap = $(wrapId);
           if (!wrap) return;
           wrap.classList.toggle("hidden", radioValue(groupName) !== "その他");
+        });
+      });
+    });
+
+    ["male", "female"].forEach((gender) => {
+      [
+        ["SaunaFacilityLocation", "SaunaFacilityLocationOther"],
+        ["SaunaStoveType", "SaunaStoveTypeOther"],
+        ["SaunaDoorType", "SaunaDoorTypeOther"]
+      ].forEach(([groupSuffix, wrapSuffix]) => {
+        const groupName = `${gender}${groupSuffix}`;
+        const wrapId = `${gender}${wrapSuffix}`;
+        document.querySelectorAll(`input[name="${groupName}"]`).forEach((radio) => {
+          radio.addEventListener("change", () => {
+            const wrap = $(wrapId);
+            if (!wrap) return;
+            wrap.classList.toggle("hidden", radioValue(groupName) !== "その他");
+          });
         });
       });
     });
@@ -3485,29 +4422,35 @@
 
     // 浴場・浴槽関連の「その他」チェックボックスも同様にトグル
     // サウナの利用時間：「利用時間あり」を選んだ時だけ時間欄を表示
-    document.querySelectorAll('input[name="saunaHoursType"]').forEach((radio) => {
-      radio.addEventListener("change", () => {
-        const wrap = $("saunaHoursWrap");
-        if (!wrap) return;
-        wrap.classList.toggle("hidden", radioValue("saunaHoursType") !== "利用時間あり");
+    ["male", "female"].forEach((gender) => {
+      document.querySelectorAll(`input[name="${gender}SaunaHoursType"]`).forEach((radio) => {
+        radio.addEventListener("change", () => {
+          const wrap = $(`${gender}SaunaHoursWrap`);
+          if (!wrap) return;
+          wrap.classList.toggle("hidden", radioValue(`${gender}SaunaHoursType`) !== "利用時間あり");
+        });
       });
     });
 
     // 家族風呂・貸切風呂の定員：「人数を指定」を選んだ時だけ人数欄を表示
-    document.querySelectorAll('input[name="privateBathCapacityStatus"]').forEach((radio) => {
-      radio.addEventListener("change", () => {
-        const wrap = $("privateBathCapacityWrap");
-        if (!wrap) return;
-        wrap.classList.toggle("hidden", radioValue("privateBathCapacityStatus") !== "人数あり");
+    ["male", "female"].forEach((gender) => {
+      document.querySelectorAll(`input[name="${gender}PrivateBathCapacityStatus"]`).forEach((radio) => {
+        radio.addEventListener("change", () => {
+          const wrap = $(`${gender}PrivateBathCapacityWrap`);
+          if (!wrap) return;
+          wrap.classList.toggle("hidden", radioValue(`${gender}PrivateBathCapacityStatus`) !== "人数あり");
+        });
       });
     });
 
     // ストーブの台数：「台数を指定」を選んだ時だけ台数欄を表示
-    document.querySelectorAll('input[name="saunaStoveCountStatus"]').forEach((radio) => {
-      radio.addEventListener("change", () => {
-        const wrap = $("saunaStoveCountWrap");
-        if (!wrap) return;
-        wrap.classList.toggle("hidden", radioValue("saunaStoveCountStatus") !== "台数あり");
+    ["male", "female"].forEach((gender) => {
+      document.querySelectorAll(`input[name="${gender}SaunaStoveCountStatus"]`).forEach((radio) => {
+        radio.addEventListener("change", () => {
+          const wrap = $(`${gender}SaunaStoveCountWrap`);
+          if (!wrap) return;
+          wrap.classList.toggle("hidden", radioValue(`${gender}SaunaStoveCountStatus`) !== "台数あり");
+        });
       });
     });
 
@@ -3570,33 +4513,54 @@
     });
 
     [
-      ["bathShapeOtherCheck", "bathShapeOther"],
-      ["bathFunctionOtherCheck", "bathFunctionOther"],
-      ["bathLocationOtherCheck", "bathLocationOther"],
-      ["showerTypeOtherCheck", "showerTypeOther"],
+      ["maleBathShapeOtherCheck", "maleBathShapeOther"],
+      ["femaleBathShapeOtherCheck", "femaleBathShapeOther"],
+      ["maleBathFunctionOtherCheck", "maleBathFunctionOther"],
+      ["femaleBathFunctionOtherCheck", "femaleBathFunctionOther"],
+      ["maleBathLocationOtherCheck", "maleBathLocationOther"],
+      ["femaleBathLocationOtherCheck", "femaleBathLocationOther"],
+      ["maleShowerTypeOtherCheck", "maleShowerTypeOther"],
+      ["femaleShowerTypeOtherCheck", "femaleShowerTypeOther"],
       ["springTypeOtherCheck", "springTypeOther"],
       ["springColorOtherCheck", "springColorOther"],
       ["springSmellOtherCheck", "springSmellOther"],
       ["springTextureOtherCheck", "springTextureOther"],
       ["springInfoSourceOtherCheck", "springInfoSourceOther"],
       ["childInfoSourceOtherCheck", "childInfoSourceOther"],
-      ["saunaTypesOtherCheck", "saunaTypesOther"],
-      ["saunaMatTypeOtherCheck", "saunaMatTypeOther"],
-      ["saunaMatPlacementOtherCheck", "saunaMatPlacementOther"],
-      ["saunaLoylyTypeOtherCheck", "saunaLoylyTypeOther"],
-      ["coldBathSourceOtherCheck", "coldBathSourceOther"],
-      ["coldBathCoolingOtherCheck", "coldBathCoolingOther"],
-      ["coldBathFlowOtherCheck", "coldBathFlowOther"],
-      ["outdoorLocationOtherCheck", "outdoorLocationOther"],
-      ["indoorLocationOtherCheck", "indoorLocationOther"],
-      ["layingSpaceMaterialOtherCheck", "layingSpaceMaterialOther"],
-      ["sceneryOtherCheck", "sceneryOther"],
-      ["lockerKeyTypeOtherCheck", "lockerKeyTypeOther"],
-      ["lockerWristbandTypeOtherCheck", "lockerWristbandTypeOther"],
-      ["lockerWristbandUseOtherCheck", "lockerWristbandUseOther"],
-      ["lockerSizeOtherCheck", "lockerSizeOther"],
-      ["shoeboxTypeOtherCheck", "shoeboxTypeOther"],
-      ["shoeboxKeyTypeOtherCheck", "shoeboxKeyTypeOther"],
+      ["maleSaunaTypesOtherCheck", "maleSaunaTypesOther"],
+      ["femaleSaunaTypesOtherCheck", "femaleSaunaTypesOther"],
+      ["maleSaunaMatTypeOtherCheck", "maleSaunaMatTypeOther"],
+      ["femaleSaunaMatTypeOtherCheck", "femaleSaunaMatTypeOther"],
+      ["maleSaunaMatPlacementOtherCheck", "maleSaunaMatPlacementOther"],
+      ["femaleSaunaMatPlacementOtherCheck", "femaleSaunaMatPlacementOther"],
+      ["maleSaunaLoylyTypeOtherCheck", "maleSaunaLoylyTypeOther"],
+      ["femaleSaunaLoylyTypeOtherCheck", "femaleSaunaLoylyTypeOther"],
+      ["maleColdBathSourceOtherCheck", "maleColdBathSourceOther"],
+      ["femaleColdBathSourceOtherCheck", "femaleColdBathSourceOther"],
+      ["maleColdBathCoolingOtherCheck", "maleColdBathCoolingOther"],
+      ["femaleColdBathCoolingOtherCheck", "femaleColdBathCoolingOther"],
+      ["maleColdBathFlowOtherCheck", "maleColdBathFlowOther"],
+      ["femaleColdBathFlowOtherCheck", "femaleColdBathFlowOther"],
+      ["maleOutdoorLocationOtherCheck", "maleOutdoorLocationOther"],
+      ["femaleOutdoorLocationOtherCheck", "femaleOutdoorLocationOther"],
+      ["maleIndoorLocationOtherCheck", "maleIndoorLocationOther"],
+      ["femaleIndoorLocationOtherCheck", "femaleIndoorLocationOther"],
+      ["maleLayingSpaceMaterialOtherCheck", "maleLayingSpaceMaterialOther"],
+      ["femaleLayingSpaceMaterialOtherCheck", "femaleLayingSpaceMaterialOther"],
+      ["maleSceneryOtherCheck", "maleSceneryOther"],
+      ["femaleSceneryOtherCheck", "femaleSceneryOther"],
+      ["maleLockerKeyTypeOtherCheck", "maleLockerKeyTypeOther"],
+      ["femaleLockerKeyTypeOtherCheck", "femaleLockerKeyTypeOther"],
+      ["maleLockerWristbandTypeOtherCheck", "maleLockerWristbandTypeOther"],
+      ["femaleLockerWristbandTypeOtherCheck", "femaleLockerWristbandTypeOther"],
+      ["maleLockerWristbandUseOtherCheck", "maleLockerWristbandUseOther"],
+      ["femaleLockerWristbandUseOtherCheck", "femaleLockerWristbandUseOther"],
+      ["maleLockerSizeOtherCheck", "maleLockerSizeOther"],
+      ["femaleLockerSizeOtherCheck", "femaleLockerSizeOther"],
+      ["maleShoeboxTypeOtherCheck", "maleShoeboxTypeOther"],
+      ["femaleShoeboxTypeOtherCheck", "femaleShoeboxTypeOther"],
+      ["maleShoeboxKeyTypeOtherCheck", "maleShoeboxKeyTypeOther"],
+      ["femaleShoeboxKeyTypeOtherCheck", "femaleShoeboxKeyTypeOther"],
       ["toiletTypesOtherCheck", "toiletTypesOther"],
       ["restaurantTypesOtherCheck", "restaurantTypesOther"],
       ["restaurantPaymentOtherCheck", "restaurantPaymentOther"],
@@ -3620,7 +4584,14 @@
       });
     });
 
-    $("rentalRows")?.addEventListener("click", (event) => {
+    $("maleRentalRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+
+      button.closest(".rental-row")?.remove();
+    });
+
+    $("femaleRentalRows")?.addEventListener("click", (event) => {
       const button = event.target.closest(".remove-rental");
       if (!button) return;
 
