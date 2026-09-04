@@ -2330,12 +2330,160 @@
     return Array.isArray(data) ? data : [];
   }
 
+  // Supabaseの現行スキーマに実在する列だけを一覧化しておき、
+  // 過去バージョンのローカルデータ等に含まれる廃止済みの項目名を
+  // 送信時に自動で取り除けるようにする。
+  const KNOWN_COLUMNS = new Set([
+    "access_method", "accommodation_status", "address", "aed_facility_status", 
+    "amenity_note_female", "amenity_note_male", "apple_maps_url", "area", "baby_bed_female", 
+    "baby_bed_male", "baby_chair_female", "baby_chair_male", "basin_female", "basin_male", 
+    "bath_anteroom_female", "bath_anteroom_male", "bath_chair_female", "bath_chair_male", 
+    "bath_event_detail_female", "bath_event_detail_male", "bath_event_female", "bath_event_male", 
+    "bath_fees", "bath_function_female", "bath_function_male", "bath_handrail_female", 
+    "bath_handrail_male", "bath_location_female", "bath_location_male", "bath_note_female", 
+    "bath_note_male", "bath_shape_female", "bath_shape_male", "bath_toys_detail_female", 
+    "bath_toys_detail_male", "bath_toys_female", "bath_toys_male", "bath_trash_bin_female", 
+    "bath_trash_bin_male", "bench_count_female", "bench_count_male", "bench_female", "bench_male", 
+    "bicycle_parking", "blood_pressure_monitor_female", "blood_pressure_monitor_male", 
+    "body_soap_female", "body_soap_male", "business_type", "charging_fee_minutes", 
+    "charging_fee_price", "charging_spot", "child_age_limit", "child_boy_age_limit", 
+    "child_gender_limit", "child_girl_age_limit", "child_info_check_date", "child_info_source", 
+    "child_mixed_bathing", "child_mixed_bathing_note", "cleansing_female", "cleansing_male", 
+    "close_time", "closed_days", "closed_days_note", "coin_laundry_status", 
+    "cold_bath_availability_female", "cold_bath_availability_male", "cold_bath_capacity_female", 
+    "cold_bath_capacity_male", "cold_bath_cooling_female", "cold_bath_cooling_male", 
+    "cold_bath_count_female", "cold_bath_count_male", "cold_bath_depth_female", 
+    "cold_bath_depth_male", "cold_bath_flow_female", "cold_bath_flow_male", 
+    "cold_bath_location_female", "cold_bath_location_male", "cold_bath_note_female", 
+    "cold_bath_note_male", "cold_bath_shape_female", "cold_bath_shape_male", 
+    "cold_bath_source_female", "cold_bath_source_male", "cold_bath_temp_max_female", 
+    "cold_bath_temp_max_male", "cold_bath_temp_min_female", "cold_bath_temp_min_male", 
+    "cold_shower_female", "cold_shower_male", "cosmetics_female", "cosmetics_male", 
+    "cotton_swab_female", "cotton_swab_male", "coworking_features", "coworking_note", 
+    "coworking_space_status", "created_at", "deck_chair_count_female", "deck_chair_count_male", 
+    "deck_chair_female", "deck_chair_male", "dryer_brand_female", "dryer_brand_male", 
+    "dryer_bring_own_female", "dryer_bring_own_male", "dryer_count_female", "dryer_count_male", 
+    "dryer_fee_female", "dryer_fee_male", "dryer_status_female", "dryer_status_male", "event_info", 
+    "face_wash_female", "face_wash_male", "facebook", "fan_female", "fan_male", 
+    "first_aid_room_status", "foot_bath_status", "game_corner_status", "ganbanyoku_status", 
+    "google_maps_url", "hair_tie_female", "hair_tie_male", "hours_note", "id", "indications", 
+    "indoor_bathing_female", "indoor_bathing_male", "indoor_location_female", 
+    "indoor_location_male", "infinity_chair_count_female", "infinity_chair_count_male", 
+    "infinity_chair_female", "infinity_chair_male", "instagram", "is_closed", "is_temp_closed", 
+    "kids_corner_status", "last_entry", "last_info_check_date", "last_visit_date", "lat", 
+    "laying_space_female", "laying_space_male", "laying_space_material_female", 
+    "laying_space_material_male", "legionella_result", "legionella_test", "legionella_test_date", 
+    "lng", "locker_count_female", "locker_count_male", "locker_divider_female", 
+    "locker_divider_male", "locker_hanger_female", "locker_hanger_male", "locker_key_type_female", 
+    "locker_key_type_male", "locker_note_female", "locker_note_male", "locker_rental_female", 
+    "locker_rental_male", "locker_room_chair_female", "locker_room_chair_male", 
+    "locker_size_female", "locker_size_male", "locker_small_item_box_female", 
+    "locker_small_item_box_male", "locker_suitcase_female", "locker_suitcase_male", 
+    "locker_valuables_female", "locker_valuables_male", "locker_wristband_type_female", 
+    "locker_wristband_type_male", "locker_wristband_use_female", "locker_wristband_use_male", 
+    "massage_chair_count", "massage_chair_minutes", "massage_chair_price", "massage_chair_status", 
+    "massage_hours_close", "massage_hours_open", "massage_hours_type", "massage_menu_fees", 
+    "massage_note", "massage_status", "massage_types", "membership_card", "motorcycle_parking", 
+    "my_impression", "name", "nearest_station", "note", "notice_info", "onsen_tamago_status", 
+    "open_time", "other_facility_note", "other_fees", "outdoor_facility_status", "outdoor_female", 
+    "outdoor_indoor_note_female", "outdoor_indoor_note_male", "outdoor_location_female", 
+    "outdoor_location_male", "outdoor_male", "parking_accessible", "parking_capacity", 
+    "parking_conditions", "parking_fee_amount", "parking_fee_type", "parking_note", 
+    "parking_status", "parking_temporary", "parking_types", "payment", "phone", "point_card", 
+    "pool_facility_status", "powder_room_female", "powder_room_male", "pre_rinse_water_female", 
+    "pre_rinse_water_male", "prefecture", "price_note", "private_bath_capacity_female", 
+    "private_bath_capacity_male", "private_bath_capacity_status_female", 
+    "private_bath_capacity_status_male", "private_bath_duration_female", 
+    "private_bath_duration_male", "private_bath_note_female", "private_bath_note_male", 
+    "purchase_method", "recline_chair_count_female", "recline_chair_count_male", 
+    "recline_chair_female", "recline_chair_male", "recycle_box_status", "rental_items_female", 
+    "rental_items_male", "rental_space_status", "rest_space_condition", "rest_space_fee_amount", 
+    "rest_space_fee_type", "rest_space_hours_close", "rest_space_hours_open", 
+    "rest_space_hours_type", "rest_space_note", "rest_space_per_person_minutes", 
+    "rest_space_per_person_type", "rest_space_status", "rest_space_type", "restaurant_close_time", 
+    "restaurant_feature", "restaurant_hours_type", "restaurant_last_order", "restaurant_note", 
+    "restaurant_open_time", "restaurant_other_info", "restaurant_payment", "restaurant_status", 
+    "restaurant_types", "roof_rain_protection_female", "roof_rain_protection_male", 
+    "sauna_aroma_loyly_female", "sauna_aroma_loyly_male", "sauna_aroma_type_female", 
+    "sauna_aroma_type_male", "sauna_aufguss_female", "sauna_aufguss_male", 
+    "sauna_capacity_number_female", "sauna_capacity_number_male", "sauna_capacity_range_female", 
+    "sauna_capacity_range_male", "sauna_clock_female", "sauna_clock_male", 
+    "sauna_door_type_female", "sauna_door_type_male", "sauna_emergency_button_female", 
+    "sauna_emergency_button_male", "sauna_exit_direction_female", "sauna_exit_direction_male", 
+    "sauna_facility_female", "sauna_facility_location_female", "sauna_facility_location_male", 
+    "sauna_facility_male", "sauna_facility_suspended_female", "sauna_facility_suspended_male", 
+    "sauna_goods_rental_female", "sauna_goods_rental_male", "sauna_goods_sale_female", 
+    "sauna_goods_sale_male", "sauna_hourglass_female", "sauna_hourglass_male", 
+    "sauna_hours_holiday_close_female", "sauna_hours_holiday_close_male", 
+    "sauna_hours_holiday_open_female", "sauna_hours_holiday_open_male", 
+    "sauna_hours_saturday_close_female", "sauna_hours_saturday_close_male", 
+    "sauna_hours_saturday_open_female", "sauna_hours_saturday_open_male", 
+    "sauna_hours_sunday_close_female", "sauna_hours_sunday_close_male", 
+    "sauna_hours_sunday_open_female", "sauna_hours_sunday_open_male", "sauna_hours_type_female", 
+    "sauna_hours_type_male", "sauna_hours_weekday_close_female", "sauna_hours_weekday_close_male", 
+    "sauna_hours_weekday_open_female", "sauna_hours_weekday_open_male", 
+    "sauna_humidity_max_female", "sauna_humidity_max_male", "sauna_humidity_min_female", 
+    "sauna_humidity_min_male", "sauna_light_brightness_female", "sauna_light_brightness_male", 
+    "sauna_loyly_female", "sauna_loyly_frequency_female", "sauna_loyly_frequency_male", 
+    "sauna_loyly_interval_minutes_female", "sauna_loyly_interval_minutes_male", 
+    "sauna_loyly_interval_note_female", "sauna_loyly_interval_note_male", "sauna_loyly_male", 
+    "sauna_loyly_note_female", "sauna_loyly_note_male", "sauna_loyly_reservation_female", 
+    "sauna_loyly_reservation_male", "sauna_loyly_type_female", "sauna_loyly_type_male", 
+    "sauna_mat_placement_female", "sauna_mat_placement_male", "sauna_mat_rental_female", 
+    "sauna_mat_rental_male", "sauna_mat_type_female", "sauna_mat_type_male", 
+    "sauna_room_note_female", "sauna_room_note_male", "sauna_stones_female", "sauna_stones_male", 
+    "sauna_stove_brand_female", "sauna_stove_brand_male", "sauna_stove_count_female", 
+    "sauna_stove_count_male", "sauna_stove_count_status_female", "sauna_stove_count_status_male", 
+    "sauna_stove_type_female", "sauna_stove_type_male", "sauna_temp_max_female", 
+    "sauna_temp_max_male", "sauna_temp_min_female", "sauna_temp_min_male", 
+    "sauna_thermometer_female", "sauna_thermometer_male", "sauna_tv_female", "sauna_tv_male", 
+    "sauna_tv_remote_female", "sauna_tv_remote_male", "sauna_twelve_min_timer_female", 
+    "sauna_twelve_min_timer_male", "sauna_types_female", "sauna_types_male", "scale_female", 
+    "scale_male", "scenery_female", "scenery_male", "shampoo_conditioner_female", 
+    "shampoo_conditioner_male", "shoebox_count_female", "shoebox_count_male", "shoebox_fee_female", 
+    "shoebox_fee_male", "shoebox_key_type_female", "shoebox_key_type_male", "shoebox_note_female", 
+    "shoebox_note_male", "shoebox_type_female", "shoebox_type_male", "shop_hours_close", 
+    "shop_hours_open", "shop_hours_type", "shop_items", "shop_note", "shop_payment", "shop_status", 
+    "shower_booth_female", "shower_booth_male", "shower_chair_female", "shower_chair_male", 
+    "shower_count_female", "shower_count_male", "shower_faucet_female", "shower_faucet_male", 
+    "shower_head_info_female", "shower_head_info_male", "shower_note_female", "shower_note_male", 
+    "shower_type_female", "shower_type_male", "soap_female", "soap_male", "source_free_flow", 
+    "source_temperature", "spring_analysis", "spring_analysis_date", "spring_circulation", 
+    "spring_color", "spring_dilution", "spring_disinfection", "spring_heating", 
+    "spring_info_check_date", "spring_info_source", "spring_open_year", "spring_open_year_note", 
+    "spring_ph", "spring_smell", "spring_source_name", "spring_takeaway_status", 
+    "spring_temperature", "spring_texture", "spring_types", "spring_usage_note", 
+    "sun_shade_female", "sun_shade_male", "tissue_female", "tissue_male", "toilet_accessible", 
+    "toilet_baby_chair_in_toilet", "toilet_barrier_free_note", "toilet_diaper_table", 
+    "toilet_elevator", "toilet_location_lobby", "toilet_location_other", 
+    "toilet_mens_changing_room", "toilet_ostomate", "toilet_slope", "toilet_types", 
+    "toilet_wheelchair", "toilet_womens_changing_room", "toiletry_shelf_female", 
+    "toiletry_shelf_male", "tori_toi_chair_count_female", "tori_toi_chair_count_male", 
+    "tori_toi_chair_female", "tori_toi_chair_male", "tori_toi_other_note_female", 
+    "tori_toi_other_note_male", "trash_bin_female", "trash_bin_male", "twitter", "updated_at", 
+    "usage", "user_info_source", "vanity_female", "vanity_male", "vending_machine_location", 
+    "vending_machine_note", "vending_machine_status", "vending_machine_types", 
+    "wash_area_divider_female", "wash_area_divider_male", "water_cooler_female", 
+    "water_cooler_male", "website", "wifi_facility", "wifi_fee_minutes", "wifi_fee_price", 
+    "wristband_payment"
+  ]);
+
+  function filterKnownColumns(payload) {
+    const filtered = {};
+    Object.keys(payload).forEach((key) => {
+      if (KNOWN_COLUMNS.has(key)) {
+        filtered[key] = payload[key];
+      }
+    });
+    return filtered;
+  }
+
   async function insertSupabaseData(item) {
     if (!supabaseClient) return null;
 
     // Supabase側に存在しない id / updated_at の扱いを避けるため、
     // まずフォーム由来の項目だけを送ります。
-    const payload = { ...item };
+    const payload = filterKnownColumns(item);
     delete payload.id;
 
     const { data, error } = await supabaseClient
@@ -2355,7 +2503,7 @@
   async function updateSupabaseData(id, item) {
     if (!supabaseClient) return null;
 
-    const payload = { ...item };
+    const payload = filterKnownColumns(item);
     delete payload.id;
 
     const { data, error } = await supabaseClient
