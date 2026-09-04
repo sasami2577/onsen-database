@@ -4091,9 +4091,6 @@
       button.textContent = "Supabaseに移行する";
     }
 
-    updateMigrateBanner();
-    await loadAll();
-
     if (failed.length) {
       alert(
         `${successCount}件を移行しました。\n` +
@@ -4102,6 +4099,9 @@
     } else {
       alert(`${successCount}件すべてSupabaseに移行しました。`);
     }
+
+    // 表示をきちんと最新化するため、ページごと読み込み直す
+    location.reload();
   }
 
   async function loadAll() {
@@ -4809,6 +4809,7 @@
 
       window.__onsenData = data;
       originalRenderCards(data);
+      updateMigrateBanner();
 
       if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
         setStatus(
@@ -4826,6 +4827,7 @@
       const localData = getLocalData();
       window.__onsenData = localData;
       originalRenderCards(localData);
+      updateMigrateBanner();
 
       setStatus(
         `一覧の読込に失敗しました：${error.message || "不明なエラー"}`,
