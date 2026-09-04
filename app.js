@@ -2617,6 +2617,23 @@
       return text.includes(search);
     });
 
+    const userLoc = window.__userLocation;
+    if (userLoc) {
+      filtered.sort((a, b) => {
+        const aHas = a.lat != null && a.lng != null;
+        const bHas = b.lat != null && b.lng != null;
+        if (aHas && bHas) {
+          return (
+            distanceKm(userLoc.lat, userLoc.lng, Number(a.lat), Number(a.lng)) -
+            distanceKm(userLoc.lat, userLoc.lng, Number(b.lat), Number(b.lng))
+          );
+        }
+        if (aHas) return -1;
+        if (bHas) return 1;
+        return 0;
+      });
+    }
+
     if (count) {
       count.textContent = `${filtered.length}件`;
     }
@@ -2649,6 +2666,9 @@
           Array.isArray(item.spring_types) ? item.spring_types.join("・") : "",
           item.spring_temperature != null
             ? `温泉 ${item.spring_temperature}℃`
+            : "",
+          userLoc && item.lat != null && item.lng != null
+            ? `📍${distanceKm(userLoc.lat, userLoc.lng, Number(item.lat), Number(item.lng)).toFixed(1)}km`
             : ""
         ].filter(Boolean);
 
@@ -4877,6 +4897,10 @@
 
     $("migrateButton")?.addEventListener("click", () => migrateLocalDataToSupabase());
 
+    $("showCurrentLocationButton")?.addEventListener("click", () => {
+      requestUserLocation({ recenter: true });
+    });
+
     $("extractLatLngButton")?.addEventListener("click", () => {
       const url = value("googleMapsUrl");
 
@@ -4997,6 +5021,69 @@
   // ---------------------------------------------------------
   // Googleマップのリンクから緯度経度を抽出
   // ---------------------------------------------------------
+
+  // ---------------------------------------------------------
+  // 現在地・距離計算
+  // ---------------------------------------------------------
+
+  function distanceKm(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  window.__userLocation = null;
+  let currentLocationMarker = null;
+
+  function requestUserLocation({ recenter = false } = {}) {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        window.__userLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+
+        renderCardsWithData(window.__onsenData);
+
+        if (leafletMap && window.L) {
+          if (currentLocationMarker) {
+            currentLocationMarker.remove();
+          }
+          currentLocationMarker = L.circleMarker(
+            [window.__userLocation.lat, window.__userLocation.lng],
+            {
+              radius: 8,
+              color: "#fff",
+              weight: 2,
+              fillColor: "#3b6fd6",
+              fillOpacity: 1
+            }
+          )
+            .bindPopup("📍 現在地")
+            .addTo(leafletMap);
+
+          if (recenter) {
+            leafletMap.setView([window.__userLocation.lat, window.__userLocation.lng], 13);
+          }
+        }
+      },
+      (error) => {
+        console.error("現在地の取得に失敗:", error);
+        if (recenter) {
+          alert("現在地を取得できませんでした。位置情報の利用を許可しているか確認してください。");
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
 
   function extractLatLngFromGoogleMapsUrl(url) {
     if (!url) return null;
@@ -5133,6 +5220,9 @@
 
     // URLに #detail-xxx が含まれていれば詳細画面から開始
     route();
+
+    // 現在地が取れれば、一覧を近い順に並び替える
+    requestUserLocation();
   }
 
   // DOMContentLoaded後に開始
