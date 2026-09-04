@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>温泉データベース</title>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
 <body>
 <header>
@@ -17,6 +18,10 @@
   <input id="search" placeholder="温泉名・地域で検索" autocomplete="off">
 </section>
 <main>
+  <section class="map-section" id="mapSection">
+    <div class="title"><h2>地図で見る</h2><span id="mapCount"></span></div>
+    <div id="mapContainer"></div>
+  </section>
   <div id="listView">
     <div class="title"><h2>温泉一覧</h2><span id="count"></span></div>
     <div id="migrateBanner" class="hidden migrate-banner">
@@ -2982,6 +2987,7 @@
 <div class="form-actions"><button type="button" id="cancel" class="secondary">キャンセル</button><button type="submit" class="primary submit">登録する</button></div>
 </form></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
 </body></html>

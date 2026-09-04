@@ -4091,6 +4091,7 @@
     if (!detailView) return;
 
     listView?.classList.add("hidden");
+    $("mapSection")?.classList.add("hidden");
     detailView.classList.remove("hidden");
     detailView.innerHTML = `<div class="detail-empty">読み込んでいます…</div>`;
     window.scrollTo(0, 0);
@@ -4201,6 +4202,10 @@
     detailView.classList.add("hidden");
     detailView.innerHTML = "";
     listView.classList.remove("hidden");
+    $("mapSection")?.classList.remove("hidden");
+    if (leafletMap) {
+      setTimeout(() => leafletMap.invalidateSize(), 0);
+    }
   }
 
   function route() {
@@ -4945,6 +4950,64 @@
   }
 
   // renderCardsをデータ保持にも対応させる
+  // ---------------------------------------------------------
+  // 地図（Leaflet / OpenStreetMap）
+  // ---------------------------------------------------------
+
+  let leafletMap = null;
+  let leafletMarkerGroup = null;
+
+  function initMap() {
+    if (leafletMap || !window.L || !$("mapContainer")) return;
+
+    leafletMap = L.map("mapContainer").setView([36.5, 138.0], 5);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(leafletMap);
+
+    leafletMarkerGroup = L.layerGroup().addTo(leafletMap);
+  }
+
+  function updateMap(list) {
+    if (!window.L || !$("mapContainer")) return;
+    if (!leafletMap) initMap();
+    if (!leafletMap || !leafletMarkerGroup) return;
+
+    leafletMarkerGroup.clearLayers();
+
+    const items = (Array.isArray(list) ? list : []).filter(
+      (item) => item.lat != null && item.lng != null && !Number.isNaN(Number(item.lat)) && !Number.isNaN(Number(item.lng))
+    );
+
+    const mapCount = $("mapCount");
+    if (mapCount) {
+      mapCount.textContent = items.length ? `${items.length}件表示中` : "";
+    }
+
+    items.forEach((item) => {
+      const marker = L.marker([Number(item.lat), Number(item.lng)]);
+      const name = escapeHtml(item.name || "名称未設定");
+      const place = escapeHtml([item.prefecture, item.area].filter(Boolean).join(" "));
+
+      marker.bindPopup(
+        `<div class="map-popup"><b>📍 ${name}</b>${place ? `${place}<br>` : ""}<a href="#detail-${encodeURIComponent(item.id)}">詳細を見る</a></div>`
+      );
+      marker.addTo(leafletMarkerGroup);
+    });
+
+    if (items.length) {
+      const bounds = L.latLngBounds(items.map((item) => [Number(item.lat), Number(item.lng)]));
+      leafletMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
+    } else {
+      leafletMap.setView([36.5, 138.0], 5);
+    }
+
+    // 地図の表示エリアが確定してからサイズを再計算する
+    setTimeout(() => leafletMap.invalidateSize(), 0);
+  }
+
   const originalRenderCards = renderCards;
 
   window.__onsenData = [];
@@ -4952,6 +5015,7 @@
   function renderCardsWithData(list) {
     window.__onsenData = Array.isArray(list) ? list : [];
     originalRenderCards(window.__onsenData);
+    updateMap(window.__onsenData);
   }
 
   // ---------------------------------------------------------
@@ -4994,6 +5058,7 @@
       window.__onsenData = data;
       originalRenderCards(data);
       updateMigrateBanner();
+      updateMap(data);
 
       if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
         setStatus(
@@ -5012,6 +5077,7 @@
       window.__onsenData = localData;
       originalRenderCards(localData);
       updateMigrateBanner();
+      updateMap(localData);
 
       setStatus(
         `一覧の読込に失敗しました：${error.message || "不明なエラー"}`,
