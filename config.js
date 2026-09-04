@@ -10,6 +10,6 @@
 */
 
 window.ONSEN_SUPABASE_CONFIG = {
-  url: "",
-  anonKey: ""
+  url: "https://kquwafghdaopeeqsalxm.supabase.co",
+  anonKey: "sb_publishable_6jb3CQIiwJf7dR1eEGMStQ_MLcoJVeM"
 };
