@@ -4877,6 +4877,30 @@
 
     $("migrateButton")?.addEventListener("click", () => migrateLocalDataToSupabase());
 
+    $("extractLatLngButton")?.addEventListener("click", () => {
+      const url = value("googleMapsUrl");
+
+      if (!url) {
+        alert("先にGoogleマップのリンクを入力してください。");
+        return;
+      }
+
+      const coords = extractLatLngFromGoogleMapsUrl(url);
+
+      if (!coords) {
+        alert(
+          "このリンクからは緯度経度を読み取れませんでした。\n\n" +
+          "短縮リンク（maps.app.goo.gl等）の場合は、一度ブラウザでリンクを開いて、" +
+          "展開された長いURLを貼り直してから、もう一度お試しください。"
+        );
+        return;
+      }
+
+      setValue("lat", coords.lat);
+      setValue("lng", coords.lng);
+      alert(`緯度・経度を入力しました。\n緯度：${coords.lat}\n経度：${coords.lng}`);
+    });
+
     $("close")?.addEventListener("click", closeModal);
     $("cancel")?.addEventListener("click", closeModal);
 
@@ -4968,6 +4992,28 @@
     }).addTo(leafletMap);
 
     leafletMarkerGroup = L.layerGroup().addTo(leafletMap);
+  }
+
+  // ---------------------------------------------------------
+  // Googleマップのリンクから緯度経度を抽出
+  // ---------------------------------------------------------
+
+  function extractLatLngFromGoogleMapsUrl(url) {
+    if (!url) return null;
+
+    // ピンそのものの正確な座標（!3d緯度!4d経度）を最優先
+    let match = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+    if (match) return { lat: match[1], lng: match[2] };
+
+    // 表示中心の座標（/@緯度,経度,ズーム/）
+    match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (match) return { lat: match[1], lng: match[2] };
+
+    // クエリパラメータ形式（?q=緯度,経度 / &ll=緯度,経度）
+    match = url.match(/[?&](?:q|ll)=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (match) return { lat: match[1], lng: match[2] };
+
+    return null;
   }
 
   function updateMap(list) {
