@@ -3992,7 +3992,8 @@
       if (!ok) return;
 
       try {
-        if (supabaseClient) {
+        const isLocalItem = String(item.id).startsWith("local-");
+        if (supabaseClient && !isLocalItem) {
           await deleteSupabaseData(item.id);
         } else {
           deleteLocalData(item.id);
@@ -4036,8 +4037,76 @@
   // 使えない → LocalStorage
   // ---------------------------------------------------------
 
+  function updateMigrateBanner() {
+    const banner = $("migrateBanner");
+    const text = $("migrateBannerText");
+    if (!banner || !text) return;
+
+    const localData = getLocalData();
+
+    if (supabaseClient && localData.length > 0) {
+      text.textContent = `この端末にだけ保存されている温泉が${localData.length}件あります。`;
+      banner.classList.remove("hidden");
+    } else {
+      banner.classList.add("hidden");
+    }
+  }
+
+  async function migrateLocalDataToSupabase() {
+    if (!supabaseClient) return;
+
+    const localData = getLocalData();
+    if (!localData.length) {
+      updateMigrateBanner();
+      return;
+    }
+
+    const button = $("migrateButton");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "移行しています…";
+    }
+
+    let successCount = 0;
+    const failed = [];
+
+    for (const item of localData) {
+      const payload = { ...item };
+      delete payload.id; // ローカル用の仮IDはSupabase側では使わない
+
+      try {
+        await insertSupabaseData(payload);
+        successCount += 1;
+      } catch (error) {
+        console.error("移行失敗:", item.name, error);
+        failed.push(item);
+      }
+    }
+
+    // 成功した分だけローカルストレージから削除し、失敗した分は端末に残しておく
+    saveLocalData(failed);
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Supabaseに移行する";
+    }
+
+    updateMigrateBanner();
+    await loadAll();
+
+    if (failed.length) {
+      alert(
+        `${successCount}件を移行しました。\n` +
+        `${failed.length}件は移行できませんでした（この端末には残っています）。`
+      );
+    } else {
+      alert(`${successCount}件すべてSupabaseに移行しました。`);
+    }
+  }
+
   async function loadAll() {
     setStatus("温泉一覧を読み込んでいます…");
+    updateMigrateBanner();
 
     try {
       if (supabaseClient) {
@@ -4100,6 +4169,7 @@
 
     const isEditing = Boolean(editingId);
     const targetId = editingId;
+    const isLocalTarget = isEditing && String(targetId).startsWith("local-");
 
     const saveButton =
       document.querySelector('#form button[type="submit"]') ||
@@ -4110,7 +4180,7 @@
     }
 
     try {
-      if (supabaseClient) {
+      if (supabaseClient && !isLocalTarget) {
         const saved = isEditing
           ? await updateSupabaseData(targetId, item)
           : await insertSupabaseData(item);
@@ -4615,6 +4685,8 @@
     document.querySelectorAll("#formTabBar .tab-btn").forEach((btn) => {
       btn.addEventListener("click", () => switchFormTab(btn.dataset.tabTarget));
     });
+
+    $("migrateButton")?.addEventListener("click", () => migrateLocalDataToSupabase());
 
     $("close")?.addEventListener("click", closeModal);
     $("cancel")?.addEventListener("click", closeModal);
