@@ -2468,12 +2468,45 @@
     "wristband_payment"
   ]);
 
+  // 配列（複数選択）として保存すべき列。過去バージョンのローカルデータ等で
+  // 単純な文字列のまま入っている場合、そのままでは型エラーになるため
+  // 送信前に配列へ変換する。
+  const ARRAY_COLUMNS = new Set([
+    "bath_function_female", "bath_function_male", "bath_location_female", "bath_location_male", 
+    "bath_shape_female", "bath_shape_male", "child_info_source", "closed_days", 
+    "cold_bath_cooling_female", "cold_bath_cooling_male", "cold_bath_flow_female", 
+    "cold_bath_flow_male", "cold_bath_location_female", "cold_bath_location_male", 
+    "cold_bath_shape_female", "cold_bath_shape_male", "cold_bath_source_female", 
+    "cold_bath_source_male", "coworking_features", "indications", "indoor_location_female", 
+    "indoor_location_male", "laying_space_material_female", "laying_space_material_male", 
+    "locker_key_type_female", "locker_key_type_male", "locker_size_female", "locker_size_male", 
+    "locker_wristband_type_female", "locker_wristband_type_male", "locker_wristband_use_female", 
+    "locker_wristband_use_male", "massage_types", "outdoor_location_female", 
+    "outdoor_location_male", "parking_accessible", "parking_conditions", "parking_types", 
+    "payment", "rest_space_type", "restaurant_other_info", "restaurant_payment", 
+    "restaurant_types", "sauna_loyly_type_female", "sauna_loyly_type_male", 
+    "sauna_mat_placement_female", "sauna_mat_placement_male", "sauna_mat_type_female", 
+    "sauna_mat_type_male", "sauna_types_female", "sauna_types_male", "scenery_female", 
+    "scenery_male", "shoebox_key_type_female", "shoebox_key_type_male", "shoebox_type_female", 
+    "shoebox_type_male", "shop_items", "shop_payment", "shower_type_female", "shower_type_male", 
+    "spring_color", "spring_info_source", "spring_smell", "spring_texture", "spring_types", 
+    "toilet_types", "usage", "user_info_source", "vending_machine_location", 
+    "vending_machine_types"
+  ]);
+
   function filterKnownColumns(payload) {
     const filtered = {};
     Object.keys(payload).forEach((key) => {
-      if (KNOWN_COLUMNS.has(key)) {
-        filtered[key] = payload[key];
+      if (!KNOWN_COLUMNS.has(key)) return;
+
+      let value = payload[key];
+
+      if (ARRAY_COLUMNS.has(key) && value != null && !Array.isArray(value)) {
+        // 昔の自由記述形式（文字列）を、配列形式に変換して保存する
+        value = String(value).trim() ? [String(value).trim()] : [];
       }
+
+      filtered[key] = value;
     });
     return filtered;
   }
