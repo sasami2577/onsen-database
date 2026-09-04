@@ -4112,6 +4112,8 @@
 
     listView?.classList.add("hidden");
     $("mapSection")?.classList.add("hidden");
+    $("siteHeader")?.classList.add("hidden");
+    $("heroSection")?.classList.add("hidden");
     detailView.classList.remove("hidden");
     detailView.innerHTML = `<div class="detail-empty">読み込んでいます…</div>`;
     window.scrollTo(0, 0);
@@ -4223,6 +4225,8 @@
     detailView.innerHTML = "";
     listView.classList.remove("hidden");
     $("mapSection")?.classList.remove("hidden");
+    $("siteHeader")?.classList.remove("hidden");
+    $("heroSection")?.classList.remove("hidden");
     if (leafletMap) {
       setTimeout(() => leafletMap.invalidateSize(), 0);
     }
