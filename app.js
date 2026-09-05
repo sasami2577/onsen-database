@@ -2905,9 +2905,7 @@
 
     cards.innerHTML = filtered
       .map((item) => {
-        const address = [item.prefecture, item.area, item.address]
-          .filter(Boolean)
-          .join(" ");
+        const address = item.address || "";
 
         const distanceText =
           userLoc && item.lat != null && item.lng != null
