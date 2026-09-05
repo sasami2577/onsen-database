@@ -2918,6 +2918,13 @@
       count.textContent = `${filtered.length}件`;
     }
 
+    const filterActive = window.__activeFacetFilters != null;
+    const statusEl = $("status");
+    if (statusEl) {
+      statusEl.innerHTML = `現在　${filtered.length}件の施設を表示中です<br>（🔎 絞り込み検索　${filterActive ? "起動中" : "解除中"}）`;
+      statusEl.className = "status ok";
+    }
+
     if (!filtered.length) {
       cards.innerHTML = `
         <div class="status">
@@ -3263,6 +3270,7 @@
           <button type="button" id="detailEdit" class="detail-action">✏️ 情報を編集する</button>
           <button type="button" id="detailShare" class="detail-action">↗️ 共有する</button>
           <button type="button" id="detailDelete" class="detail-action detail-action-danger">🗑 削除する</button>
+          <button type="button" id="detailReport" class="detail-action">🚩 報告する</button>
         </div>
       </div>
       <div class="detail-heading-block">
@@ -4554,27 +4562,73 @@
       }
     });
 
+    $("detailReport")?.addEventListener("click", () => {
+      if ($("reportModalTarget")) {
+        $("reportModalTarget").textContent = `「${item.name || "この施設"}」について報告します。`;
+      }
+      $("reportModal")?.classList.remove("hidden");
+      $("reportModal")?.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+
+      const submitHandler = async () => {
+        if (!supabaseClient) {
+          alert("現在この機能は利用できません（Supabase未設定）。");
+          return;
+        }
+        try {
+          const { error } = await supabaseClient.from("reports").insert([
+            {
+              onsen_id: String(item.id).startsWith("local-") ? null : item.id,
+              onsen_name: item.name || null,
+              reason: value("reportReason"),
+              message: value("reportMessage").trim() || null
+            }
+          ]);
+          if (error) throw error;
+          closeReportModal();
+          alert("報告を送信しました。ご協力ありがとうございます。");
+        } catch (error) {
+          alert(`送信できませんでした。\n\n詳細：${error.message || "不明なエラー"}`);
+        }
+      };
+
+      function closeReportModal() {
+        $("reportModal")?.classList.add("hidden");
+        $("reportModal")?.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        if ($("reportMessage")) $("reportMessage").value = "";
+        $("reportSubmit")?.removeEventListener("click", submitHandler);
+        $("reportClose")?.removeEventListener("click", closeReportModal);
+        $("reportCancel")?.removeEventListener("click", closeReportModal);
+      }
+
+      $("reportSubmit")?.addEventListener("click", submitHandler);
+      $("reportClose")?.addEventListener("click", closeReportModal);
+      $("reportCancel")?.addEventListener("click", closeReportModal);
+    });
+
     $("detailDelete")?.addEventListener("click", async () => {
       const ok = confirm(
-        `「${item.name || "この温泉"}」を削除します。この操作は取り消せません。よろしいですか？`
+        `「${item.name || "この温泉"}」の削除を申請します。管理者が確認したあと削除されます。よろしいですか？`
       );
       if (!ok) return;
 
       try {
         const isLocalItem = String(item.id).startsWith("local-");
         if (supabaseClient && !isLocalItem) {
-          await deleteSupabaseData(item.id);
+          await submitModerationRequest("delete", item.id, null, item.name);
+          alert("削除を申請しました。管理者の確認後にサイトから削除されます。");
         } else {
           deleteLocalData(item.id);
+          alert("削除しました。");
         }
 
         location.hash = "";
         await loadAll();
-        alert("削除しました。");
       } catch (error) {
         console.error(error);
         alert(
-          "削除できませんでした。\n\n" +
+          "削除を申請できませんでした。\n\n" +
           `詳細：${error.message || "不明なエラー"}`
         );
       }
@@ -4694,7 +4748,6 @@
         // 0件ならローカルデータも確認する。
         if (data.length > 0) {
           renderCards(data);
-          setStatus(`Supabaseから${data.length}件読み込みました。`, "ok");
           return;
         }
       }
@@ -4734,6 +4787,30 @@
   // 保存
   // ---------------------------------------------------------
 
+  async function submitModerationRequest(action, targetId, payload, name) {
+    if (!supabaseClient) throw new Error("Supabaseが設定されていません。");
+
+    const cleanPayload = payload ? filterKnownColumns(payload) : null;
+    if (cleanPayload) delete cleanPayload.id;
+
+    const { data, error } = await supabaseClient
+      .from("moderation_queue")
+      .insert([
+        {
+          action,
+          target_id: targetId || null,
+          payload: cleanPayload,
+          submitted_name: name || cleanPayload?.name || null,
+          status: "pending"
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   async function saveOnsen(event) {
     event.preventDefault();
 
@@ -4759,26 +4836,27 @@
 
     try {
       if (supabaseClient && !isLocalTarget) {
-        const saved = isEditing
-          ? await updateSupabaseData(targetId, item)
-          : await insertSupabaseData(item);
+        await submitModerationRequest(
+          isEditing ? "update" : "create",
+          isEditing ? targetId : null,
+          item,
+          item.name
+        );
 
-        setStatus(isEditing ? "温泉情報を更新しました。" : "温泉を登録しました。", "ok");
+        setStatus("管理者の確認待ちです。", "ok");
         editingId = null;
         resetForm();
         closeModal();
 
-        // 保存直後に再読込 → 一覧・詳細へ即反映
-        await loadAll();
-
         if (isEditing) {
-          await showDetail(targetId);
+          location.hash = "";
         }
 
         alert(
-          isEditing
-            ? `「${saved?.name || item.name}」を更新しました。`
-            : `「${saved?.name || item.name}」を登録しました。`
+          (isEditing
+            ? `「${item.name}」の更新内容を送信しました。\n\n`
+            : `「${item.name}」の登録内容を送信しました。\n\n`) +
+          "内容を管理者が確認したあと、サイトに反映されます。しばらくお待ちください。"
         );
       } else {
         // Supabase未設定でも、内容を失わない
@@ -4814,8 +4892,8 @@
       }
 
       alert(
-        (isEditing ? "更新できませんでした。\n\n" : "保存できませんでした。\n\n") +
-        `詳細：${error.message || "Supabaseへの保存に失敗しました。"}` +
+        (isEditing ? "更新内容を送信できませんでした。\n\n" : "登録内容を送信できませんでした。\n\n") +
+        `詳細：${error.message || "送信に失敗しました。"}` +
         (isEditing ? "" : "\n\n入力内容はこの端末にも保存しました。")
       );
 
@@ -5273,6 +5351,50 @@
     $("migrateButton")?.addEventListener("click", () => migrateLocalDataToSupabase());
 
     // 絞り込み検索モーダル
+    // ご意見・アイデアフォーム
+    $("openFeedbackButton")?.addEventListener("click", () => {
+      $("feedbackModal")?.classList.remove("hidden");
+      $("feedbackModal")?.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    });
+    function closeFeedbackModal() {
+      $("feedbackModal")?.classList.add("hidden");
+      $("feedbackModal")?.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      if ($("feedbackMessage")) $("feedbackMessage").value = "";
+    }
+    $("feedbackClose")?.addEventListener("click", closeFeedbackModal);
+    $("feedbackCancel")?.addEventListener("click", closeFeedbackModal);
+    let feedbackModalPressStartedOnBackdrop = false;
+    $("feedbackModal")?.addEventListener("pointerdown", (event) => {
+      feedbackModalPressStartedOnBackdrop = event.target === $("feedbackModal");
+    });
+    $("feedbackModal")?.addEventListener("click", (event) => {
+      if (event.target === $("feedbackModal") && feedbackModalPressStartedOnBackdrop) {
+        closeFeedbackModal();
+      }
+      feedbackModalPressStartedOnBackdrop = false;
+    });
+    $("feedbackSubmit")?.addEventListener("click", async () => {
+      const message = value("feedbackMessage").trim();
+      if (!message) {
+        alert("内容を入力してください。");
+        return;
+      }
+      if (!supabaseClient) {
+        alert("現在この機能は利用できません（Supabase未設定）。");
+        return;
+      }
+      try {
+        const { error } = await supabaseClient.from("feedback").insert([{ message }]);
+        if (error) throw error;
+        closeFeedbackModal();
+        alert("ご意見を送信しました。ありがとうございます！");
+      } catch (error) {
+        alert(`送信できませんでした。\n\n詳細：${error.message || "不明なエラー"}`);
+      }
+    });
+
     $("openFilterButton")?.addEventListener("click", () => {
       $("filterModal")?.classList.remove("hidden");
       $("filterModal")?.setAttribute("aria-hidden", "false");
@@ -5681,8 +5803,43 @@
   // 起動
   // ---------------------------------------------------------
 
+  async function checkSitePublic() {
+    if (!supabaseClient) return true;
+
+    try {
+      const { data, error } = await supabaseClient
+        .from("site_settings")
+        .select("is_public, maintenance_message")
+        .eq("id", 1)
+        .single();
+
+      if (error) return true; // テーブル未設定などの場合は通常表示を優先
+      if (data && data.is_public === false) {
+        const main = document.querySelector("main");
+        const hero = $("heroSection");
+        if (main) {
+          main.innerHTML = `
+            <div class="site-offline">
+              <p>🚧 現在サイトは非公開になっています。</p>
+              ${data.maintenance_message ? `<p>${escapeHtml(data.maintenance_message)}</p>` : ""}
+            </div>
+          `;
+        }
+        hero?.classList.add("hidden");
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      return true;
+    }
+  }
+
   async function start() {
     setupEvents();
+
+    const isPublic = await checkSitePublic();
+    if (!isPublic) return;
 
     // 既存の関数から使えるようにする
     window.onsenApp = {
@@ -5727,8 +5884,6 @@
             : "Supabase未設定です。端末保存で登録できます。",
           data.length ? "ok" : ""
         );
-      } else {
-        setStatus(`${data.length}件の温泉を読み込みました。`, "ok");
       }
     } catch (error) {
       console.error(error);

@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>温泉データベース｜管理者ページ</title>
+<style>
+  :root{color-scheme:light}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:#faf7f4;color:#2c2622}
+  header{background:#875020;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+  header h1{font-size:16px;margin:0}
+  header button{background:#fff2;border:1px solid #fff5;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer}
+  main{max-width:900px;margin:0 auto;padding:20px}
+  .hidden{display:none!important}
+
+  #loginScreen{max-width:360px;margin:80px auto;background:#fff;padding:30px;border-radius:16px;box-shadow:0 6px 20px #0001}
+  #loginScreen h2{margin:0 0 6px;font-size:20px}
+  #loginScreen p{color:#807a74;font-size:13px;margin:0 0 20px}
+  #loginScreen label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}
+  #loginScreen input{width:100%;padding:12px;border:1px solid #e3ddd7;border-radius:10px;font-size:15px}
+  #loginScreen button{width:100%;margin-top:20px;padding:13px;background:#875020;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer}
+  #loginError{color:#c0392b;font-size:13px;margin-top:10px}
+
+  .tab-bar{display:flex;gap:6px;overflow-x:auto;margin-bottom:20px;border-bottom:1px solid #e6e1dd;padding-bottom:10px}
+  .tab-btn{flex:0 0 auto;background:#f2efed;border:1px solid #e1dcd7;padding:9px 16px;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;color:#615a53;white-space:nowrap}
+  .tab-btn.active{background:#875020;color:#fff;border-color:#875020}
+
+  .panel{display:none}
+  .panel.active{display:block}
+  .panel h2{font-size:17px;margin:0 0 4px}
+  .panel-desc{color:#807a74;font-size:13px;margin:0 0 16px}
+
+  .card{background:#fff;border:1px solid #eee5df;border-radius:14px;padding:16px;margin-bottom:12px}
+  .card-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+  .card h3{margin:0 0 4px;font-size:16px}
+  .card .meta{font-size:12px;color:#918a83;margin:0 0 8px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700}
+  .badge-create{background:#e8f4ec;color:#177144}
+  .badge-update{background:#eaf1fb;color:#2c5aa0}
+  .badge-delete{background:#fdecea;color:#c0392b}
+  .badge-pending{background:#fff6df;color:#a9790c}
+  .badge-open{background:#fdecea;color:#c0392b}
+  .badge-resolved{background:#eee;color:#888}
+  .badge-unread{background:#fff6df;color:#a9790c}
+  .badge-read{background:#eee;color:#888}
+
+  .payload-preview{background:#faf7f4;border-radius:10px;padding:10px 12px;font-size:12px;color:#615a53;max-height:160px;overflow-y:auto;white-space:pre-wrap;margin:8px 0}
+  .btn-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  button.action{padding:8px 16px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:13px;font-weight:700;cursor:pointer}
+  button.approve{background:#177144;color:#fff;border-color:#177144}
+  button.reject{background:#c0392b;color:#fff;border-color:#c0392b}
+  button.resolve{background:#875020;color:#fff;border-color:#875020}
+
+  .empty{color:#918a83;font-size:13px;padding:20px 0;text-align:center}
+
+  .settings-row{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #eee5df;border-radius:14px;padding:16px;margin-bottom:14px}
+  .settings-row div p{margin:0;font-size:13px;color:#807a74}
+  .switch{position:relative;width:50px;height:28px;background:#ddd;border-radius:99px;cursor:pointer;border:none}
+  .switch.on{background:#177144}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform .15s}
+  .switch.on::after{transform:translateX(22px)}
+  textarea#maintenanceMessage{width:100%;padding:10px;border:1px solid #e3ddd7;border-radius:10px;font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <h2>♨️ 管理者ログイン</h2>
+  <p>温泉データベースの管理者専用ページです。</p>
+  <label>メールアドレス<input id="loginEmail" type="email" autocomplete="username"></label>
+  <label>パスワード<input id="loginPassword" type="password" autocomplete="current-password"></label>
+  <button id="loginButton" type="button">ログイン</button>
+  <p id="loginError" class="hidden"></p>
+</div>
+
+<div id="dashboard" class="hidden">
+  <header>
+    <h1>♨️ 温泉データベース｜管理者ページ</h1>
+    <button id="logoutButton" type="button">ログアウト</button>
+  </header>
+  <main>
+    <div class="tab-bar">
+      <button type="button" class="tab-btn active" data-panel="pendingPanel">承認待ち<span id="pendingCountBadge"></span></button>
+      <button type="button" class="tab-btn" data-panel="historyPanel">更新履歴</button>
+      <button type="button" class="tab-btn" data-panel="reportsPanel">報告<span id="reportsCountBadge"></span></button>
+      <button type="button" class="tab-btn" data-panel="feedbackPanel">ご意見・アイデア</button>
+      <button type="button" class="tab-btn" data-panel="settingsPanel">サイト公開設定</button>
+    </div>
+
+    <section id="pendingPanel" class="panel active">
+      <h2>承認待ちの登録・編集・削除</h2>
+      <p class="panel-desc">承認すると、実際に温泉データベースへ反映されます。</p>
+      <div id="pendingList"></div>
+    </section>
+
+    <section id="historyPanel" class="panel">
+      <h2>更新履歴</h2>
+      <p class="panel-desc">承認済みの操作の履歴です（最新50件）。</p>
+      <div id="historyList"></div>
+    </section>
+
+    <section id="reportsPanel" class="panel">
+      <h2>報告一覧</h2>
+      <p class="panel-desc">ユーザーから寄せられた情報の報告です。</p>
+      <div id="reportsList"></div>
+    </section>
+
+    <section id="feedbackPanel" class="panel">
+      <h2>ご意見・アイデア</h2>
+      <p class="panel-desc">ユーザーから寄せられたご意見です。</p>
+      <div id="feedbackList"></div>
+    </section>
+
+    <section id="settingsPanel" class="panel">
+      <h2>サイト公開設定</h2>
+      <p class="panel-desc">オフにすると、一般の方には非公開メッセージだけが表示されます。</p>
+      <div class="settings-row">
+        <div>
+          <b>サイトを公開する</b>
+          <p>オフの間は一覧・登録などが利用できなくなります。</p>
+        </div>
+        <button id="publicToggle" class="switch" type="button"></button>
+      </div>
+      <label style="display:block;font-size:13px;font-weight:700;margin-bottom:6px">非公開時に表示するメッセージ（任意）</label>
+      <textarea id="maintenanceMessage" rows="3" placeholder="例：メンテナンス中です。しばらくお待ちください。"></textarea>
+      <div class="btn-row">
+        <button class="action resolve" id="saveSettingsButton" type="button">保存する</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+(() => {
+  const SUPABASE_URL = window.ONSEN_SUPABASE_CONFIG?.url || "";
+  const SUPABASE_ANON_KEY = window.ONSEN_SUPABASE_CONFIG?.anonKey || "";
+
+  if (!window.supabase || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    document.getElementById("loginError").textContent = "Supabaseの設定が見つかりません。config.jsを確認してください。";
+    document.getElementById("loginError").classList.remove("hidden");
+  }
+
+  const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const $ = (id) => document.getElementById(id);
+
+  function escapeHtml(text) {
+    return String(text ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function formatDate(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    return d.toLocaleString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+  }
+
+  // ---------------------------------------------------------
+  // ログイン
+  // ---------------------------------------------------------
+
+  async function checkSession() {
+    const { data } = await supabaseClient.auth.getSession();
+    if (data?.session) {
+      showDashboard();
+    }
+  }
+
+  $("loginButton").addEventListener("click", async () => {
+    const email = $("loginEmail").value.trim();
+    const password = $("loginPassword").value;
+    $("loginError").classList.add("hidden");
+
+    if (!email || !password) {
+      $("loginError").textContent = "メールアドレスとパスワードを入力してください。";
+      $("loginError").classList.remove("hidden");
+      return;
+    }
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+      $("loginError").textContent = "ログインできませんでした：" + error.message;
+      $("loginError").classList.remove("hidden");
+      return;
+    }
+    showDashboard();
+  });
+
+  $("logoutButton").addEventListener("click", async () => {
+    await supabaseClient.auth.signOut();
+    location.reload();
+  });
+
+  function showDashboard() {
+    $("loginScreen").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+    loadPending();
+    loadHistory();
+    loadReports();
+    loadFeedback();
+    loadSettings();
+  }
+
+  // ---------------------------------------------------------
+  // タブ切り替え
+  // ---------------------------------------------------------
+
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+      btn.classList.add("active");
+      $(btn.dataset.panel).classList.add("active");
+    });
+  });
+
+  // ---------------------------------------------------------
+  // 承認待ち一覧
+  // ---------------------------------------------------------
+
+  const ACTION_LABELS = { create: "新規登録", update: "編集", delete: "削除" };
+  const ACTION_BADGE_CLASS = { create: "badge-create", update: "badge-update", delete: "badge-delete" };
+
+  async function loadPending() {
+    const { data, error } = await supabaseClient
+      .from("moderation_queue")
+      .select("*")
+      .eq("status", "pending")
+      .order("created_at", { ascending: true });
+
+    const list = $("pendingList");
+    if (error) {
+      list.innerHTML = `<div class="empty">読み込みに失敗しました：${escapeHtml(error.message)}</div>`;
+      return;
+    }
+
+    $("pendingCountBadge").textContent = data.length ? ` (${data.length})` : "";
+
+    if (!data.length) {
+      list.innerHTML = `<div class="empty">承認待ちの申請はありません。</div>`;
+      return;
+    }
+
+    list.innerHTML = data
+      .map(
+        (row) => `
+        <div class="card" data-id="${row.id}">
+          <div class="card-row">
+            <div>
+              <span class="badge ${ACTION_BADGE_CLASS[row.action] || ""}">${ACTION_LABELS[row.action] || row.action}</span>
+              <h3>${escapeHtml(row.submitted_name || "（名称未設定）")}</h3>
+            </div>
+          </div>
+          <p class="meta">申請日時：${formatDate(row.created_at)}</p>
+          ${row.payload ? `<div class="payload-preview">${escapeHtml(JSON.stringify(row.payload, null, 1)).slice(0, 1500)}</div>` : ""}
+          <div class="btn-row">
+            <button class="action approve" data-approve="${row.id}">承認する</button>
+            <button class="action reject" data-reject="${row.id}">却下する</button>
+          </div>
+        </div>
+      `
+      )
+      .join("");
+
+    list.querySelectorAll("[data-approve]").forEach((btn) => {
+      btn.addEventListener("click", () => approveRequest(btn.dataset.approve, data));
+    });
+    list.querySelectorAll("[data-reject]").forEach((btn) => {
+      btn.addEventListener("click", () => rejectRequest(btn.dataset.reject));
+    });
+  }
+
+  async function approveRequest(id, currentList) {
+    const row = currentList.find((r) => String(r.id) === String(id));
+    if (!row) return;
+    if (!confirm(`「${row.submitted_name || "この申請"}」を承認します。よろしいですか？`)) return;
+
+    try {
+      let historySummary = "";
+
+      if (row.action === "create") {
+        const { data: inserted, error } = await supabaseClient
+          .from("onsen_database")
+          .insert([row.payload])
+          .select()
+          .single();
+        if (error) throw error;
+        historySummary = `新規登録：${inserted.name || ""}`;
+        await logHistory(inserted.id, inserted.name, "create", historySummary);
+      } else if (row.action === "update") {
+        const { data: updated, error } = await supabaseClient
+          .from("onsen_database")
+          .update(row.payload)
+          .eq("id", row.target_id)
+          .select()
+          .single();
+        if (error) throw error;
+        historySummary = `編集：${updated?.name || row.submitted_name || ""}`;
+        await logHistory(row.target_id, updated?.name || row.submitted_name, "update", historySummary);
+      } else if (row.action === "delete") {
+        const { error } = await supabaseClient.from("onsen_database").delete().eq("id", row.target_id);
+        if (error) throw error;
+        historySummary = `削除：${row.submitted_name || ""}`;
+        await logHistory(row.target_id, row.submitted_name, "delete", historySummary);
+      }
+
+      await supabaseClient
+        .from("moderation_queue")
+        .update({ status: "approved", reviewed_at: new Date().toISOString() })
+        .eq("id", id);
+
+      loadPending();
+      loadHistory();
+    } catch (error) {
+      alert("承認できませんでした：" + error.message);
+    }
+  }
+
+  async function rejectRequest(id) {
+    if (!confirm("この申請を却下します。よろしいですか？")) return;
+    try {
+      await supabaseClient
+        .from("moderation_queue")
+        .update({ status: "rejected", reviewed_at: new Date().toISOString() })
+        .eq("id", id);
+      loadPending();
+    } catch (error) {
+      alert("却下できませんでした：" + error.message);
+    }
+  }
+
+  async function logHistory(onsenId, onsenName, action, summary) {
+    try {
+      await supabaseClient.from("update_history").insert([
+        { onsen_id: onsenId, onsen_name: onsenName, action, summary }
+      ]);
+    } catch (error) {
+      console.error("履歴の記録に失敗:", error);
+    }
+  }
+
+  // ---------------------------------------------------------
+  // 更新履歴
+  // ---------------------------------------------------------
+
+  async function loadHistory() {
+    const { data, error } = await supabaseClient
+      .from("update_history")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    const list = $("historyList");
+    if (error) {
+      list.innerHTML = `<div class="empty">読み込みに失敗しました：${escapeHtml(error.message)}</div>`;
+      return;
+    }
+    if (!data.length) {
+      list.innerHTML = `<div class="empty">まだ履歴がありません。</div>`;
+      return;
+    }
+    list.innerHTML = data
+      .map(
+        (row) => `
+        <div class="card">
+          <span class="badge ${ACTION_BADGE_CLASS[row.action] || ""}">${ACTION_LABELS[row.action] || row.action}</span>
+          <p class="meta">${formatDate(row.created_at)}</p>
+          <p>${escapeHtml(row.summary || "")}</p>
+        </div>
+      `
+      )
+      .join("");
+  }
+
+  // ---------------------------------------------------------
+  // 報告一覧
+  // ---------------------------------------------------------
+
+  async function loadReports() {
+    const { data, error } = await supabaseClient
+      .from("reports")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    const list = $("reportsList");
+    if (error) {
+      list.innerHTML = `<div class="empty">読み込みに失敗しました：${escapeHtml(error.message)}</div>`;
+      return;
+    }
+
+    const openCount = data.filter((r) => r.status === "open").length;
+    $("reportsCountBadge").textContent = openCount ? ` (${openCount})` : "";
+
+    if (!data.length) {
+      list.innerHTML = `<div class="empty">報告はまだありません。</div>`;
+      return;
+    }
+
+    list.innerHTML = data
+      .map(
+        (row) => `
+        <div class="card" data-id="${row.id}">
+          <div class="card-row">
+            <h3>${escapeHtml(row.onsen_name || "（対象施設不明）")}</h3>
+            <span class="badge ${row.status === "open" ? "badge-open" : "badge-resolved"}">${row.status === "open" ? "未対応" : "対応済み"}</span>
+          </div>
+          <p class="meta">${formatDate(row.created_at)}｜理由：${escapeHtml(row.reason || "")}</p>
+          ${row.message ? `<p>${escapeHtml(row.message)}</p>` : ""}
+          ${row.status === "open" ? `<div class="btn-row"><button class="action resolve" data-resolve="${row.id}">対応済みにする</button></div>` : ""}
+        </div>
+      `
+      )
+      .join("");
+
+    list.querySelectorAll("[data-resolve]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        await supabaseClient.from("reports").update({ status: "resolved" }).eq("id", btn.dataset.resolve);
+        loadReports();
+      });
+    });
+  }
+
+  // ---------------------------------------------------------
+  // ご意見・アイデア
+  // ---------------------------------------------------------
+
+  async function loadFeedback() {
+    const { data, error } = await supabaseClient
+      .from("feedback")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    const list = $("feedbackList");
+    if (error) {
+      list.innerHTML = `<div class="empty">読み込みに失敗しました：${escapeHtml(error.message)}</div>`;
+      return;
+    }
+    if (!data.length) {
+      list.innerHTML = `<div class="empty">ご意見はまだありません。</div>`;
+      return;
+    }
+    list.innerHTML = data
+      .map(
+        (row) => `
+        <div class="card" data-id="${row.id}">
+          <div class="card-row">
+            <p class="meta">${formatDate(row.created_at)}</p>
+            <span class="badge ${row.status === "unread" ? "badge-unread" : "badge-read"}">${row.status === "unread" ? "未読" : "既読"}</span>
+          </div>
+          <p>${escapeHtml(row.message)}</p>
+          ${row.status === "unread" ? `<div class="btn-row"><button class="action resolve" data-read="${row.id}">既読にする</button></div>` : ""}
+        </div>
+      `
+      )
+      .join("");
+
+    list.querySelectorAll("[data-read]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        await supabaseClient.from("feedback").update({ status: "read" }).eq("id", btn.dataset.read);
+        loadFeedback();
+      });
+    });
+  }
+
+  // ---------------------------------------------------------
+  // サイト公開設定
+  // ---------------------------------------------------------
+
+  let currentIsPublic = true;
+
+  async function loadSettings() {
+    const { data, error } = await supabaseClient
+      .from("site_settings")
+      .select("*")
+      .eq("id", 1)
+      .single();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    currentIsPublic = data.is_public !== false;
+    $("publicToggle").classList.toggle("on", currentIsPublic);
+    $("maintenanceMessage").value = data.maintenance_message || "";
+  }
+
+  $("publicToggle").addEventListener("click", () => {
+    currentIsPublic = !currentIsPublic;
+    $("publicToggle").classList.toggle("on", currentIsPublic);
+  });
+
+  $("saveSettingsButton").addEventListener("click", async () => {
+    try {
+      const { error } = await supabaseClient
+        .from("site_settings")
+        .update({
+          is_public: currentIsPublic,
+          maintenance_message: $("maintenanceMessage").value.trim() || null
+        })
+        .eq("id", 1);
+      if (error) throw error;
+      alert("設定を保存しました。");
+    } catch (error) {
+      alert("保存できませんでした：" + error.message);
+    }
+  });
+
+  if (supabaseClient) checkSession();
+})();
+</script>
+</body>
+</html>

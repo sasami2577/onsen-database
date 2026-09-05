@@ -37,6 +37,41 @@
   </div>
   <section id="detailView" class="hidden" aria-live="polite"></section>
 </main>
+<footer class="site-footer">
+  <button type="button" id="openFeedbackButton" class="feedback-link">💬 ご意見・アイデアはこちら</button>
+</footer>
+<div id="feedbackModal" class="hidden" aria-hidden="true">
+<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackModalTitle">
+<button id="feedbackClose" class="close" type="button" aria-label="閉じる">×</button>
+<div class="modal-head"><span class="modal-icon">💬</span><div><h2 id="feedbackModalTitle">ご意見・アイデア</h2><p>サイトへのご意見やご要望をお聞かせください。</p></div></div>
+<label class="full">内容<textarea id="feedbackMessage" rows="6" placeholder="こんな機能があったら嬉しい、ここが使いづらい、など何でも構いません"></textarea></label>
+<div class="form-actions">
+<button type="button" id="feedbackCancel" class="secondary">キャンセル</button>
+<button type="button" id="feedbackSubmit" class="primary submit">送信する</button>
+</div>
+</div>
+</div>
+
+<div id="reportModal" class="hidden" aria-hidden="true">
+<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+<button id="reportClose" class="close" type="button" aria-label="閉じる">×</button>
+<div class="modal-head"><span class="modal-icon">🚩</span><div><h2 id="reportModalTitle">情報の報告</h2><p id="reportModalTarget"></p></div></div>
+<label class="full">報告の理由
+<select id="reportReason">
+<option value="情報が間違っている">情報が間違っている</option>
+<option value="閉店・移転している">閉店・移転している</option>
+<option value="不適切な内容が含まれている">不適切な内容が含まれている</option>
+<option value="その他">その他</option>
+</select>
+</label>
+<label class="full compact-top">詳細（任意）<textarea id="reportMessage" rows="4" placeholder="具体的な内容があれば教えてください"></textarea></label>
+<div class="form-actions">
+<button type="button" id="reportCancel" class="secondary">キャンセル</button>
+<button type="button" id="reportSubmit" class="primary submit">報告する</button>
+</div>
+</div>
+</div>
+
 <div id="filterModal" class="hidden" aria-hidden="true">
 <div class="dialog filter-dialog" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle">
 <button id="filterClose" class="close" type="button" aria-label="閉じる">×</button>
