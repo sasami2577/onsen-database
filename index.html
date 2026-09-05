@@ -14,12 +14,13 @@
 </header>
 <section class="hero" id="heroSection">
   <img src="header-banner.png" alt="温泉データベース" class="hero-banner">
-  <h1>行きたい温泉を探そう</h1>
+  <h1>行きたい温泉・サウナを探そう。</h1>
   <p>全国の温泉施設を、みんなで記録・共有。</p>
   <p class="facility-count">現在 登録されている施設数　<span id="facilityCount">読み込み中…</span>件<br>ご協力いただきありがとうございます🙇🏻‍♀️</p>
   <input id="search" placeholder="温泉名・地域で検索" autocomplete="off">
 </section>
 <main>
+  <button type="button" id="openFilterButton" class="filter-open-button">🔎 絞り込み検索する</button>
   <section class="map-section" id="mapSection">
     <div class="title"><h2>📍地図で探す</h2><span id="mapCount"></span></div>
     <div class="map-toolbar"><button type="button" id="showCurrentLocationButton" class="secondary">📍 現在地を表示</button></div>
@@ -36,6 +37,134 @@
   </div>
   <section id="detailView" class="hidden" aria-live="polite"></section>
 </main>
+<div id="filterModal" class="hidden" aria-hidden="true">
+<div class="dialog filter-dialog" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle">
+<button id="filterClose" class="close" type="button" aria-label="閉じる">×</button>
+<div class="modal-head"><span class="modal-icon">🔎</span><div><h2 id="filterModalTitle">絞り込み検索</h2><p>条件を選んで絞り込めます。</p></div></div>
+<section class="form-section"><h3>📍 検索エリア</h3>
+<p class="field-title">都道府県（複数選択可）</p>
+<fieldset class="full compact-top filter-region"><legend>北海道・東北エリア</legend><div class="checks">
+<label><input type="checkbox" class="filter-prefecture" value="北海道">北海道</label>
+<label><input type="checkbox" class="filter-prefecture" value="青森県">青森県</label>
+<label><input type="checkbox" class="filter-prefecture" value="岩手県">岩手県</label>
+<label><input type="checkbox" class="filter-prefecture" value="宮城県">宮城県</label>
+<label><input type="checkbox" class="filter-prefecture" value="秋田県">秋田県</label>
+<label><input type="checkbox" class="filter-prefecture" value="山形県">山形県</label>
+<label><input type="checkbox" class="filter-prefecture" value="福島県">福島県</label>
+</div></fieldset>
+
+<fieldset class="full compact-top filter-region"><legend>関東エリア</legend><div class="checks">
+<label><input type="checkbox" class="filter-prefecture" value="茨城県">茨城県</label>
+<label><input type="checkbox" class="filter-prefecture" value="栃木県">栃木県</label>
+<label><input type="checkbox" class="filter-prefecture" value="群馬県">群馬県</label>
+<label><input type="checkbox" class="filter-prefecture" value="埼玉県">埼玉県</label>
+<label><input type="checkbox" class="filter-prefecture" value="千葉県">千葉県</label>
+<label><input type="checkbox" class="filter-prefecture" value="東京都">東京都</label>
+<label><input type="checkbox" class="filter-prefecture" value="神奈川県">神奈川県</label>
+</div></fieldset>
+
+<fieldset class="full compact-top filter-region"><legend>北陸エリア</legend><div class="checks">
+<label><input type="checkbox" class="filter-prefecture" value="新潟県">新潟県</label>
+<label><input type="checkbox" class="filter-prefecture" value="富山県">富山県</label>
+<label><input type="checkbox" class="filter-prefecture" value="石川県">石川県</label>
+<label><input type="checkbox" class="filter-prefecture" value="福井県">福井県</label>
+</div></fieldset>
+
+<fieldset class="full compact-top filter-region"><legend>東海エリア</legend><div class="checks">
+<label><input type="checkbox" class="filter-prefecture" value="山梨県">山梨県</label>
+<label><input type="checkbox" class="filter-prefecture" value="長野県">長野県</label>
+<label><input type="checkbox" class="filter-prefecture" value="岐阜県">岐阜県</label>
+<label><input type="checkbox" class="filter-prefecture" value="静岡県">静岡県</label>
+<label><input type="checkbox" class="filter-prefecture" value="愛知県">愛知県</label>
+<label><input type="checkbox" class="filter-prefecture" value="三重県">三重県</label>
+</div></fieldset>
+
+<fieldset class="full compact-top filter-region"><legend>近畿エリア</legend><div class="checks">
+<label><input type="checkbox" class="filter-prefecture" value="滋賀県">滋賀県</label>
+<label><input type="checkbox" class="filter-prefecture" value="京都府">京都府</label>
+<label><input type="checkbox" class="filter-prefecture" value="大阪府">大阪府</label>
+<label><input type="checkbox" class="filter-prefecture" value="兵庫県">兵庫県</label>
+<label><input type="checkbox" class="filter-prefecture" value="奈良県">奈良県</label>
+<label><input type="checkbox" class="filter-prefecture" value="和歌山県">和歌山県</label>
+</div></fieldset>
+
+<fieldset class="full compact-top filter-region"><legend>中国エリア</legend><div class="checks">
+<label><input type="checkbox" class="filter-prefecture" value="鳥取県">鳥取県</label>
+<label><input type="checkbox" class="filter-prefecture" value="島根県">島根県</label>
+<label><input type="checkbox" class="filter-prefecture" value="岡山県">岡山県</label>
+<label><input type="checkbox" class="filter-prefecture" value="広島県">広島県</label>
+<label><input type="checkbox" class="filter-prefecture" value="山口県">山口県</label>
+</div></fieldset>
+
+<fieldset class="full compact-top filter-region"><legend>四国エリア</legend><div class="checks">
+<label><input type="checkbox" class="filter-prefecture" value="徳島県">徳島県</label>
+<label><input type="checkbox" class="filter-prefecture" value="香川県">香川県</label>
+<label><input type="checkbox" class="filter-prefecture" value="愛媛県">愛媛県</label>
+<label><input type="checkbox" class="filter-prefecture" value="高知県">高知県</label>
+</div></fieldset>
+
+<fieldset class="full compact-top filter-region"><legend>九州・沖縄エリア</legend><div class="checks">
+<label><input type="checkbox" class="filter-prefecture" value="福岡県">福岡県</label>
+<label><input type="checkbox" class="filter-prefecture" value="佐賀県">佐賀県</label>
+<label><input type="checkbox" class="filter-prefecture" value="長崎県">長崎県</label>
+<label><input type="checkbox" class="filter-prefecture" value="熊本県">熊本県</label>
+<label><input type="checkbox" class="filter-prefecture" value="大分県">大分県</label>
+<label><input type="checkbox" class="filter-prefecture" value="宮崎県">宮崎県</label>
+<label><input type="checkbox" class="filter-prefecture" value="鹿児島県">鹿児島県</label>
+<label><input type="checkbox" class="filter-prefecture" value="沖縄県">沖縄県</label>
+</div></fieldset>
+
+<div id="filterCityContainer"></div>
+</section>
+
+<section class="form-section"><h3>♨️ 施設分類</h3><div class="checks">
+<label><input type="checkbox" id="filterCategoryAll">すべて</label>
+<label><input type="checkbox" class="filter-category" value="日帰り温泉">日帰り温泉</label>
+<label><input type="checkbox" class="filter-category" value="温泉旅館">温泉旅館</label>
+<label><input type="checkbox" class="filter-category" value="露天風呂">露天風呂</label>
+<label><input type="checkbox" class="filter-category" value="家族風呂">家族風呂</label>
+<label><input type="checkbox" class="filter-category" value="サウナ">サウナ</label>
+<label><input type="checkbox" class="filter-category" value="水風呂">水風呂</label>
+<label><input type="checkbox" class="filter-category" value="外気浴">外気浴</label>
+<label><input type="checkbox" class="filter-category" value="お食事処">お食事処</label>
+<label><input type="checkbox" class="filter-category" value="リラクゼーション">リラクゼーション</label>
+<label><input type="checkbox" class="filter-category" value="休憩スペース">休憩スペース</label>
+<label><input type="checkbox" class="filter-category" value="売店コーナー">売店コーナー</label>
+<label><input type="checkbox" class="filter-category" value="コインランドリー">コインランドリー</label>
+<label><input type="checkbox" class="filter-category" value="レンタルスペース">レンタルスペース</label>
+</div></section>
+
+<section class="form-section"><h3>💰 料金選択</h3><div class="checks">
+<label><input type="radio" name="filterPrice" value="すべて" checked>すべて</label>
+<label><input type="radio" name="filterPrice" value="500円以内">500円以内</label>
+<label><input type="radio" name="filterPrice" value="1000円以内">1000円以内</label>
+<label><input type="radio" name="filterPrice" value="1500円以内">1500円以内</label>
+<label><input type="radio" name="filterPrice" value="2000円以内">2000円以内</label>
+<label><input type="radio" name="filterPrice" value="2000円以上">2000円以上</label>
+</div>
+<p class="field-title compact-top">上限料金：<span id="filterPriceSliderValue">2,000</span>円</p>
+<input type="range" id="filterPriceSlider" min="0" max="2000" step="100" value="2000" style="width:100%">
+</section>
+
+<section class="form-section"><h3>👨‍👩‍👦 家族連れ検索</h3><div class="checks">
+<label><input type="checkbox" id="filterKidsOk">子ども利用OK</label>
+<label><input type="checkbox" id="filterKidsMixedBathing">子どもとの混浴可能</label>
+</div>
+<label class="compact-top">混浴可能年齢（歳まで）<select id="filterKidsAge"><option value="">指定しない</option><option value="0">0歳</option><option value="1">1歳</option><option value="2">2歳</option><option value="3">3歳</option><option value="4">4歳</option><option value="5">5歳</option><option value="6">6歳</option><option value="7">7歳</option><option value="8">8歳</option><option value="9">9歳</option><option value="10">10歳</option><option value="11">11歳</option><option value="12">12歳</option></select></label>
+</section>
+
+<section class="form-section"><h3>🅿️ 駐車場検索</h3><div class="checks">
+<label><input type="checkbox" id="filterParkingAll">すべて</label>
+<label><input type="checkbox" class="filter-parking" value="駐車場あり">駐車場あり</label>
+<label><input type="checkbox" class="filter-parking" value="無料駐車場">無料駐車場</label>
+<label><input type="checkbox" class="filter-parking" value="大型車駐車場あり">大型車駐車場あり</label>
+</div></section>
+
+<div class="form-actions">
+<button type="button" id="filterReset" class="secondary">条件をリセット</button>
+<button type="button" id="filterApply" class="primary submit">この条件で絞り込む</button>
+</div>
+</div></div>
 <div id="modal" class="hidden" aria-hidden="true">
 <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
 <button id="close" class="close" type="button" aria-label="閉じる">×</button>

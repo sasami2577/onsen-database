@@ -2591,6 +2591,234 @@
   // 一覧表示
   // ---------------------------------------------------------
 
+  // ---------------------------------------------------------
+  // 絞り込み検索
+  // ---------------------------------------------------------
+
+  window.__activeFacetFilters = null;
+  let filterPriceSliderTouched = false;
+
+  function getMinBathFeeAmount(item) {
+    if (!Array.isArray(item.bath_fees) || !item.bath_fees.length) return null;
+    const adult = item.bath_fees.find((f) => f.category === "大人");
+    if (adult && adult.amount != null) return adult.amount;
+    const amounts = item.bath_fees.map((f) => f.amount).filter((a) => a != null);
+    return amounts.length ? Math.min(...amounts) : null;
+  }
+
+  const FACILITY_CATEGORY_MATCHERS = {
+    "日帰り温泉": (item) => item.business_type === "日帰り温泉",
+    "温泉旅館": (item) => item.business_type === "温泉旅館",
+    "露天風呂": (item) =>
+      [item.bath_shape_male, item.bath_shape_female].some(
+        (arr) => Array.isArray(arr) && arr.includes("露天風呂・半露天風呂")
+      ),
+    "家族風呂": (item) =>
+      [item.bath_shape_male, item.bath_shape_female].some(
+        (arr) => Array.isArray(arr) && arr.includes("家族風呂")
+      ),
+    "サウナ": (item) =>
+      item.sauna_facility_male === "あり" || item.sauna_facility_female === "あり",
+    "水風呂": (item) =>
+      item.cold_bath_availability_male === "あり" ||
+      item.cold_bath_availability_female === "あり",
+    "外気浴": (item) =>
+      item.outdoor_male === "あり" || item.outdoor_female === "あり",
+    "お食事処": (item) => item.restaurant_status === "あり",
+    "リラクゼーション": (item) => item.massage_status === "あり",
+    "休憩スペース": (item) => item.rest_space_status === "あり",
+    "売店コーナー": (item) => item.shop_status === "あり",
+    "コインランドリー": (item) => item.coin_laundry_status === "あり",
+    "レンタルスペース": (item) => item.rental_space_status === "あり"
+  };
+
+  function passesKidsAgeFilter(item, age) {
+    if (age == null || age === "") return true;
+    if (item.child_mixed_bathing !== "あり") return false;
+    if (item.child_age_limit === "なし") return true;
+    const limits = [item.child_boy_age_limit, item.child_girl_age_limit].filter(
+      (v) => v != null
+    );
+    if (!limits.length) return true;
+    return limits.some((limit) => Number(limit) >= Number(age));
+  }
+
+  function itemMatchesFacetFilters(item) {
+    const filters = window.__activeFacetFilters;
+    if (!filters) return true;
+
+    // 検索エリア（都道府県・市区町村）
+    if (filters.prefectures && filters.prefectures.length) {
+      if (!filters.prefectures.includes(item.prefecture)) return false;
+
+      const cities = filters.cities && filters.cities[item.prefecture];
+      if (cities && cities.length && !cities.includes(item.area)) return false;
+    }
+
+    // 施設分類（選んだものすべてに合致する施設だけ表示）
+    if (filters.categories && filters.categories.length) {
+      const allMatch = filters.categories.every((cat) => {
+        const matcher = FACILITY_CATEGORY_MATCHERS[cat];
+        return matcher ? matcher(item) : true;
+      });
+      if (!allMatch) return false;
+    }
+
+    // 料金
+    if (filters.priceMode === "max") {
+      const fee = getMinBathFeeAmount(item);
+      if (fee == null || fee > filters.priceMax) return false;
+    } else if (filters.priceMode === "min2000") {
+      const fee = getMinBathFeeAmount(item);
+      if (fee == null || fee < 2000) return false;
+    }
+
+    // 家族連れ検索
+    if (filters.kidsOk) {
+      if (Array.isArray(item.usage) && item.usage.includes("会員制")) return false;
+    }
+    if (filters.kidsMixedBathing && item.child_mixed_bathing !== "あり") return false;
+    if (!passesKidsAgeFilter(item, filters.kidsAge)) return false;
+
+    // 駐車場検索
+    if (filters.parking && filters.parking.length) {
+      const parkingMatchers = {
+        "駐車場あり": (i) => i.parking_status === "あり",
+        "無料駐車場": (i) => i.parking_fee_type === "無料",
+        "大型車駐車場あり": (i) =>
+          Array.isArray(i.parking_accessible) && i.parking_accessible.includes("大型車駐車スペース")
+      };
+      const allMatch = filters.parking.every((key) =>
+        parkingMatchers[key] ? parkingMatchers[key](item) : true
+      );
+      if (!allMatch) return false;
+    }
+
+    return true;
+  }
+
+  function buildCityFilterGroups() {
+    const container = $("filterCityContainer");
+    if (!container) return;
+
+    const checkedPrefs = Array.from(
+      document.querySelectorAll(".filter-prefecture:checked")
+    ).map((el) => el.value);
+
+    container.innerHTML = "";
+
+    checkedPrefs.forEach((pref) => {
+      const areas = Array.from(
+        new Set(
+          (window.__onsenData || [])
+            .filter((item) => item.prefecture === pref && item.area)
+            .map((item) => item.area)
+        )
+      ).sort();
+
+      if (!areas.length) return;
+
+      const group = document.createElement("div");
+      group.className = "filter-city-group";
+      group.dataset.prefecture = pref;
+
+      const title = document.createElement("p");
+      title.className = "field-title";
+      title.textContent = `${pref}の市区町村（すべて・または選択）`;
+      group.appendChild(title);
+
+      const checksWrap = document.createElement("div");
+      checksWrap.className = "checks";
+      areas.forEach((area) => {
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="checkbox" class="filter-city" data-prefecture="${escapeHtml(pref)}" value="${escapeHtml(area)}">${escapeHtml(area)}`;
+        checksWrap.appendChild(label);
+      });
+      group.appendChild(checksWrap);
+      container.appendChild(group);
+    });
+  }
+
+  function collectFacetFilters() {
+    const prefectures = Array.from(
+      document.querySelectorAll(".filter-prefecture:checked")
+    ).map((el) => el.value);
+
+    const cities = {};
+    document.querySelectorAll(".filter-city:checked").forEach((el) => {
+      const pref = el.dataset.prefecture;
+      if (!cities[pref]) cities[pref] = [];
+      cities[pref].push(el.value);
+    });
+
+    const categories = Array.from(
+      document.querySelectorAll(".filter-category:checked")
+    ).map((el) => el.value);
+
+    const priceRadio = radioValue("filterPrice");
+    let priceMode = "all";
+    let priceMax = null;
+    if (filterPriceSliderTouched) {
+      priceMode = "max";
+      priceMax = Number(value("filterPriceSlider"));
+    } else if (priceRadio === "2000円以上") {
+      priceMode = "min2000";
+    } else if (priceRadio && priceRadio !== "すべて") {
+      priceMode = "max";
+      priceMax = Number(priceRadio.replace(/[^0-9]/g, ""));
+    } else if (priceRadio === "すべて") {
+      priceMode = "all";
+    }
+
+    const parking = Array.from(
+      document.querySelectorAll(".filter-parking:checked")
+    ).map((el) => el.value);
+
+    const kidsAgeValue = value("filterKidsAge");
+
+    const filters = {
+      prefectures,
+      cities,
+      categories,
+      priceMode,
+      priceMax,
+      kidsOk: checkedBool("filterKidsOk"),
+      kidsMixedBathing: checkedBool("filterKidsMixedBathing"),
+      kidsAge: kidsAgeValue === "" ? null : Number(kidsAgeValue),
+      parking
+    };
+
+    const isEmpty =
+      !filters.prefectures.length &&
+      !filters.categories.length &&
+      filters.priceMode === "all" &&
+      !filters.kidsOk &&
+      !filters.kidsMixedBathing &&
+      filters.kidsAge == null &&
+      !filters.parking.length;
+
+    return isEmpty ? null : filters;
+  }
+
+  function resetFilterForm() {
+    filterPriceSliderTouched = false;
+    document.querySelectorAll(".filter-prefecture").forEach((el) => (el.checked = false));
+    document.querySelectorAll(".filter-city").forEach((el) => (el.checked = false));
+    $("filterCityContainer").innerHTML = "";
+    document.querySelectorAll(".filter-category").forEach((el) => (el.checked = false));
+    if ($("filterCategoryAll")) $("filterCategoryAll").checked = false;
+    document.querySelectorAll('input[name="filterPrice"]').forEach((el, i) => {
+      el.checked = i === 0;
+    });
+    if ($("filterPriceSlider")) $("filterPriceSlider").value = 2000;
+    if ($("filterPriceSliderValue")) $("filterPriceSliderValue").textContent = "2,000";
+    if ($("filterKidsOk")) $("filterKidsOk").checked = false;
+    if ($("filterKidsMixedBathing")) $("filterKidsMixedBathing").checked = false;
+    if ($("filterKidsAge")) $("filterKidsAge").value = "";
+    document.querySelectorAll(".filter-parking").forEach((el) => (el.checked = false));
+    if ($("filterParkingAll")) $("filterParkingAll").checked = false;
+  }
+
   function renderCards(list) {
     const cards = $("cards");
     const count = $("count");
@@ -2600,6 +2828,7 @@
     const search = value("search").toLowerCase();
 
     const filtered = list.filter((item) => {
+      if (!itemMatchesFacetFilters(item)) return false;
       if (!search) return true;
 
       const text = [
@@ -4900,6 +5129,107 @@
     });
 
     $("migrateButton")?.addEventListener("click", () => migrateLocalDataToSupabase());
+
+    // 絞り込み検索モーダル
+    $("openFilterButton")?.addEventListener("click", () => {
+      $("filterModal")?.classList.remove("hidden");
+      $("filterModal")?.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    });
+
+    function closeFilterModal() {
+      $("filterModal")?.classList.add("hidden");
+      $("filterModal")?.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    }
+
+    $("filterClose")?.addEventListener("click", closeFilterModal);
+
+    let filterModalPressStartedOnBackdrop = false;
+    $("filterModal")?.addEventListener("pointerdown", (event) => {
+      filterModalPressStartedOnBackdrop = event.target === $("filterModal");
+    });
+    $("filterModal")?.addEventListener("click", (event) => {
+      if (event.target === $("filterModal") && filterModalPressStartedOnBackdrop) {
+        closeFilterModal();
+      }
+      filterModalPressStartedOnBackdrop = false;
+    });
+
+    // 都道府県を選ぶと、その都道府県の市区町村チェックボックスを表示
+    document.querySelectorAll(".filter-prefecture").forEach((el) => {
+      el.addEventListener("change", buildCityFilterGroups);
+    });
+
+    // 施設分類「すべて」の一括チェック
+    $("filterCategoryAll")?.addEventListener("change", (event) => {
+      document.querySelectorAll(".filter-category").forEach((el) => {
+        el.checked = event.target.checked;
+      });
+    });
+    document.querySelectorAll(".filter-category").forEach((el) => {
+      el.addEventListener("change", () => {
+        const all = document.querySelectorAll(".filter-category");
+        const checked = document.querySelectorAll(".filter-category:checked");
+        if ($("filterCategoryAll")) {
+          $("filterCategoryAll").checked = all.length === checked.length;
+        }
+      });
+    });
+
+    // 駐車場検索「すべて」の一括チェック
+    $("filterParkingAll")?.addEventListener("change", (event) => {
+      document.querySelectorAll(".filter-parking").forEach((el) => {
+        el.checked = event.target.checked;
+      });
+    });
+    document.querySelectorAll(".filter-parking").forEach((el) => {
+      el.addEventListener("change", () => {
+        const all = document.querySelectorAll(".filter-parking");
+        const checked = document.querySelectorAll(".filter-parking:checked");
+        if ($("filterParkingAll")) {
+          $("filterParkingAll").checked = all.length === checked.length;
+        }
+      });
+    });
+
+    // 料金プリセットを選ぶとスライダーにも反映
+    document.querySelectorAll('input[name="filterPrice"]').forEach((el) => {
+      el.addEventListener("change", () => {
+        filterPriceSliderTouched = false;
+        const val = el.value;
+        const num = Number(val.replace(/[^0-9]/g, ""));
+        if ($("filterPriceSlider") && !Number.isNaN(num) && num > 0) {
+          $("filterPriceSlider").value = Math.min(num, 2000);
+          $("filterPriceSliderValue").textContent = Math.min(num, 2000).toLocaleString();
+        } else if ($("filterPriceSlider")) {
+          $("filterPriceSlider").value = 2000;
+          $("filterPriceSliderValue").textContent = "2,000";
+        }
+      });
+    });
+
+    // スライダーを直接動かした場合は、そちらを優先する
+    $("filterPriceSlider")?.addEventListener("input", (event) => {
+      filterPriceSliderTouched = true;
+      document.querySelectorAll('input[name="filterPrice"]').forEach((el) => {
+        el.checked = false;
+      });
+      $("filterPriceSliderValue").textContent = Number(event.target.value).toLocaleString();
+    });
+
+    $("filterReset")?.addEventListener("click", () => {
+      resetFilterForm();
+      filterPriceSliderTouched = false;
+      window.__activeFacetFilters = null;
+      renderCardsWithData(window.__onsenData);
+    });
+
+    $("filterApply")?.addEventListener("click", () => {
+      window.__activeFacetFilters = collectFacetFilters();
+      closeFilterModal();
+      renderCardsWithData(window.__onsenData);
+    });
 
     $("showCurrentLocationButton")?.addEventListener("click", () => {
       requestUserLocation({ recenter: true });

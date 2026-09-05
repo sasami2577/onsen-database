@@ -6,6 +6,10 @@
 .facility-count #facilityCount{font-weight:700;color:#875020;font-size:15px}
 .hero input{width:min(720px,100%);padding:15px;border:1px solid #e3ddd7;border-radius:14px;font-size:16px;background:#fff}main{max-width:1000px;margin:auto;padding:25px 20px}.title{display:flex;align-items:center;gap:10px}.title h2{margin:0 0 15px}#count{color:#837d77}
 .map-section{margin-bottom:25px}
+.filter-open-button{display:block;width:100%;background:#f4faf6;color:#177144;border:1px solid #cfe1d6;font-weight:700;font-size:15px;padding:14px;border-radius:14px;margin-bottom:20px;text-align:center}
+.filter-region legend{color:#615a53}
+#filterCityContainer .filter-city-group{border-top:1px solid #e5ece8;padding-top:12px;margin-top:12px}
+#filterPriceSlider{accent-color:#875020;margin-top:8px}
 .map-toolbar{margin-bottom:10px}
 .map-toolbar button{background:#f2efed;color:#403730;border:1px solid #e1dcd7;font-size:13px;padding:8px 14px}
 #mapContainer{height:320px;border-radius:18px;overflow:hidden;border:1px solid #e8e4e0;background:#f2f0ee}
