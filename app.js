@@ -2921,7 +2921,7 @@
     const filterActive = window.__activeFacetFilters != null;
     const statusEl = $("status");
     if (statusEl) {
-      statusEl.innerHTML = `現在　${filtered.length}件の施設を表示中です<br>（🔎 絞り込み検索　${filterActive ? "起動中" : "解除中"}）`;
+      statusEl.innerHTML = `現在 ${filtered.length}件の施設を表示中です<br>（🔎 絞り込み検索　${filterActive ? "起動中" : "解除中"}）`;
       statusEl.className = "status ok";
     }
 
@@ -3269,8 +3269,10 @@
         <div class="detail-toolbar-actions">
           <button type="button" id="detailEdit" class="detail-action">✏️ 情報を編集する</button>
           <button type="button" id="detailShare" class="detail-action">↗️ 共有する</button>
+        </div>
+        <div class="detail-toolbar-actions detail-toolbar-actions-full">
           <button type="button" id="detailDelete" class="detail-action detail-action-danger">🗑 削除する</button>
-          <button type="button" id="detailReport" class="detail-action">🚩 報告する</button>
+          <button type="button" id="detailReport" class="detail-action">⚠️ 報告する</button>
         </div>
       </div>
       <div class="detail-heading-block">
