@@ -5598,7 +5598,7 @@
     editingId = null;
     resetForm();
     const titleEl = $("modalTitle");
-    if (titleEl) titleEl.textContent = "温泉を追加";
+    if (titleEl) titleEl.textContent = "施設を追加";
     const submitButton = document.querySelector('#form button[type="submit"]');
     if (submitButton) submitButton.textContent = "登録する";
   }
