@@ -360,6 +360,20 @@
       closed_days_note: value("closedDaysNote"),
       is_temp_closed: checkedBool("tempClosed"),
       is_closed: checkedBool("closedPermanently"),
+      weekday_hours_overrides: (() => {
+        const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        const dayChars = { sun: "日", mon: "月", tue: "火", wed: "水", thu: "木", fri: "金", sat: "土" };
+        const result = {};
+        days.forEach((code) => {
+          if (!checkedBool(`weekdayHoursEnabled_${code}`)) return;
+          const open = timeValue(`weekdayHoursOpen_${code}`);
+          const close = timeValue(`weekdayHoursClose_${code}`);
+          if (open || close) {
+            result[dayChars[code]] = { open: open || null, close: close || null };
+          }
+        });
+        return Object.keys(result).length ? result : null;
+      })(),
       hours_note: value("hoursNote"),
 
       usage: [
@@ -1350,6 +1364,19 @@
     if (item.is_temp_closed) $("tempClosed").checked = true;
     if (item.is_closed) $("closedPermanently").checked = true;
     setValue("closedDaysNote", item.closed_days_note);
+    (() => {
+      const dayChars = { sun: "日", mon: "月", tue: "火", wed: "水", thu: "木", fri: "金", sat: "土" };
+      const overrides = item.weekday_hours_overrides || {};
+      Object.entries(dayChars).forEach(([code, ch]) => {
+        const entry = overrides[ch];
+        if (entry) {
+          if ($(`weekdayHoursEnabled_${code}`)) $(`weekdayHoursEnabled_${code}`).checked = true;
+          $(`weekdayHoursWrap_${code}`)?.classList.remove("hidden");
+          setTimeValue(`weekdayHoursOpen_${code}`, entry.open);
+          setTimeValue(`weekdayHoursClose_${code}`, entry.close);
+        }
+      });
+    })();
     setValue("hoursNote", item.hours_note);
 
     populateFeeRows("bathFeeRows", item.bath_fees);
@@ -2334,6 +2361,7 @@
   // 過去バージョンのローカルデータ等に含まれる廃止済みの項目名を
   // 送信時に自動で取り除けるようにする。
   const KNOWN_COLUMNS = new Set([
+    "weekday_hours_overrides",
     "access_method", "accommodation_status", "address", "aed_facility_status", 
     "amenity_note_female", "amenity_note_male", "apple_maps_url", "area", "baby_bed_female", 
     "baby_bed_male", "baby_chair_female", "baby_chair_male", "basin_female", "basin_male", 
@@ -3104,7 +3132,12 @@
       return { label: "定休日", className: "status-holiday" };
     }
 
-    if (!item.open_time || !item.close_time) return null;
+    // 今日が「曜日によって異なる営業時間」の対象なら、そちらを優先する
+    const todayOverride = item.weekday_hours_overrides && item.weekday_hours_overrides[todayChar];
+    const effectiveOpenTime = todayOverride?.open || item.open_time;
+    const effectiveCloseTime = todayOverride?.close || item.close_time;
+
+    if (!effectiveOpenTime || !effectiveCloseTime) return null;
 
     const toMinutes = (t) => {
       const [h, m] = t.split(":").map(Number);
@@ -3113,8 +3146,8 @@
     };
 
     const nowMinutes = now.getHours() * 60 + now.getMinutes();
-    const openMinutes = toMinutes(item.open_time);
-    const closeMinutes = toMinutes(item.close_time);
+    const openMinutes = toMinutes(effectiveOpenTime);
+    const closeMinutes = toMinutes(effectiveCloseTime);
     if (openMinutes == null || closeMinutes == null) return null;
 
     let isOpen;
@@ -3226,6 +3259,13 @@
             ${detailField("営業時間", hours)}
             ${detailField("最終受付", item.last_entry)}
           </div>
+          ${
+            item.weekday_hours_overrides && Object.keys(item.weekday_hours_overrides).length
+              ? `<p class="detail-note">🗓 ${Object.entries(item.weekday_hours_overrides)
+                  .map(([day, t]) => `${escapeHtml(day)}曜：${escapeHtml(t.open || "?")}〜${escapeHtml(t.close || "?")}`)
+                  .join("　")}</p>`
+              : ""
+          }
           ${item.hours_note ? `<p class="detail-note">${escapeHtml(item.hours_note)}</p>` : ""}
 
           ${detailSubhead("🗓 定休日")}
@@ -4726,6 +4766,10 @@
 
     form.reset();
 
+    ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach((code) => {
+      $(`weekdayHoursWrap_${code}`)?.classList.add("hidden");
+    });
+
     // 動的なレンタル欄・料金欄は空に戻す
     const maleRentalRows = $("maleRentalRows");
     if (maleRentalRows) {
@@ -5253,6 +5297,12 @@
       window.__activeFacetFilters = collectFacetFilters();
       closeFilterModal();
       renderCardsWithData(window.__onsenData);
+    });
+
+    ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach((code) => {
+      $(`weekdayHoursEnabled_${code}`)?.addEventListener("change", (event) => {
+        $(`weekdayHoursWrap_${code}`)?.classList.toggle("hidden", !event.target.checked);
+      });
     });
 
     $("showCurrentLocationButton")?.addEventListener("click", () => {

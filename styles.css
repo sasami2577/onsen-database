@@ -1,4 +1,4 @@
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:#f8f6f5;color:#221c17}header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid #e6e1dd;position:sticky;top:0;z-index:2}.brand{display:flex;gap:10px;align-items:center}.brand>span{font-size:30px;background:#f5ebe2;padding:6px 10px;border-radius:12px}.brand b{display:block}.brand small{display:block;color:#807a74;font-size:11px;margin-top:3px}button{border:0;border-radius:11px;padding:11px 15px;background:#875020;color:#fff;font-weight:700}.hero{padding:38px 20px;background:linear-gradient(135deg,#f5ebe3,#fcfbfa)}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:#f8f6f5;color:#221c17}header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid #e6e1dd;position:sticky;top:0;z-index:1500}.brand{display:flex;gap:10px;align-items:center}.brand>span{font-size:30px;background:#f5ebe2;padding:6px 10px;border-radius:12px}.brand b{display:block}.brand small{display:block;color:#807a74;font-size:11px;margin-top:3px}button{border:0;border-radius:11px;padding:11px 15px;background:#875020;color:#fff;font-weight:700}.hero{padding:38px 20px;background:linear-gradient(135deg,#f5ebe3,#fcfbfa)}
 .hero-banner{width:100%;max-width:720px;height:auto;border-radius:18px;display:block;margin:0 0 20px;box-shadow:0 6px 20px #16130f1a}
 .hero h1{font-size:26px;margin:0 0 8px}
 .hero p{color:#706760}
@@ -58,6 +58,8 @@ body.modal-open{overflow:hidden}.primary{background:#875020;color:#fff}.secondar
 .dialog .field-title{font-size:13px;color:#403730}
 .field-subtitle{font-weight:600;margin:14px 0 8px;font-size:13px;color:#807972}
 .note-inline{font-size:12px;color:#807972;margin:10px 0 0}
+.weekday-hours-row{border-top:1px solid #eee5df;padding-top:10px;margin-top:10px}
+.weekday-hours-check{display:flex;align-items:center;gap:8px;font-weight:700;margin:0}
 .form-section select{display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #e1dcd7;border-radius:9px;font:inherit;background:#fff}
 .compact-top{margin-top:12px}
 .time-select{display:flex;align-items:center;gap:8px;margin-top:7px}
