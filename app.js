@@ -2819,12 +2819,7 @@
     if ($("filterParkingAll")) $("filterParkingAll").checked = false;
   }
 
-  function renderCards(list) {
-    const cards = $("cards");
-    const count = $("count");
-
-    if (!cards) return;
-
+  function getFilteredSortedList(list) {
     const search = value("search").toLowerCase();
 
     const filtered = list.filter((item) => {
@@ -2863,6 +2858,34 @@
       });
     }
 
+    return filtered;
+  }
+
+  const CATEGORY_TAG_EMOJIS = {
+    "日帰り温泉": "♨️",
+    "露天風呂": "♨️",
+    "家族風呂": "👨‍👩‍👦",
+    "サウナ": "🧖‍♀️",
+    "水風呂": "💧",
+    "外気浴": "🌿",
+    "お食事処": "🍴",
+    "売店コーナー": "🛍",
+    "リラクゼーション": "💆‍♀️",
+    "休憩スペース": "🛋",
+    "コインランドリー": "🧺",
+    "レンタルスペース": "👩🏻‍💻"
+  };
+
+  function renderCards(list) {
+    const cards = $("cards");
+    const count = $("count");
+
+    if (!cards) return;
+
+    const search = value("search").toLowerCase();
+    const filtered = getFilteredSortedList(list);
+    const userLoc = window.__userLocation;
+
     if (count) {
       count.textContent = `${filtered.length}件`;
     }
@@ -2882,24 +2905,35 @@
 
     cards.innerHTML = filtered
       .map((item) => {
-        const place = [
-          item.prefecture,
-          item.area,
-          item.address
-        ]
+        const address = [item.prefecture, item.area, item.address]
           .filter(Boolean)
           .join(" ");
 
-        const details = [
-          item.business_type,
-          Array.isArray(item.spring_types) ? item.spring_types.join("・") : "",
-          item.spring_temperature != null
-            ? `温泉 ${item.spring_temperature}℃`
-            : "",
+        const distanceText =
           userLoc && item.lat != null && item.lng != null
-            ? `📍${distanceKm(userLoc.lat, userLoc.lng, Number(item.lat), Number(item.lng)).toFixed(1)}km`
-            : ""
-        ].filter(Boolean);
+            ? `${distanceKm(userLoc.lat, userLoc.lng, Number(item.lat), Number(item.lng)).toFixed(1)}km`
+            : "";
+
+        const status = getOpenStatus(item);
+
+        const hoursText =
+          item.open_time || item.close_time
+            ? `${item.open_time || "?"}〜${item.close_time || "?"}`
+            : "";
+
+        const closedDaysText =
+          Array.isArray(item.closed_days) && item.closed_days.length
+            ? item.closed_days
+                .map((d) =>
+                  ["日", "月", "火", "水", "木", "金", "土"].includes(d) ? `${d}曜日` : d
+                )
+                .join("・")
+            : "";
+
+        const categoryTags = Object.keys(CATEGORY_TAG_EMOJIS).filter((cat) => {
+          const matcher = FACILITY_CATEGORY_MATCHERS[cat];
+          return matcher ? matcher(item) : false;
+        });
 
         return `
           <article class="card" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る">
@@ -2907,33 +2941,23 @@
               <h3>${escapeHtml(item.name || "名称未設定")}</h3>
             </div>
 
-            ${
-              place
-                ? `<p class="card-place">${escapeHtml(place)}</p>`
-                : ""
-            }
+            ${address ? `<p class="card-place">📍 ${escapeHtml(address)}</p>` : ""}
+
+            ${distanceText ? `<p class="card-distance">現在地から　${escapeHtml(distanceText)}</p>` : ""}
+
+            <div class="card-badges">
+              ${item.business_type ? renderBusinessTypeBadge(item.business_type) : ""}
+              ${status ? `<span class="status-badge ${status.className}">${escapeHtml(status.label)}</span>` : ""}
+            </div>
+
+            ${hoursText ? `<p>🕒 営業時間：${escapeHtml(hoursText)}</p>` : ""}
+            ${closedDaysText ? `<p>🗓 定休日：${escapeHtml(closedDaysText)}</p>` : ""}
 
             ${
-              details.length
-                ? `<p>${escapeHtml(details.join(" / "))}</p>`
-                : ""
-            }
-
-            ${
-              item.open_time || item.close_time
-                ? `<p>営業時間：
-                    ${escapeHtml(item.open_time || "")}
-                    ${
-                      item.open_time || item.close_time ? "〜" : ""
-                    }
-                    ${escapeHtml(item.close_time || "")}
-                  </p>`
-                : ""
-            }
-
-            ${
-              item.price != null
-                ? `<p>大人料金：${escapeHtml(item.price)}円</p>`
+              categoryTags.length
+                ? `<div class="card-category-tags">${categoryTags
+                    .map((cat) => `<span class="badge">${CATEGORY_TAG_EMOJIS[cat]} ${escapeHtml(cat)}</span>`)
+                    .join("")}</div>`
                 : ""
             }
 
@@ -2943,7 +2967,7 @@
                 : ""
             }
 
-            <button type="button" class="detail" data-id="${escapeHtml(item.id ?? "")}">詳細を見る</button>
+            <button type="button" class="detail" data-id="${escapeHtml(item.id ?? "")}">この施設の詳細を見る</button>
           </article>
         `;
       })
@@ -4829,8 +4853,10 @@
       // 検索時は現在表示できるデータを再取得
       if (window.__onsenData) {
         renderCards(window.__onsenData);
+        updateMap(getFilteredSortedList(window.__onsenData));
       } else {
         renderCards(getLocalData());
+        updateMap(getFilteredSortedList(getLocalData()));
       }
     });
 
@@ -5525,7 +5551,7 @@
   function renderCardsWithData(list) {
     window.__onsenData = Array.isArray(list) ? list : [];
     originalRenderCards(window.__onsenData);
-    updateMap(window.__onsenData);
+    updateMap(getFilteredSortedList(window.__onsenData));
     updateFacilityCount(window.__onsenData);
   }
 
@@ -5569,7 +5595,7 @@
       window.__onsenData = data;
       originalRenderCards(data);
       updateMigrateBanner();
-      updateMap(data);
+      updateMap(getFilteredSortedList(data));
       updateFacilityCount(data);
 
       if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -5589,7 +5615,7 @@
       window.__onsenData = localData;
       originalRenderCards(localData);
       updateMigrateBanner();
-      updateMap(localData);
+      updateMap(getFilteredSortedList(localData));
       updateFacilityCount(localData);
 
       setStatus(
