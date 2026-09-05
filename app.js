@@ -361,8 +361,8 @@
       is_temp_closed: checkedBool("tempClosed"),
       is_closed: checkedBool("closedPermanently"),
       weekday_hours_overrides: (() => {
-        const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-        const dayChars = { sun: "日", mon: "月", tue: "火", wed: "水", thu: "木", fri: "金", sat: "土" };
+        const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat", "holiday"];
+        const dayChars = { sun: "日", mon: "月", tue: "火", wed: "水", thu: "木", fri: "金", sat: "土", holiday: "祝" };
         const result = {};
         days.forEach((code) => {
           if (!checkedBool(`weekdayHoursEnabled_${code}`)) return;
@@ -1365,7 +1365,7 @@
     if (item.is_closed) $("closedPermanently").checked = true;
     setValue("closedDaysNote", item.closed_days_note);
     (() => {
-      const dayChars = { sun: "日", mon: "月", tue: "火", wed: "水", thu: "木", fri: "金", sat: "土" };
+      const dayChars = { sun: "日", mon: "月", tue: "火", wed: "水", thu: "木", fri: "金", sat: "土", holiday: "祝" };
       const overrides = item.weekday_hours_overrides || {};
       Object.entries(dayChars).forEach(([code, ch]) => {
         const entry = overrides[ch];
@@ -3114,6 +3114,74 @@
     `;
   }
 
+  // ---------------------------------------------------------
+  // 日本の祝日判定（内閣府の祝日ルールに基づく簡易計算）
+  // ---------------------------------------------------------
+
+  function nthMondayOfMonth(year, month, n) {
+    let count = 0;
+    for (let day = 1; day <= 31; day++) {
+      const d = new Date(year, month - 1, day);
+      if (d.getMonth() !== month - 1) break;
+      if (d.getDay() === 1) {
+        count += 1;
+        if (count === n) return day;
+      }
+    }
+    return null;
+  }
+
+  function vernalEquinoxDay(year) {
+    return Math.floor(20.8431 + 0.242194 * (year - 1980) - Math.floor((year - 1980) / 4));
+  }
+
+  function autumnalEquinoxDay(year) {
+    return Math.floor(23.2488 + 0.242194 * (year - 1980) - Math.floor((year - 1980) / 4));
+  }
+
+  function getJapaneseHolidaySet(year) {
+    const set = new Set();
+    const add = (m, d) => d && set.add(`${m}-${d}`);
+    add(1, 1);
+    add(1, nthMondayOfMonth(year, 1, 2));
+    add(2, 11);
+    add(2, 23);
+    add(3, vernalEquinoxDay(year));
+    add(4, 29);
+    add(5, 3);
+    add(5, 4);
+    add(5, 5);
+    add(7, nthMondayOfMonth(year, 7, 3));
+    add(8, 11);
+    add(9, nthMondayOfMonth(year, 9, 3));
+    add(9, autumnalEquinoxDay(year));
+    add(10, nthMondayOfMonth(year, 10, 2));
+    add(11, 3);
+    add(11, 23);
+    return set;
+  }
+
+  function isJapaneseHoliday(date) {
+    const holidays = getJapaneseHolidaySet(date.getFullYear());
+    const key = `${date.getMonth() + 1}-${date.getDate()}`;
+    if (holidays.has(key)) return true;
+
+    // 振替休日：日曜が祝日だった場合、翌月曜も休日になる
+    if (date.getDay() === 1) {
+      const yesterday = new Date(date);
+      yesterday.setDate(date.getDate() - 1);
+      if (
+        yesterday.getDay() === 0 &&
+        getJapaneseHolidaySet(yesterday.getFullYear()).has(
+          `${yesterday.getMonth() + 1}-${yesterday.getDate()}`
+        )
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function getOpenStatus(item) {
     // 将来的なフラグ（閉鎖・臨時休業）に対応
     if (item.is_closed) {
@@ -3126,14 +3194,20 @@
     const weekdayChars = ["日", "月", "火", "水", "木", "金", "土"];
     const now = new Date();
     const todayChar = weekdayChars[now.getDay()];
+    const todayIsHoliday = isJapaneseHoliday(now);
 
     // 定休日（曜日の複数選択）に今日が含まれていれば定休日と判定
     if (Array.isArray(item.closed_days) && item.closed_days.includes(todayChar)) {
       return { label: "定休日", className: "status-holiday" };
     }
+    if (todayIsHoliday && Array.isArray(item.closed_days) && item.closed_days.includes("祝日")) {
+      return { label: "定休日", className: "status-holiday" };
+    }
 
-    // 今日が「曜日によって異なる営業時間」の対象なら、そちらを優先する
-    const todayOverride = item.weekday_hours_overrides && item.weekday_hours_overrides[todayChar];
+    // 今日が祝日で「祝日」の営業時間が設定されていればそちらを優先し、
+    // 次に「曜日によって異なる営業時間」、どちらもなければ通常の営業時間を使う
+    const overrides = item.weekday_hours_overrides || {};
+    const todayOverride = (todayIsHoliday && overrides["祝"]) || overrides[todayChar];
     const effectiveOpenTime = todayOverride?.open || item.open_time;
     const effectiveCloseTime = todayOverride?.close || item.close_time;
 
@@ -3262,7 +3336,7 @@
           ${
             item.weekday_hours_overrides && Object.keys(item.weekday_hours_overrides).length
               ? `<p class="detail-note">🗓 ${Object.entries(item.weekday_hours_overrides)
-                  .map(([day, t]) => `${escapeHtml(day)}曜：${escapeHtml(t.open || "?")}〜${escapeHtml(t.close || "?")}`)
+                  .map(([day, t]) => `${escapeHtml(day === "祝" ? "祝日" : `${day}曜`)}：${escapeHtml(t.open || "?")}〜${escapeHtml(t.close || "?")}`)
                   .join("　")}</p>`
               : ""
           }
@@ -4766,7 +4840,7 @@
 
     form.reset();
 
-    ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach((code) => {
+    ["sun", "mon", "tue", "wed", "thu", "fri", "sat", "holiday"].forEach((code) => {
       $(`weekdayHoursWrap_${code}`)?.classList.add("hidden");
     });
 
@@ -5299,7 +5373,7 @@
       renderCardsWithData(window.__onsenData);
     });
 
-    ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].forEach((code) => {
+    ["sun", "mon", "tue", "wed", "thu", "fri", "sat", "holiday"].forEach((code) => {
       $(`weekdayHoursEnabled_${code}`)?.addEventListener("change", (event) => {
         $(`weekdayHoursWrap_${code}`)?.classList.toggle("hidden", !event.target.checked);
       });
