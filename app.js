@@ -11,6 +11,38 @@
 
   const TABLE_NAME = "onsen_database";
   const LOCAL_KEY = "onsen_database_local_v1";
+  const DRAFT_KEY = "onsen_database_draft_v1";
+
+  function getDraft() {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  function saveDraft(mode, editingIdValue) {
+    try {
+      const activeTabBtn = document.querySelector("#formTabBar .tab-btn.active");
+      const draft = {
+        mode,
+        editingId: editingIdValue || null,
+        data: collectFormData(),
+        activeTab: activeTabBtn ? activeTabBtn.dataset.tabTarget : "basic",
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch (error) {
+      console.error("下書きの保存に失敗:", error);
+    }
+  }
+
+  function clearDraft() {
+    localStorage.removeItem(DRAFT_KEY);
+  }
+
 
   // ---------------------------------------------------------
   // Supabase設定
@@ -4522,8 +4554,30 @@
     $("detailEdit")?.addEventListener("click", () => {
       editingId = item.id;
 
-      resetForm();
-      populateForm(item);
+      const draft = getDraft();
+      let resumed = false;
+
+      if (draft && draft.mode === "edit" && String(draft.editingId) === String(item.id)) {
+        const savedAtText = draft.savedAt
+          ? new Date(draft.savedAt).toLocaleString("ja-JP")
+          : "";
+        const ok = confirm(
+          `この施設について、入力途中の内容が残っています（${savedAtText}）。\n続きから編集を再開しますか？\n\n` +
+          "「キャンセル」を押すと、この下書きは削除されます。"
+        );
+        if (ok) {
+          resetForm();
+          populateForm(draft.data);
+          resumed = true;
+        } else {
+          clearDraft();
+        }
+      }
+
+      if (!resumed) {
+        resetForm();
+        populateForm(item);
+      }
 
       const modal = $("modal");
       if (modal) {
@@ -4531,7 +4585,7 @@
         modal.setAttribute("aria-hidden", "false");
         document.body.classList.add("modal-open");
       }
-      switchFormTab("basic");
+      switchFormTab(resumed ? draft.activeTab || "basic" : "basic");
 
       const titleEl = $("modalTitle");
       if (titleEl) titleEl.textContent = "温泉を編集";
@@ -4846,6 +4900,7 @@
         );
 
         setStatus("管理者の確認待ちです。", "ok");
+        clearDraft();
         editingId = null;
         resetForm();
         closeModal();
@@ -4866,6 +4921,7 @@
           ? updateLocalData(targetId, item)
           : addLocalData(item);
 
+        clearDraft();
         editingId = null;
         resetForm();
         closeModal();
@@ -5045,6 +5101,18 @@
   function setupEvents() {
     $("form")?.addEventListener("submit", saveOnsen);
 
+    // 入力途中の内容を自動で下書き保存しておく（リロード・誤操作対策）
+    let draftSaveTimer = null;
+    $("form")?.addEventListener("input", () => {
+      clearTimeout(draftSaveTimer);
+      draftSaveTimer = setTimeout(() => {
+        saveDraft(editingId ? "edit" : "add", editingId);
+      }, 600);
+    });
+    $("form")?.addEventListener("change", () => {
+      saveDraft(editingId ? "edit" : "add", editingId);
+    });
+
     $("search")?.addEventListener("input", () => {
       // 検索時は現在表示できるデータを再取得
       if (window.__onsenData) {
@@ -5063,34 +5131,58 @@
       modal.classList.remove("hidden");
       modal.setAttribute("aria-hidden", "false");
       document.body.classList.add("modal-open");
-      switchFormTab("basic");
 
-      // レンタル品欄が空なら、まず1行用意しておく（フォーカスは奪わない）
-      ["maleRentalRows", "femaleRentalRows"].forEach((containerId) => {
-        const rows = $(containerId);
-        if (rows && !rows.children.length) {
-          addRentalRow(containerId, "", "", { focus: false });
+      const draft = getDraft();
+      let resumed = false;
+
+      if (draft && draft.mode === "add") {
+        const savedAtText = draft.savedAt
+          ? new Date(draft.savedAt).toLocaleString("ja-JP")
+          : "";
+        const ok = confirm(
+          `入力途中の内容が残っています（${savedAtText}）。\n続きから編集を再開しますか？\n\n` +
+          "「キャンセル」を押すと、この下書きは削除されます。"
+        );
+        if (ok) {
+          resetForm();
+          populateForm(draft.data);
+          switchFormTab(draft.activeTab || "basic");
+          resumed = true;
+        } else {
+          clearDraft();
         }
-      });
-
-      // 入浴料・その他料金区分も、空ならデフォルトの区分名で行を用意しておく
-      const bathFeeRows = $("bathFeeRows");
-      if (bathFeeRows && !bathFeeRows.children.length) {
-        DEFAULT_BATH_FEE_CATEGORIES.forEach((category) =>
-          addFeeRow("bathFeeRows", category, "", { focus: false })
-        );
       }
 
-      const otherFeeRows = $("otherFeeRows");
-      if (otherFeeRows && !otherFeeRows.children.length) {
-        DEFAULT_OTHER_FEE_CATEGORIES.forEach((category) =>
-          addFeeRow("otherFeeRows", category, "", { focus: false })
-        );
-      }
+      if (!resumed) {
+        switchFormTab("basic");
 
-      const massageFeeRows = $("massageFeeRows");
-      if (massageFeeRows && !massageFeeRows.children.length) {
-        addFeeRow3("massageFeeRows", "", "", "", { focus: false });
+        // レンタル品欄が空なら、まず1行用意しておく（フォーカスは奪わない）
+        ["maleRentalRows", "femaleRentalRows"].forEach((containerId) => {
+          const rows = $(containerId);
+          if (rows && !rows.children.length) {
+            addRentalRow(containerId, "", "", { focus: false });
+          }
+        });
+
+        // 入浴料・その他料金区分も、空ならデフォルトの区分名で行を用意しておく
+        const bathFeeRows = $("bathFeeRows");
+        if (bathFeeRows && !bathFeeRows.children.length) {
+          DEFAULT_BATH_FEE_CATEGORIES.forEach((category) =>
+            addFeeRow("bathFeeRows", category, "", { focus: false })
+          );
+        }
+
+        const otherFeeRows = $("otherFeeRows");
+        if (otherFeeRows && !otherFeeRows.children.length) {
+          DEFAULT_OTHER_FEE_CATEGORIES.forEach((category) =>
+            addFeeRow("otherFeeRows", category, "", { focus: false })
+          );
+        }
+
+        const massageFeeRows = $("massageFeeRows");
+        if (massageFeeRows && !massageFeeRows.children.length) {
+          addFeeRow3("massageFeeRows", "", "", "", { focus: false });
+        }
       }
 
       // モーダルを開いたら温泉名欄にフォーカス
