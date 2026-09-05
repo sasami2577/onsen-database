@@ -8,6 +8,15 @@
 .map-section{margin-bottom:25px}
 .filter-open-button{display:block;width:100%;background:#f4faf6;color:#177144;border:1px solid #cfe1d6;font-weight:700;font-size:15px;padding:14px;border-radius:14px;margin-bottom:20px;text-align:center}
 .filter-region legend{color:#615a53}
+.filter-category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.filter-category-card{position:relative;display:block;border-radius:14px;overflow:hidden;border:3px solid transparent;cursor:pointer;background:#faf7f4}
+.filter-category-card img{display:block;width:100%;height:auto}
+.filter-category-card input{position:absolute;top:6px;left:6px;width:20px;height:20px;z-index:2;accent-color:#875020;margin:0}
+.filter-category-card:has(input:checked){border-color:#875020;box-shadow:0 0 0 2px #875020 inset}
+.filter-category-card-text{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;aspect-ratio:auto;padding:16px 6px}
+.filter-category-card-emoji{font-size:28px}
+.filter-category-card-label{font-size:13px;font-weight:700;color:#403730}
+@media(max-width:600px){.filter-category-grid{grid-template-columns:repeat(2,1fr)}}
 #filterCityContainer .filter-city-group{border-top:1px solid #e5ece8;padding-top:12px;margin-top:12px}
 #filterPriceSlider{accent-color:#875020;margin-top:8px}
 .map-toolbar{margin-bottom:10px}

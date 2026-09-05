@@ -117,22 +117,24 @@
 <div id="filterCityContainer"></div>
 </section>
 
-<section class="form-section"><h3>♨️ 施設分類</h3><div class="checks">
-<label><input type="checkbox" id="filterCategoryAll">すべて</label>
-<label><input type="checkbox" class="filter-category" value="日帰り温泉">日帰り温泉</label>
-<label><input type="checkbox" class="filter-category" value="温泉旅館">温泉旅館</label>
-<label><input type="checkbox" class="filter-category" value="露天風呂">露天風呂</label>
-<label><input type="checkbox" class="filter-category" value="家族風呂">家族風呂</label>
-<label><input type="checkbox" class="filter-category" value="サウナ">サウナ</label>
-<label><input type="checkbox" class="filter-category" value="水風呂">水風呂</label>
-<label><input type="checkbox" class="filter-category" value="外気浴">外気浴</label>
-<label><input type="checkbox" class="filter-category" value="お食事処">お食事処</label>
-<label><input type="checkbox" class="filter-category" value="リラクゼーション">リラクゼーション</label>
-<label><input type="checkbox" class="filter-category" value="休憩スペース">休憩スペース</label>
-<label><input type="checkbox" class="filter-category" value="売店コーナー">売店コーナー</label>
-<label><input type="checkbox" class="filter-category" value="コインランドリー">コインランドリー</label>
-<label><input type="checkbox" class="filter-category" value="レンタルスペース">レンタルスペース</label>
-</div></section>
+<section class="form-section"><h3>♨️ 施設分類</h3>
+<div class="filter-category-grid">
+<label class="filter-category-card filter-category-card-text"><input type="checkbox" id="filterCategoryAll"><span class="filter-category-card-emoji">🔘</span><span class="filter-category-card-label">すべて</span></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="日帰り温泉"><img src="icons/day_use_onsen.png" alt="日帰り温泉" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="サウナ"><img src="icons/sauna.png" alt="サウナ" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="水風呂"><img src="icons/cold_bath.png" alt="水風呂" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="外気浴"><img src="icons/air_bath.png" alt="外気浴" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="露天風呂"><img src="icons/open_air_bath.png" alt="露天風呂" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="家族風呂"><img src="icons/family_bath.png" alt="家族風呂" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="リラクゼーション"><img src="icons/relaxation.png" alt="リラクゼーション" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="お食事処"><img src="icons/restaurant.png" alt="お食事処" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="コインランドリー"><img src="icons/coin_laundry.png" alt="コインランドリー" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="レンタルスペース"><img src="icons/rental_space.png" alt="レンタルスペース" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="売店コーナー"><img src="icons/shop_corner.png" alt="売店コーナー" loading="lazy"></label>
+<label class="filter-category-card"><input type="checkbox" class="filter-category" value="休憩スペース"><img src="icons/rest_space.png" alt="休憩スペース" loading="lazy"></label>
+<label class="filter-category-card filter-category-card-text"><input type="checkbox" class="filter-category" value="温泉旅館"><span class="filter-category-card-emoji">🛌</span><span class="filter-category-card-label">温泉旅館</span></label>
+</div>
+</section>
 
 <section class="form-section"><h3>💰 料金選択</h3><div class="checks">
 <label><input type="radio" name="filterPrice" value="すべて" checked>すべて</label>
