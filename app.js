@@ -3265,13 +3265,13 @@
 
     return `
       <div class="detail-toolbar">
-        <button type="button" id="detailBack" class="detail-back">← 一覧に戻る</button>
+        <div class="detail-toolbar-row">
+          <button type="button" id="detailBack" class="detail-back">← 一覧に戻る</button>
+          <button type="button" id="detailDelete" class="detail-action detail-action-danger">🗑 削除する</button>
+        </div>
         <div class="detail-toolbar-actions">
           <button type="button" id="detailEdit" class="detail-action">✏️ 情報を編集する</button>
           <button type="button" id="detailShare" class="detail-action">↗️ 共有する</button>
-        </div>
-        <div class="detail-toolbar-actions detail-toolbar-actions-full">
-          <button type="button" id="detailDelete" class="detail-action detail-action-danger">🗑 削除する</button>
           <button type="button" id="detailReport" class="detail-action">⚠️ 報告する</button>
         </div>
       </div>
