@@ -227,7 +227,8 @@
 <section class="form-section" data-tab="basic"><h3>基本情報</h3><div class="grid two">
 <label class="full">温泉・施設名 <em>必須</em><input id="name" required maxlength="100" placeholder="例：○○温泉"></label>
 <label>都道府県<select id="prefecture"><option value="">選択してください</option><option>北海道</option><option>青森県</option><option>岩手県</option><option>宮城県</option><option>秋田県</option><option>山形県</option><option>福島県</option><option>茨城県</option><option>栃木県</option><option>群馬県</option><option>埼玉県</option><option>千葉県</option><option>東京都</option><option>神奈川県</option><option>新潟県</option><option>富山県</option><option>石川県</option><option>福井県</option><option>山梨県</option><option>長野県</option><option>岐阜県</option><option>静岡県</option><option>愛知県</option><option>三重県</option><option>滋賀県</option><option>京都府</option><option>大阪府</option><option>兵庫県</option><option>奈良県</option><option>和歌山県</option><option>鳥取県</option><option>島根県</option><option>岡山県</option><option>広島県</option><option>山口県</option><option>徳島県</option><option>香川県</option><option>愛媛県</option><option>高知県</option><option>福岡県</option><option>佐賀県</option><option>長崎県</option><option>熊本県</option><option>大分県</option><option>宮崎県</option><option>鹿児島県</option><option>沖縄県</select></label>
-<label>市区町村・地域<input id="area" placeholder="例：草津町"></label>
+<label>市区町村・地域<select id="area"><option value="">先に都道府県を選択してください</option></select></label>
+<label class="hidden full" id="areaOtherWrap">市区町村・地域（自由入力）<input id="areaOther" placeholder="例：草津町"></label>
 
 <label class="full">施設業態 <em>必須</em><select id="businessType" required>
 <option value="">選択してください</option>
@@ -315,6 +316,15 @@
 <label>開始<div class="time-select"><select id="overnightOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="overnightOpenMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label>
 <label>終了<div class="time-select"><select id="overnightCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="overnightCloseMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label>
 </div></fieldset>
+<fieldset class="full compact-top"><legend>🌅 朝風呂の営業時間（該当する場合）</legend>
+<p class="note-inline">通常営業とは別に、早朝だけ入浴できる時間帯がある場合に入力してください。</p>
+<div class="grid two">
+<label>開始<div class="time-select"><select id="morningBathOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="morningBathOpenMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>終了<div class="time-select"><select id="morningBathCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="morningBathCloseMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label></div></fieldset>
+<fieldset class="full compact-top"><legend>🕒 その他の営業時間（該当する場合）</legend>
+<p class="note-inline">上記に当てはまらない特別な時間帯がある場合に入力してください（例：貸切風呂のみの時間帯など）。</p>
+<label class="full">名称・内容<input type="text" id="otherHoursLabel" placeholder="例：貸切風呂の営業時間"></label>
+<div class="grid two">
+<label>開始<div class="time-select"><select id="otherHoursOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="otherHoursOpenMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label><label>終了<div class="time-select"><select id="otherHoursCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="otherHoursCloseMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label></div></fieldset>
 <fieldset class="full"><legend>定休日</legend><div class="checks">
 <label><input type="checkbox" name="closedDay" value="日">日曜日</label>
 <label><input type="checkbox" name="closedDay" value="月">月曜日</label>
@@ -917,8 +927,8 @@
 </fieldset>
 
 <div class="grid two compact-top">
-<label>🌡 サウナ室内の温度（℃・下限）<input id="maleSaunaTempMin" type="number"></label>
-<label>🌡 サウナ室内の温度（℃・上限）<input id="maleSaunaTempMax" type="number"></label>
+<label>🌡 サウナ室内の温度（℃・下限）<input id="maleSaunaTempMin" type="number" step="0.1"></label>
+<label>🌡 サウナ室内の温度（℃・上限）<input id="maleSaunaTempMax" type="number" step="0.1"></label>
 <label>💧 サウナ室内の湿度（%・下限）<input id="maleSaunaHumidityMin" type="number"></label>
 <label>💧 サウナ室内の湿度（%・上限）<input id="maleSaunaHumidityMax" type="number"></label>
 </div>
@@ -1199,8 +1209,8 @@
 </fieldset>
 
 <div class="grid two compact-top">
-<label>🌡 水風呂の温度（℃・下限）<input id="maleColdBathTempMin" type="number"></label>
-<label>🌡 水風呂の温度（℃・上限）<input id="maleColdBathTempMax" type="number"></label>
+<label>🌡 水風呂の温度（℃・下限）<input id="maleColdBathTempMin" type="number" step="0.1"></label>
+<label>🌡 水風呂の温度（℃・上限）<input id="maleColdBathTempMax" type="number" step="0.1"></label>
 <label>👤 水風呂の定員（人）<input id="maleColdBathCapacity" type="number" min="0"></label>
 <label>💧 水風呂の深さ（およそ cm）<input id="maleColdBathDepth" type="number" min="0"></label>
 </div>
@@ -1390,8 +1400,8 @@
 </fieldset>
 
 <div class="grid two compact-top">
-<label>🌡 サウナ室内の温度（℃・下限）<input id="femaleSaunaTempMin" type="number"></label>
-<label>🌡 サウナ室内の温度（℃・上限）<input id="femaleSaunaTempMax" type="number"></label>
+<label>🌡 サウナ室内の温度（℃・下限）<input id="femaleSaunaTempMin" type="number" step="0.1"></label>
+<label>🌡 サウナ室内の温度（℃・上限）<input id="femaleSaunaTempMax" type="number" step="0.1"></label>
 <label>💧 サウナ室内の湿度（%・下限）<input id="femaleSaunaHumidityMin" type="number"></label>
 <label>💧 サウナ室内の湿度（%・上限）<input id="femaleSaunaHumidityMax" type="number"></label>
 </div>
@@ -1672,8 +1682,8 @@
 </fieldset>
 
 <div class="grid two compact-top">
-<label>🌡 水風呂の温度（℃・下限）<input id="femaleColdBathTempMin" type="number"></label>
-<label>🌡 水風呂の温度（℃・上限）<input id="femaleColdBathTempMax" type="number"></label>
+<label>🌡 水風呂の温度（℃・下限）<input id="femaleColdBathTempMin" type="number" step="0.1"></label>
+<label>🌡 水風呂の温度（℃・上限）<input id="femaleColdBathTempMax" type="number" step="0.1"></label>
 <label>👤 水風呂の定員（人）<input id="femaleColdBathCapacity" type="number" min="0"></label>
 <label>💧 水風呂の深さ（およそ cm）<input id="femaleColdBathDepth" type="number" min="0"></label>
 </div>
@@ -3261,6 +3271,7 @@
 </form></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="municipalities.js"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
 </body></html>

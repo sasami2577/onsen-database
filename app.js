@@ -150,6 +150,54 @@
   }
 
   // ---------------------------------------------------------
+  // 市区町村・地域の選択肢を都道府県に応じて作る
+  // ---------------------------------------------------------
+
+  function populateAreaOptions(prefectureName, selectedValue) {
+    const select = $("area");
+    if (!select) return;
+
+    const list = window.MUNICIPALITIES_BY_PREFECTURE?.[prefectureName] || [];
+
+    select.innerHTML = "";
+
+    if (!prefectureName) {
+      select.innerHTML = '<option value="">先に都道府県を選択してください</option>';
+      $("areaOtherWrap")?.classList.add("hidden");
+      return;
+    }
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "選択してください";
+    select.appendChild(placeholder);
+
+    list.forEach((name) => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      select.appendChild(opt);
+    });
+
+    const otherOpt = document.createElement("option");
+    otherOpt.value = "その他";
+    otherOpt.textContent = "その他（一覧にない場合）";
+    select.appendChild(otherOpt);
+
+    if (selectedValue && list.includes(selectedValue)) {
+      select.value = selectedValue;
+      $("areaOtherWrap")?.classList.add("hidden");
+    } else if (selectedValue) {
+      // 一覧に無い値（旧データ・自由記述など）は「その他」にして元の値を残す
+      select.value = "その他";
+      $("areaOtherWrap")?.classList.remove("hidden");
+      setValue("areaOther", selectedValue);
+    } else {
+      $("areaOtherWrap")?.classList.add("hidden");
+    }
+  }
+
+  // ---------------------------------------------------------
   // レンタル品
   // #rentalRows に行を動的に追加・削除できるようにする
   // ---------------------------------------------------------
@@ -375,7 +423,7 @@
     return {
       name: value("name"),
       prefecture: value("prefecture"),
-      area: value("area"),
+      area: value("area") === "その他" ? value("areaOther") : value("area"),
       address: value("address"),
       business_type:
         value("businessType") === "その他" && value("businessTypeOther")
@@ -391,6 +439,11 @@
       closed_days: checkedValues("closedDay"),
       overnight_open_time: timeValue("overnightOpen"),
       overnight_close_time: timeValue("overnightClose"),
+      morning_bath_open_time: timeValue("morningBathOpen"),
+      morning_bath_close_time: timeValue("morningBathClose"),
+      other_hours_label: value("otherHoursLabel"),
+      other_hours_open_time: timeValue("otherHoursOpen"),
+      other_hours_close_time: timeValue("otherHoursClose"),
       closed_nth_weeks: checkedBool("closedNthWeekdayEnabled")
         ? checkedValues("closedNthWeek")
         : null,
@@ -1373,7 +1426,7 @@
   function populateForm(item) {
     setValue("name", item.name);
     setValue("prefecture", item.prefecture);
-    setValue("area", item.area);
+    populateAreaOptions(item.prefecture, item.area);
 
     if (item.business_type && !BUSINESS_TYPE_STYLES[item.business_type]) {
       setValue("businessType", "その他");
@@ -1408,6 +1461,11 @@
     if (item.is_closed) $("closedPermanently").checked = true;
     setTimeValue("overnightOpen", item.overnight_open_time);
     setTimeValue("overnightClose", item.overnight_close_time);
+    setTimeValue("morningBathOpen", item.morning_bath_open_time);
+    setTimeValue("morningBathClose", item.morning_bath_close_time);
+    setValue("otherHoursLabel", item.other_hours_label);
+    setTimeValue("otherHoursOpen", item.other_hours_open_time);
+    setTimeValue("otherHoursClose", item.other_hours_close_time);
     if (Array.isArray(item.closed_nth_weeks) && item.closed_nth_weeks.length) {
       $("closedNthWeekdayEnabled").checked = true;
       $("closedNthWeekdayWrap")?.classList.remove("hidden");
@@ -2423,6 +2481,8 @@
   const KNOWN_COLUMNS = new Set([
     "weekday_hours_overrides",
     "overnight_open_time", "overnight_close_time",
+    "morning_bath_open_time", "morning_bath_close_time",
+    "other_hours_label", "other_hours_open_time", "other_hours_close_time",
     "closed_nth_weeks", "closed_nth_weekday", "closed_monthly_dates",
     "closed_irregular", "closed_calendar_based", "closed_holiday_rule", "closed_day_pattern_note",
     "access_method", "accommodation_status", "address", "aed_facility_status", 
@@ -3443,44 +3503,43 @@
               ? `<p class="detail-note">🛌 宿泊者限定：${escapeHtml(item.overnight_open_time || "?")}〜${escapeHtml(item.overnight_close_time || "?")}</p>`
               : ""
           }
+          ${
+            item.morning_bath_open_time || item.morning_bath_close_time
+              ? `<p class="detail-note">🌅 朝風呂：${escapeHtml(item.morning_bath_open_time || "?")}〜${escapeHtml(item.morning_bath_close_time || "?")}</p>`
+              : ""
+          }
+          ${
+            item.other_hours_open_time || item.other_hours_close_time
+              ? `<p class="detail-note">🕒 ${escapeHtml(item.other_hours_label || "その他の営業時間")}：${escapeHtml(item.other_hours_open_time || "?")}〜${escapeHtml(item.other_hours_close_time || "?")}</p>`
+              : ""
+          }
 
           ${detailSubhead("🗓 定休日")}
-          ${
-            Array.isArray(item.closed_days) && item.closed_days.length
-              ? detailTags(
-                  item.closed_days.map((d) =>
-                    ["日", "月", "火", "水", "木", "金", "土"].includes(d) ? `${d}曜日` : d
-                  )
-                )
-              : `<p class="detail-note">情報がありません。</p>`
-          }
-          ${
-            item.is_temp_closed || item.is_closed
-              ? detailTags(
-                  [
-                    item.is_temp_closed ? "臨時休業中" : null,
-                    item.is_closed ? "閉鎖済み" : null
-                  ].filter(Boolean)
-                )
-              : ""
-          }
+          ${(() => {
+            const closedTags = [];
+            if (Array.isArray(item.closed_days)) {
+              item.closed_days.forEach((d) => {
+                closedTags.push(
+                  ["日", "月", "火", "水", "木", "金", "土"].includes(d) ? `${d}曜日` : d
+                );
+              });
+            }
+            if (Array.isArray(item.closed_nth_weeks) && item.closed_nth_weeks.length && item.closed_nth_weekday) {
+              closedTags.push(`📅 ${item.closed_nth_weeks.join("・")}${item.closed_nth_weekday}曜日`);
+            }
+            if (item.closed_monthly_dates) {
+              closedTags.push(`📅 毎月${item.closed_monthly_dates}`);
+            }
+            if (item.closed_irregular) closedTags.push("不定休");
+            if (item.closed_calendar_based) closedTags.push("営業カレンダーによる");
+            if (item.is_temp_closed) closedTags.push("臨時休業中");
+            if (item.is_closed) closedTags.push("閉鎖済み");
+
+            return closedTags.length
+              ? detailTags(closedTags)
+              : `<p class="detail-note">情報がありません。</p>`;
+          })()}
           ${item.closed_days_note ? `<p class="detail-note">${escapeHtml(item.closed_days_note)}</p>` : ""}
-          ${
-            Array.isArray(item.closed_nth_weeks) && item.closed_nth_weeks.length && item.closed_nth_weekday
-              ? `<p class="detail-note">📅 ${escapeHtml(item.closed_nth_weeks.join("・"))}${escapeHtml(item.closed_nth_weekday)}曜日</p>`
-              : ""
-          }
-          ${item.closed_monthly_dates ? `<p class="detail-note">📅 毎月${escapeHtml(item.closed_monthly_dates)}</p>` : ""}
-          ${
-            item.closed_irregular || item.closed_calendar_based
-              ? detailTags(
-                  [
-                    item.closed_irregular ? "不定休" : null,
-                    item.closed_calendar_based ? "営業カレンダーによる" : null
-                  ].filter(Boolean)
-                )
-              : ""
-          }
           ${item.closed_holiday_rule ? `<p class="detail-note">🎌 ${escapeHtml(item.closed_holiday_rule)}</p>` : ""}
           ${item.closed_day_pattern_note ? `<p class="detail-note">${escapeHtml(item.closed_day_pattern_note)}</p>` : ""}
 
@@ -5063,6 +5122,8 @@
 
     form.reset();
 
+    populateAreaOptions("", null);
+
     ["sun", "mon", "tue", "wed", "thu", "fri", "sat", "holiday"].forEach((code) => {
       $(`weekdayHoursWrap_${code}`)?.classList.add("hidden");
     });
@@ -5539,6 +5600,13 @@
 
     // 絞り込み検索モーダル
     // ご意見・アイデアフォーム
+    $("prefecture")?.addEventListener("change", (event) => {
+      populateAreaOptions(event.target.value, null);
+    });
+    $("area")?.addEventListener("change", (event) => {
+      $("areaOtherWrap")?.classList.toggle("hidden", event.target.value !== "その他");
+    });
+
     $("openFeedbackButton")?.addEventListener("click", () => {
       $("feedbackModal")?.classList.remove("hidden");
       $("feedbackModal")?.setAttribute("aria-hidden", "false");
