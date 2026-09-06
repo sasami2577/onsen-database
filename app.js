@@ -441,11 +441,14 @@
       closed_days: checkedValues("closedDay"),
       overnight_open_time: timeValue("overnightOpen"),
       overnight_close_time: timeValue("overnightClose"),
+      overnight_days: checkedValues("overnightDays"),
       morning_bath_open_time: timeValue("morningBathOpen"),
       morning_bath_close_time: timeValue("morningBathClose"),
+      morning_bath_days: checkedValues("morningBathDays"),
       other_hours_label: value("otherHoursLabel"),
       other_hours_open_time: timeValue("otherHoursOpen"),
       other_hours_close_time: timeValue("otherHoursClose"),
+      other_hours_days: checkedValues("otherHoursDays"),
       closed_nth_weeks: checkedBool("closedNthWeekdayEnabled")
         ? checkedValues("closedNthWeek")
         : null,
@@ -1467,11 +1470,14 @@
     if (item.is_closed) $("closedPermanently").checked = true;
     setTimeValue("overnightOpen", item.overnight_open_time);
     setTimeValue("overnightClose", item.overnight_close_time);
+    setCheckboxGroup("overnightDays", ["日", "月", "火", "水", "木", "金", "土"], item.overnight_days);
     setTimeValue("morningBathOpen", item.morning_bath_open_time);
     setTimeValue("morningBathClose", item.morning_bath_close_time);
+    setCheckboxGroup("morningBathDays", ["日", "月", "火", "水", "木", "金", "土"], item.morning_bath_days);
     setValue("otherHoursLabel", item.other_hours_label);
     setTimeValue("otherHoursOpen", item.other_hours_open_time);
     setTimeValue("otherHoursClose", item.other_hours_close_time);
+    setCheckboxGroup("otherHoursDays", ["日", "月", "火", "水", "木", "金", "土"], item.other_hours_days);
     if (Array.isArray(item.closed_nth_weeks) && item.closed_nth_weeks.length) {
       $("closedNthWeekdayEnabled").checked = true;
       $("closedNthWeekdayWrap")?.classList.remove("hidden");
@@ -2487,9 +2493,9 @@
   const KNOWN_COLUMNS = new Set([
     "is_24_hours",
     "weekday_hours_overrides",
-    "overnight_open_time", "overnight_close_time",
-    "morning_bath_open_time", "morning_bath_close_time",
-    "other_hours_label", "other_hours_open_time", "other_hours_close_time",
+    "overnight_open_time", "overnight_close_time", "overnight_days",
+    "morning_bath_open_time", "morning_bath_close_time", "morning_bath_days",
+    "other_hours_label", "other_hours_open_time", "other_hours_close_time", "other_hours_days",
     "closed_nth_weeks", "closed_nth_weekday", "closed_monthly_dates",
     "closed_irregular", "closed_calendar_based", "closed_holiday_rule", "closed_day_pattern_note",
     "access_method", "accommodation_status", "address", "aed_facility_status", 
@@ -2630,6 +2636,7 @@
   // 単純な文字列のまま入っている場合、そのままでは型エラーになるため
   // 送信前に配列へ変換する。
   const ARRAY_COLUMNS = new Set([
+    "overnight_days", "morning_bath_days", "other_hours_days",
     "bath_function_female", "bath_function_male", "bath_location_female", "bath_location_male", 
     "bath_shape_female", "bath_shape_male", "child_info_source", "closed_days", 
     "cold_bath_cooling_female", "cold_bath_cooling_male", "cold_bath_flow_female", 
@@ -3524,21 +3531,24 @@
               : ""
           }
           ${item.hours_note ? `<p class="detail-note">${escapeHtml(item.hours_note)}</p>` : ""}
-          ${
-            item.overnight_open_time || item.overnight_close_time
-              ? `<p class="detail-note">🛌 宿泊者限定：${escapeHtml(item.overnight_open_time || "?")}〜${escapeHtml(item.overnight_close_time || "?")}</p>`
-              : ""
-          }
-          ${
-            item.morning_bath_open_time || item.morning_bath_close_time
-              ? `<p class="detail-note">🌅 朝風呂：${escapeHtml(item.morning_bath_open_time || "?")}〜${escapeHtml(item.morning_bath_close_time || "?")}</p>`
-              : ""
-          }
-          ${
-            item.other_hours_open_time || item.other_hours_close_time
-              ? `<p class="detail-note">🕒 ${escapeHtml(item.other_hours_label || "その他の営業時間")}：${escapeHtml(item.other_hours_open_time || "?")}〜${escapeHtml(item.other_hours_close_time || "?")}</p>`
-              : ""
-          }
+          ${(() => {
+            const daysSuffix = (days) =>
+              Array.isArray(days) && days.length ? `（${days.map((d) => `${d}曜`).join("・")}）` : "";
+
+            const rows = [
+              item.overnight_open_time || item.overnight_close_time
+                ? `🛌 宿泊者限定：${escapeHtml(item.overnight_open_time || "?")}〜${escapeHtml(item.overnight_close_time || "?")}${escapeHtml(daysSuffix(item.overnight_days))}`
+                : null,
+              item.morning_bath_open_time || item.morning_bath_close_time
+                ? `🌅 朝風呂：${escapeHtml(item.morning_bath_open_time || "?")}〜${escapeHtml(item.morning_bath_close_time || "?")}${escapeHtml(daysSuffix(item.morning_bath_days))}`
+                : null,
+              item.other_hours_open_time || item.other_hours_close_time
+                ? `🕒 ${escapeHtml(item.other_hours_label || "その他の営業時間")}：${escapeHtml(item.other_hours_open_time || "?")}〜${escapeHtml(item.other_hours_close_time || "?")}${escapeHtml(daysSuffix(item.other_hours_days))}`
+                : null
+            ].filter(Boolean);
+
+            return rows.map((r) => `<p class="detail-note">${r}</p>`).join("");
+          })()}
 
           ${detailSubhead("🗓 定休日")}
           ${(() => {
