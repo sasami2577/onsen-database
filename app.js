@@ -3285,6 +3285,15 @@
 
             ${hoursText ? `<p>🕒 営業時間：${escapeHtml(hoursText)}</p>` : ""}
             ${closedDaysText ? `<p>🗓 定休日：${escapeHtml(closedDaysText)}</p>` : ""}
+            ${(() => {
+              if (!Array.isArray(item.bath_fees) || !item.bath_fees.length) return "";
+              const parts = item.bath_fees
+                .filter((f) => f.category && f.amount != null && f.amount !== "")
+                .map((f) => `${f.category} ${f.amount}円`);
+              return parts.length
+                ? `<p class="card-price">💰 料金：${escapeHtml(parts.join("　"))}</p>`
+                : "";
+            })()}
 
             ${
               categoryTags.length
@@ -6257,6 +6266,22 @@
     }
 
     leafletMarkerGroup = L.layerGroup().addTo(leafletMap);
+    renderMapLegend();
+  }
+
+  function renderMapLegend() {
+    const legend = $("mapLegend");
+    if (!legend) return;
+    legend.innerHTML = Object.entries(BUSINESS_TYPE_STYLES)
+      .map(
+        ([type, style]) => `
+          <span class="map-legend-item">
+            <span class="map-legend-dot" style="background:${style.bg}">${style.emoji}</span>
+            ${escapeHtml(type)}
+          </span>
+        `
+      )
+      .join("");
   }
 
   // ---------------------------------------------------------
