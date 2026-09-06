@@ -2770,7 +2770,7 @@
   }
 
   const FACILITY_CATEGORY_MATCHERS = {
-    "日帰り温泉": (item) => item.business_type === "日帰り温泉",
+    "日帰り入浴可": (item) => Array.isArray(item.usage) && item.usage.includes("日帰り入浴可"),
     "温泉旅館": (item) => item.business_type === "温泉旅館",
     "露天風呂": (item) =>
       [item.bath_shape_male, item.bath_shape_female].some(
@@ -2782,6 +2782,8 @@
       ),
     "サウナ": (item) =>
       item.sauna_facility_male === "あり" || item.sauna_facility_female === "あり",
+    "ロウリュ": (item) =>
+      item.sauna_loyly_male === "あり" || item.sauna_loyly_female === "あり",
     "水風呂": (item) =>
       item.cold_bath_availability_male === "あり" ||
       item.cold_bath_availability_female === "あり",
@@ -3025,10 +3027,11 @@
   }
 
   const CATEGORY_TAG_EMOJIS = {
-    "日帰り温泉": "♨️",
+    "日帰り入浴可": "♨️",
     "露天風呂": "♨️",
     "家族風呂": "👨‍👩‍👦",
     "サウナ": "🧖‍♀️",
+    "ロウリュ": "🔥",
     "水風呂": "💧",
     "外気浴": "🌿",
     "お食事処": "🍴",
@@ -5945,8 +5948,8 @@
     if (toggleButton) {
       toggleButton.textContent =
         style === "aerial"
-          ? "🗺 通常マップに変更（国土地理院の航空写真表示中）"
-          : "🗺 航空写真に変更（オープンストリートマップ表示中）";
+          ? "🗺 通常マップに変更"
+          : "🗺 航空写真に変更";
     }
   }
 
