@@ -1333,7 +1333,6 @@
       my_impression: value("myImpression"),
 
       // 📍 位置情報・メモ
-      apple_maps_url: value("appleMapsUrl"),
 
       lat: numberValue("lat"),
       lng: numberValue("lng"),
@@ -2425,7 +2424,6 @@
     setValue("myImpression", item.my_impression);
 
     // 📍 位置情報・メモ
-    setValue("appleMapsUrl", item.apple_maps_url);
 
     setValue("lat", item.lat);
     setValue("lng", item.lng);
@@ -2499,7 +2497,7 @@
     "closed_nth_weeks", "closed_nth_weekday", "closed_monthly_dates",
     "closed_irregular", "closed_calendar_based", "closed_holiday_rule", "closed_day_pattern_note",
     "access_method", "accommodation_status", "address", "aed_facility_status", 
-    "amenity_note_female", "amenity_note_male", "apple_maps_url", "area", "baby_bed_female", 
+    "amenity_note_female", "amenity_note_male", "area", "baby_bed_female", 
     "baby_bed_male", "baby_chair_female", "baby_chair_male", "basin_female", "basin_male", 
     "bath_anteroom_female", "bath_anteroom_male", "bath_chair_female", "bath_chair_male", 
     "bath_event_detail_female", "bath_event_detail_male", "bath_event_female", "bath_event_male", 
@@ -4623,7 +4621,7 @@
 
         <!-- 地図情報 -->
         ${
-          item.lat != null || item.lng != null || item.google_maps_url || item.apple_maps_url
+          item.lat != null || item.lng != null || item.google_maps_url
             ? `
               <section class="detail-section" data-tab="user">
                 <h3>地図情報</h3>
@@ -4639,11 +4637,6 @@
                             ? escapeHtml(item.google_maps_url)
                             : `https://www.google.com/maps?q=${escapeHtml(item.lat)},${escapeHtml(item.lng)}`
                         }" target="_blank" rel="noopener">Googleマップで見る</a>`
-                      : ""
-                  }
-                  ${
-                    item.apple_maps_url
-                      ? `<a href="${escapeHtml(item.apple_maps_url)}" target="_blank" rel="noopener">Appleマップで見る</a>`
                       : ""
                   }
                 </p>
