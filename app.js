@@ -57,6 +57,169 @@
 
   let supabaseClient = null;
   let editingId = null;
+  let currentUser = null;
+  let myCurrentRating = 0;
+  let authMode = "login";
+
+  function updateAuthHeaderUI(user) {
+    const btn = $("openAuthButton");
+    if (!btn) return;
+    if (user) {
+      const name = user.user_metadata?.display_name || user.email || "ログイン中";
+      btn.textContent = `👤 ${name}`;
+    } else {
+      btn.textContent = "👤 ログイン";
+    }
+  }
+
+  function updateUserInfoLoginGate() {
+    const banner = $("userInfoLoginBanner");
+    const content = $("userInfoGatedContent");
+    if (currentUser) {
+      banner?.classList.add("hidden");
+      content?.classList.remove("locked");
+    } else {
+      banner?.classList.remove("hidden");
+      content?.classList.add("locked");
+    }
+  }
+
+  async function refreshAuthState() {
+    if (!supabaseClient) return null;
+    const { data } = await supabaseClient.auth.getSession();
+    const user = data?.session?.user || null;
+    currentUser = user;
+    updateAuthHeaderUI(user);
+    updateUserInfoLoginGate();
+    return user;
+  }
+
+  function setAuthMode(mode) {
+    authMode = mode;
+    if (mode === "signup") {
+      $("authModalTitle").textContent = "新規登録";
+      $("authModalDesc").textContent = "メールアドレスとパスワードでアカウントを作成します。";
+      $("authSubmit").textContent = "登録する";
+      $("authToggleMode").textContent = "ログインはこちら";
+      $("authToggleMode").previousSibling.textContent = "すでにアカウントをお持ちの方は";
+    } else {
+      $("authModalTitle").textContent = "ログイン";
+      $("authModalDesc").textContent = "アカウントをお持ちの方はログインしてください。";
+      $("authSubmit").textContent = "ログイン";
+      $("authToggleMode").textContent = "新規登録はこちら";
+      $("authToggleMode").previousSibling.textContent = "アカウントをお持ちでない方は";
+    }
+    $("authError")?.classList.add("hidden");
+  }
+
+  async function openAuthModal() {
+    if (!supabaseClient) {
+      alert("現在この機能は利用できません（Supabase未設定）。");
+      return;
+    }
+    const user = await refreshAuthState();
+    $("authModal")?.classList.remove("hidden");
+    $("authModal")?.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+
+    if (user) {
+      $("authLoggedOutView")?.classList.add("hidden");
+      $("authLoggedInView")?.classList.remove("hidden");
+      $("authModalTitle").textContent = "アカウント";
+      $("authModalDesc").textContent = "登録した情報を編集できます。";
+      $("authCurrentEmail").textContent = user.email || "";
+      setValue("authDisplayName", user.user_metadata?.display_name || "");
+    } else {
+      $("authLoggedOutView")?.classList.remove("hidden");
+      $("authLoggedInView")?.classList.add("hidden");
+      setAuthMode("login");
+      setValue("authEmail", "");
+      setValue("authPassword", "");
+    }
+  }
+
+  function closeAuthModal() {
+    $("authModal")?.classList.add("hidden");
+    $("authModal")?.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+  }
+
+  function renderMyRatingStars(rating) {
+    const container = $("myRatingStars");
+    if (!container) return;
+    container.dataset.rating = String(rating || 0);
+    container.querySelectorAll(".rating-star").forEach((star) => {
+      star.classList.toggle("filled", Number(star.dataset.star) <= rating);
+    });
+  }
+
+  async function loadMyRatingForOnsen(onsenId) {
+    myCurrentRating = 0;
+    renderMyRatingStars(0);
+    if (!supabaseClient || !currentUser || !onsenId) return;
+
+    try {
+      const { data, error } = await supabaseClient
+        .from("ratings")
+        .select("rating")
+        .eq("onsen_id", onsenId)
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      myCurrentRating = data?.rating || 0;
+      renderMyRatingStars(myCurrentRating);
+    } catch (error) {
+      console.error("評価の取得に失敗:", error);
+    }
+  }
+
+  async function loadRatingSummary() {
+    if (!supabaseClient) return;
+    try {
+      const { data, error } = await supabaseClient.from("ratings").select("onsen_id, rating");
+      if (error) throw error;
+
+      const summary = {};
+      (data || []).forEach((row) => {
+        if (!summary[row.onsen_id]) summary[row.onsen_id] = { sum: 0, count: 0 };
+        summary[row.onsen_id].sum += row.rating;
+        summary[row.onsen_id].count += 1;
+      });
+
+      window.__ratingSummary = {};
+      Object.keys(summary).forEach((id) => {
+        window.__ratingSummary[id] = {
+          average: summary[id].sum / summary[id].count,
+          count: summary[id].count
+        };
+      });
+
+      if (window.__onsenData) renderCardsWithData(window.__onsenData);
+    } catch (error) {
+      console.error("評価集計の取得に失敗:", error);
+    }
+  }
+
+  async function submitMyRating(onsenId, rating) {
+    if (!supabaseClient || !currentUser || !onsenId) return;
+
+    try {
+      const { error } = await supabaseClient
+        .from("ratings")
+        .upsert(
+          { onsen_id: onsenId, user_id: currentUser.id, rating, updated_at: new Date().toISOString() },
+          { onConflict: "onsen_id,user_id" }
+        );
+      if (error) throw error;
+      myCurrentRating = rating;
+      renderMyRatingStars(rating);
+      loadRatingSummary();
+    } catch (error) {
+      alert(`評価を送信できませんでした：${error.message || "不明なエラー"}`);
+    }
+  }
+
 
   function initSupabase() {
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -3109,6 +3272,11 @@
             ${address ? `<p class="card-place">📍 ${escapeHtml(address)}</p>` : ""}
 
             ${distanceText ? `<p class="card-distance">現在地から　${escapeHtml(distanceText)}</p>` : ""}
+            ${(() => {
+              const summary = window.__ratingSummary?.[item.id];
+              if (!summary || !summary.count) return "";
+              return `<p class="card-rating">⭐️ ${summary.average.toFixed(1)}　${summary.count}件の評価</p>`;
+            })()}
 
             <div class="card-badges">
               ${item.business_type ? renderBusinessTypeBadge(item.business_type) : ""}
@@ -4752,6 +4920,8 @@
       const titleEl = $("modalTitle");
       if (titleEl) titleEl.textContent = "温泉を編集";
 
+      loadMyRatingForOnsen(item.id);
+
       const submitButton = document.querySelector('#form button[type="submit"]');
       if (submitButton) submitButton.textContent = "更新する";
     });
@@ -5147,6 +5317,7 @@
 
     form.reset();
 
+    renderMyRatingStars(0);
     $("normalHoursWrap")?.classList.remove("hidden");
     populateAreaOptions("", null);
 
@@ -5628,78 +5799,8 @@
     // ログイン・アカウント機能
     // ---------------------------------------------------------
 
-    let authMode = "login";
-
-    function updateAuthHeaderUI(user) {
-      const btn = $("openAuthButton");
-      if (!btn) return;
-      if (user) {
-        const name = user.user_metadata?.display_name || user.email || "ログイン中";
-        btn.textContent = `👤 ${name}`;
-      } else {
-        btn.textContent = "👤 ログイン";
-      }
-    }
-
-    async function refreshAuthState() {
-      if (!supabaseClient) return null;
-      const { data } = await supabaseClient.auth.getSession();
-      const user = data?.session?.user || null;
-      updateAuthHeaderUI(user);
-      return user;
-    }
-
-    function setAuthMode(mode) {
-      authMode = mode;
-      if (mode === "signup") {
-        $("authModalTitle").textContent = "新規登録";
-        $("authModalDesc").textContent = "メールアドレスとパスワードでアカウントを作成します。";
-        $("authSubmit").textContent = "登録する";
-        $("authToggleMode").textContent = "ログインはこちら";
-        $("authToggleMode").previousSibling.textContent = "すでにアカウントをお持ちの方は";
-      } else {
-        $("authModalTitle").textContent = "ログイン";
-        $("authModalDesc").textContent = "アカウントをお持ちの方はログインしてください。";
-        $("authSubmit").textContent = "ログイン";
-        $("authToggleMode").textContent = "新規登録はこちら";
-        $("authToggleMode").previousSibling.textContent = "アカウントをお持ちでない方は";
-      }
-      $("authError")?.classList.add("hidden");
-    }
-
-    async function openAuthModal() {
-      if (!supabaseClient) {
-        alert("現在この機能は利用できません（Supabase未設定）。");
-        return;
-      }
-      const user = await refreshAuthState();
-      $("authModal")?.classList.remove("hidden");
-      $("authModal")?.setAttribute("aria-hidden", "false");
-      document.body.classList.add("modal-open");
-
-      if (user) {
-        $("authLoggedOutView")?.classList.add("hidden");
-        $("authLoggedInView")?.classList.remove("hidden");
-        $("authModalTitle").textContent = "アカウント";
-        $("authModalDesc").textContent = "登録した情報を編集できます。";
-        $("authCurrentEmail").textContent = user.email || "";
-        setValue("authDisplayName", user.user_metadata?.display_name || "");
-      } else {
-        $("authLoggedOutView")?.classList.remove("hidden");
-        $("authLoggedInView")?.classList.add("hidden");
-        setAuthMode("login");
-        setValue("authEmail", "");
-        setValue("authPassword", "");
-      }
-    }
-
-    function closeAuthModal() {
-      $("authModal")?.classList.add("hidden");
-      $("authModal")?.setAttribute("aria-hidden", "true");
-      document.body.classList.remove("modal-open");
-    }
-
     $("openAuthButton")?.addEventListener("click", openAuthModal);
+    $("userInfoLoginPrompt")?.addEventListener("click", openAuthModal);
     $("authClose")?.addEventListener("click", closeAuthModal);
     $("authCancel")?.addEventListener("click", closeAuthModal);
 
@@ -5772,6 +5873,27 @@
     });
 
     if (supabaseClient) refreshAuthState();
+
+    // ---------------------------------------------------------
+    // ⭐️ 自分の評価（星レーティング）
+    // ---------------------------------------------------------
+
+    document.querySelectorAll(".rating-star").forEach((star) => {
+      star.addEventListener("click", () => {
+        const targetOnsenId = editingId;
+        if (!targetOnsenId) {
+          alert("この施設を登録したあとに評価できます。");
+          return;
+        }
+        if (!currentUser) {
+          openAuthModal();
+          return;
+        }
+        submitMyRating(targetOnsenId, Number(star.dataset.star));
+      });
+    });
+
+    if (supabaseClient) loadRatingSummary();
 
     // 絞り込み検索モーダル
     // ご意見・アイデアフォーム
