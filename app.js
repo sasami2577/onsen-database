@@ -4927,22 +4927,17 @@
     const cleanPayload = payload ? filterKnownColumns(payload) : null;
     if (cleanPayload) delete cleanPayload.id;
 
-    const { data, error } = await supabaseClient
-      .from("moderation_queue")
-      .insert([
-        {
-          action,
-          target_id: targetId || null,
-          payload: cleanPayload,
-          submitted_name: name || cleanPayload?.name || null,
-          status: "pending"
-        }
-      ])
-      .select()
-      .single();
+    const { error } = await supabaseClient.from("moderation_queue").insert([
+      {
+        action,
+        target_id: targetId || null,
+        payload: cleanPayload,
+        submitted_name: name || cleanPayload?.name || null,
+        status: "pending"
+      }
+    ]);
 
     if (error) throw error;
-    return data;
   }
 
   async function saveOnsen(event) {
