@@ -4975,8 +4975,10 @@
       document.querySelector('#form button[type="submit"]') ||
       document.querySelector('#form button:not(#cancel)');
 
+    const originalButtonText = saveButton?.textContent;
     if (saveButton) {
       saveButton.disabled = true;
+      saveButton.textContent = "送信中…";
     }
 
     try {
@@ -5051,6 +5053,7 @@
     } finally {
       if (saveButton) {
         saveButton.disabled = false;
+        saveButton.textContent = originalButtonText || saveButton.textContent;
       }
     }
   }
