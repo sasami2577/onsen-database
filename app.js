@@ -3275,7 +3275,7 @@
             ${(() => {
               const summary = window.__ratingSummary?.[item.id];
               if (!summary || !summary.count) return "";
-              return `<p class="card-rating">⭐️ ${summary.average.toFixed(1)}　${summary.count}件の評価</p>`;
+              return `<p class="card-rating"><span class="card-rating-score">⭐️ ${summary.average.toFixed(1)}</span>　${summary.count}件の評価</p>`;
             })()}
 
             <div class="card-badges">

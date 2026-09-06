@@ -78,6 +78,7 @@ body.modal-open{overflow:hidden}.primary{background:#875020;color:#fff}.secondar
 .rating-star{background:none;border:none;font-size:34px;line-height:1;padding:0;color:#ddd6cc;cursor:pointer}
 .rating-star.filled{color:#f5c518}
 .card-rating{color:#8a6a10;font-size:14px;margin:4px 0 0}
+.card-rating-score{color:#875020;font-weight:700;font-size:13px}
 .card-price{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .map-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:12px;color:#615a53}
 .map-legend-item{display:flex;align-items:center;gap:5px;white-space:nowrap}
