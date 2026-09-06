@@ -5624,6 +5624,14 @@
       $("normalHoursWrap")?.classList.toggle("hidden", event.target.checked);
     });
 
+    const dialogEl = document.querySelector("#modal .dialog");
+    dialogEl?.addEventListener("scroll", () => {
+      $("scrollToTopButton")?.classList.toggle("hidden", dialogEl.scrollTop < 400);
+    });
+    $("scrollToTopButton")?.addEventListener("click", () => {
+      dialogEl?.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
     $("prefecture")?.addEventListener("change", (event) => {
       populateAreaOptions(event.target.value, null);
     });
@@ -5877,6 +5885,8 @@
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
+    document.querySelector("#modal .dialog")?.scrollTo(0, 0);
+    $("scrollToTopButton")?.classList.add("hidden");
 
     // 編集状態やフォームの内容が残らないよう、閉じるたびに初期状態へ戻す
     editingId = null;

@@ -70,7 +70,8 @@ body.modal-open{overflow:hidden}.primary{background:#875020;color:#fff}.secondar
 .time-select{display:flex;align-items:center;gap:8px;margin-top:7px}
 .time-select select{width:auto;flex:1;margin-top:0;padding:11px 8px}
 .time-select span{color:#837d77;font-weight:700}
-.dialog{max-height:94vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.dialog{max-height:94vh;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative}
+.scroll-to-top{position:fixed;right:24px;bottom:24px;z-index:2100;background:#875020;color:#fff;border:none;padding:12px 18px;border-radius:99px;font-size:14px;font-weight:700;box-shadow:0 4px 14px #0004}
 @media(max-width:600px){.dialog{max-height:calc(100dvh - 20px);padding-bottom:32px}.form-section{scroll-margin-top:12px}}
 
 #modal.hidden,#filterModal.hidden,#feedbackModal.hidden,#reportModal.hidden{display:none}
