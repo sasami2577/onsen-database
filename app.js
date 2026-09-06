@@ -4948,7 +4948,18 @@
   async function saveOnsen(event) {
     event.preventDefault();
 
-    const item = collectFormData();
+    let item;
+    try {
+      item = collectFormData();
+    } catch (error) {
+      console.error("フォーム内容の読み取りに失敗:", error);
+      alert(
+        "フォームの内容を読み取れませんでした。\n\n" +
+        `詳細：${error.message || "不明なエラー"}\n\n` +
+        "お手数ですが、この画面を閉じてもう一度お試しください。"
+      );
+      return;
+    }
 
     if (!item.name) {
       alert("温泉名を入力してください。");
@@ -5182,15 +5193,19 @@
     $("form")?.addEventListener("submit", saveOnsen);
 
     // 入力途中の内容を自動で下書き保存しておく（リロード・誤操作対策）
+    // ※項目数が非常に多いフォームのため、保存頻度を抑えて負荷を軽くする
     let draftSaveTimer = null;
     $("form")?.addEventListener("input", () => {
       clearTimeout(draftSaveTimer);
       draftSaveTimer = setTimeout(() => {
         saveDraft(editingId ? "edit" : "add", editingId);
-      }, 600);
+      }, 1500);
     });
     $("form")?.addEventListener("change", () => {
-      saveDraft(editingId ? "edit" : "add", editingId);
+      clearTimeout(draftSaveTimer);
+      draftSaveTimer = setTimeout(() => {
+        saveDraft(editingId ? "edit" : "add", editingId);
+      }, 1500);
     });
 
     $("search")?.addEventListener("input", () => {
