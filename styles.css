@@ -80,6 +80,12 @@ body.modal-open{overflow:hidden}.primary{background:#875020;color:#fff}.secondar
 .card-rating{color:#8a6a10;font-size:14px;margin:4px 0 0}
 .card-rating-score{color:#875020;font-weight:700;font-size:13px}
 .card-price{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.review-item{border-top:1px solid #eee5df;padding:14px 0}
+.review-item:first-child{border-top:none;padding-top:0}
+.review-author{font-weight:700;margin:0 0 6px;color:#3a2c1c}
+.review-body{margin:0;line-height:1.6;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+.review-body-expanded{-webkit-line-clamp:unset;overflow:visible}
+.review-expand{margin-top:6px;font-size:13px}
 .map-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:12px;color:#615a53}
 .map-legend-item{display:flex;align-items:center;gap:5px;white-space:nowrap}
 .map-legend-dot{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:11px;flex-shrink:0}

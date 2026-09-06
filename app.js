@@ -156,12 +156,13 @@
   async function loadMyRatingForOnsen(onsenId) {
     myCurrentRating = 0;
     renderMyRatingStars(0);
+    setValue("myImpression", "");
     if (!supabaseClient || !currentUser || !onsenId) return;
 
     try {
       const { data, error } = await supabaseClient
         .from("ratings")
-        .select("rating")
+        .select("rating, impression")
         .eq("onsen_id", onsenId)
         .eq("user_id", currentUser.id)
         .maybeSingle();
@@ -169,10 +170,12 @@
       if (error) throw error;
       myCurrentRating = data?.rating || 0;
       renderMyRatingStars(myCurrentRating);
+      setValue("myImpression", data?.impression || "");
     } catch (error) {
       console.error("評価の取得に失敗:", error);
     }
   }
+
 
   async function loadRatingSummary() {
     if (!supabaseClient) return;
@@ -217,6 +220,93 @@
       loadRatingSummary();
     } catch (error) {
       alert(`評価を送信できませんでした：${error.message || "不明なエラー"}`);
+    }
+  }
+
+  async function loadOnsenReviews(onsenId) {
+    const container = $("onsenReviewsList");
+    if (!container) return;
+    if (!supabaseClient) {
+      container.innerHTML = `<p class="detail-note-tight">まだ感想がありません。</p>`;
+      return;
+    }
+
+    try {
+      const { data, error } = await supabaseClient
+        .from("ratings")
+        .select("display_name, impression, created_at")
+        .eq("onsen_id", onsenId)
+        .not("impression", "is", null)
+        .neq("impression", "")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      if (!data || !data.length) {
+        container.innerHTML = `<p class="detail-note-tight">まだ感想がありません。</p>`;
+        return;
+      }
+
+      container.innerHTML = data
+        .map(
+          (review, index) => `
+            <div class="review-item">
+              <p class="review-author">${escapeHtml(review.display_name || "名無しさん")}</p>
+              <p class="review-body" id="reviewBody${index}">${escapeHtml(review.impression)}</p>
+              <button type="button" class="link-button review-expand" data-target="reviewBody${index}">続きを見る</button>
+            </div>
+          `
+        )
+        .join("");
+
+      container.querySelectorAll(".review-expand").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const body = $(btn.dataset.target);
+          body?.classList.add("review-body-expanded");
+          btn.classList.add("hidden");
+        });
+      });
+
+      // 6行に収まる感想では「続きを見る」を隠す
+      container.querySelectorAll(".review-body").forEach((body) => {
+        if (body.scrollHeight <= body.clientHeight + 2) {
+          const btn = container.querySelector(`[data-target="${body.id}"]`);
+          btn?.classList.add("hidden");
+        }
+      });
+    } catch (error) {
+      console.error("感想の取得に失敗:", error);
+      container.innerHTML = `<p class="detail-note-tight">感想を読み込めませんでした。</p>`;
+    }
+  }
+
+  async function submitMyImpression(onsenId, impressionText) {
+    if (!supabaseClient) return;
+    if (!currentUser) {
+      openAuthModal();
+      return;
+    }
+    if (!onsenId) {
+      alert("この施設を登録したあとに感想を書けます。");
+      return;
+    }
+
+    try {
+      const displayName = currentUser.user_metadata?.display_name || currentUser.email || "名無しさん";
+      const { error } = await supabaseClient.from("ratings").upsert(
+        {
+          onsen_id: onsenId,
+          user_id: currentUser.id,
+          impression: impressionText,
+          display_name: displayName,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: "onsen_id,user_id" }
+      );
+      if (error) throw error;
+      alert("感想を保存しました。");
+    } catch (error) {
+      alert(`感想を保存できませんでした：${error.message || "不明なエラー"}`);
     }
   }
 
@@ -1493,7 +1583,6 @@
           ? [value("userInfoSourceOther") || "その他"]
           : [])
       ],
-      my_impression: value("myImpression"),
 
       // 📍 位置情報・メモ
 
@@ -2584,7 +2673,6 @@
       "userInfoSourceOtherCheck",
       "userInfoSourceOther"
     );
-    setValue("myImpression", item.my_impression);
 
     // 📍 位置情報・メモ
 
@@ -3222,7 +3310,7 @@
     const filterActive = window.__activeFacetFilters != null;
     const statusEl = $("status");
     if (statusEl) {
-      statusEl.innerHTML = `現在 ${filtered.length}件の施設を表示中です<br>（🔎 絞り込み検索　${filterActive ? "起動中" : "解除中"}）`;
+      statusEl.innerHTML = `現在 ${filtered.length}件の施設を表示中です　（🔎 絞り込み検索　${filterActive ? "起動中" : "解除中"}）`;
       statusEl.className = "status ok";
     }
 
@@ -4805,7 +4893,15 @@
           <h3>⭐️ ユーザー情報</h3>
           <p class="field-subtitle">✍️ 情報源</p>
           ${detailTags(item.user_info_source) || `<p class="detail-note-tight">情報がありません。</p>`}
-          ${item.my_impression ? `<p class="field-title">📝 自分の感想</p><p class="detail-note">${escapeHtml(item.my_impression)}</p>` : ""}
+          <p class="field-title">⭐️ 評価</p>
+          ${(() => {
+            const summary = window.__ratingSummary?.[item.id];
+            return summary && summary.count
+              ? `<p class="detail-note">⭐️ ${summary.average.toFixed(1)}　${summary.count}件の評価</p>`
+              : `<p class="detail-note-tight">まだ評価がありません。</p>`;
+          })()}
+          <p class="field-title">📝 みんなの感想</p>
+          <div id="onsenReviewsList" class="reviews-list"><p class="detail-note-tight">読み込んでいます…</p></div>
         </section>
 
         <!-- 地図情報 -->
@@ -4934,6 +5030,7 @@
     }
 
     detailView.innerHTML = renderDetailHTML(item);
+    loadOnsenReviews(item.id);
 
     document.querySelectorAll("#detailTabBar .tab-btn").forEach((btn) => {
       btn.addEventListener("click", () => switchDetailTab(btn.dataset.tabTarget));
@@ -5969,6 +6066,10 @@
         }
         submitMyRating(targetOnsenId, Number(star.dataset.star));
       });
+    });
+
+    $("saveMyImpressionButton")?.addEventListener("click", () => {
+      submitMyImpression(editingId, value("myImpression").trim());
     });
 
     if (supabaseClient) loadRatingSummary();
