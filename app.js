@@ -4850,6 +4850,60 @@
     window.scrollTo(0, 0);
   }
 
+  function normalizeNameForMatch(str) {
+    return String(str || "")
+      .toLowerCase()
+      .replace(/[\s　]+/g, "");
+  }
+
+  function findSimilarNamedOnsens(query) {
+    const normalizedQuery = normalizeNameForMatch(query);
+    if (normalizedQuery.length < 2 || !Array.isArray(window.__onsenData)) return [];
+
+    return window.__onsenData
+      .filter((item) => {
+        const normalizedName = normalizeNameForMatch(item.name);
+        if (!normalizedName) return false;
+        return normalizedName.includes(normalizedQuery) || normalizedQuery.includes(normalizedName);
+      })
+      .slice(0, 5);
+  }
+
+  function renderDuplicateNameSuggestions(candidates) {
+    const box = $("duplicateNameSuggestions");
+    if (!box) return;
+
+    if (!candidates.length) {
+      box.classList.add("hidden");
+      box.innerHTML = "";
+      return;
+    }
+
+    box.innerHTML = `
+      <p>もしかして…この施設ですか？</p>
+      ${candidates
+        .map(
+          (item) =>
+            `<button type="button" class="duplicate-suggestion-item" data-id="${escapeHtml(item.id ?? "")}">${escapeHtml(item.name || "名称未設定")}${item.prefecture ? `（${escapeHtml(item.prefecture)}${escapeHtml(item.area || "")}）` : ""}</button>`
+        )
+        .join("")}
+      <button type="button" class="duplicate-suggestion-dismiss" id="dismissDuplicateSuggestions">いいえ、このまま新しく追加する</button>
+    `;
+    box.classList.remove("hidden");
+
+    box.querySelectorAll(".duplicate-suggestion-item").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        box.classList.add("hidden");
+        closeModal();
+        location.hash = `#detail-${btn.dataset.id}`;
+      });
+    });
+    $("dismissDuplicateSuggestions")?.addEventListener("click", () => {
+      box.classList.add("hidden");
+      box.innerHTML = "";
+    });
+  }
+
   async function showDetail(id) {
     const listView = $("listView");
     const detailView = $("detailView");
@@ -5326,6 +5380,7 @@
 
     form.reset();
 
+    $("duplicateNameSuggestions")?.classList.add("hidden");
     renderMyRatingStars(0);
     $("normalHoursWrap")?.classList.remove("hidden");
     populateAreaOptions("", null);
@@ -5456,6 +5511,20 @@
 
   function setupEvents() {
     $("form")?.addEventListener("submit", saveOnsen);
+
+    // 施設名の重複チェック（新規追加時のみ）
+    let duplicateNameCheckTimer = null;
+    $("name")?.addEventListener("input", (event) => {
+      clearTimeout(duplicateNameCheckTimer);
+      if (editingId) {
+        $("duplicateNameSuggestions")?.classList.add("hidden");
+        return;
+      }
+      const query = event.target.value;
+      duplicateNameCheckTimer = setTimeout(() => {
+        renderDuplicateNameSuggestions(findSimilarNamedOnsens(query));
+      }, 400);
+    });
 
     // 入力途中の内容を自動で下書き保存しておく（リロード・誤操作対策）
     // ※項目数が非常に多いフォームのため、保存頻度を抑えて負荷を軽くする
