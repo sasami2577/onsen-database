@@ -3123,11 +3123,20 @@
                 : ""
             }
 
-            ${
-              item.website
-                ? `<p><a href="${escapeHtml(item.website)}" target="_blank" rel="noopener">公式サイト</a></p>`
-                : ""
-            }
+            ${(() => {
+              const cardLinks = [
+                item.website ? { label: "公式サイト", url: item.website } : null,
+                item.instagram ? { label: "Instagram", url: item.instagram } : null,
+                item.twitter ? { label: "X（旧Twitter）", url: item.twitter } : null,
+                item.facebook ? { label: "Facebook", url: item.facebook } : null
+              ].filter(Boolean);
+
+              return cardLinks.length
+                ? `<p class="card-links">${cardLinks
+                    .map((l) => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${l.label}</a>`)
+                    .join("　")}</p>`
+                : "";
+            })()}
 
             <button type="button" class="detail" data-id="${escapeHtml(item.id ?? "")}">この施設の詳細を見る</button>
           </article>
@@ -3450,7 +3459,7 @@
         <div class="detail-toolbar-actions">
           <button type="button" id="detailEdit" class="detail-action">✏️ 情報を編集する</button>
           <button type="button" id="detailShare" class="detail-action">↗️ 共有する</button>
-          <button type="button" id="detailReport" class="detail-action">⚠️ 報告する</button>
+          <button type="button" id="detailReport" class="detail-action detail-action-push-right">⚠️ 報告する</button>
         </div>
       </div>
       <div class="detail-heading-block">
