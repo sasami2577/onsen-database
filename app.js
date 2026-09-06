@@ -5958,10 +5958,18 @@
       (error) => {
         console.error("現在地の取得に失敗:", error);
         if (recenter) {
-          alert("現在地を取得できませんでした。位置情報の利用を許可しているか確認してください。");
+          const reasons = {
+            1: "位置情報の利用が許可されていません。",
+            2: "現在地を特定できませんでした（電波状況やGPSの問題の可能性があります）。",
+            3: "位置情報の取得がタイムアウトしました。電波の良い場所でもう一度お試しください。"
+          };
+          alert(
+            "現在地を取得できませんでした。\n\n" +
+            (reasons[error.code] || `詳細：${error.message || "不明なエラー"}`)
+          );
         }
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
     );
   }
 
