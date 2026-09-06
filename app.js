@@ -5797,6 +5797,10 @@
       $("closedMonthlyDatesWrap")?.classList.toggle("hidden", !event.target.checked);
     });
 
+    $("mapStyleToggleButton")?.addEventListener("click", () => {
+      applyMapStyle(currentMapStyle === "aerial" ? "osm" : "aerial");
+    });
+
     $("showCurrentLocationButton")?.addEventListener("click", () => {
       requestUserLocation({ recenter: true });
     });
@@ -5906,6 +5910,45 @@
 
   let leafletMap = null;
   let leafletMarkerGroup = null;
+  let currentTileLayer = null;
+  let currentMapStyle = "aerial";
+
+  const TILE_LAYER_CONFIGS = {
+    aerial: {
+      url: "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg",
+      options: {
+        maxZoom: 18,
+        attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル（航空写真）</a>'
+      }
+    },
+    osm: {
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      options: {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+      }
+    }
+  };
+
+  function applyMapStyle(style) {
+    if (!leafletMap) return;
+
+    const config = TILE_LAYER_CONFIGS[style] || TILE_LAYER_CONFIGS.aerial;
+
+    if (currentTileLayer) {
+      leafletMap.removeLayer(currentTileLayer);
+    }
+    currentTileLayer = L.tileLayer(config.url, config.options).addTo(leafletMap);
+    currentMapStyle = style;
+
+    const toggleButton = $("mapStyleToggleButton");
+    if (toggleButton) {
+      toggleButton.textContent =
+        style === "aerial"
+          ? "🗺 通常マップに変更（国土地理院の航空写真表示中）"
+          : "🗺 航空写真に変更（オープンストリートマップ表示中）";
+    }
+  }
 
   function initMap() {
     if (leafletMap || !window.L || !$("mapContainer")) return;
@@ -5926,11 +5969,9 @@
             '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
         }
       ).addTo(leafletMap);
+      $("mapStyleToggleButton")?.classList.add("hidden");
     } else {
-      L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg", {
-        maxZoom: 18,
-        attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル（航空写真）</a>'
-      }).addTo(leafletMap);
+      applyMapStyle("aerial");
     }
 
     leafletMarkerGroup = L.layerGroup().addTo(leafletMap);
