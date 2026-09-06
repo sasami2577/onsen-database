@@ -3321,10 +3321,10 @@
       });
     }
     if (Array.isArray(item.closed_nth_weeks) && item.closed_nth_weeks.length && item.closed_nth_weekday) {
-      tags.push(`📅 ${item.closed_nth_weeks.join("・")}${item.closed_nth_weekday}曜日`);
+      tags.push(`${item.closed_nth_weeks.join("・")}${item.closed_nth_weekday}曜日`);
     }
     if (item.closed_monthly_dates) {
-      tags.push(`📅 毎月${item.closed_monthly_dates}`);
+      tags.push(`毎月${item.closed_monthly_dates}`);
     }
     if (item.closed_irregular) tags.push("不定休");
     if (item.closed_calendar_based) tags.push("営業カレンダーによる");
