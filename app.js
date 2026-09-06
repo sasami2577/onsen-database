@@ -173,9 +173,10 @@
     select.appendChild(placeholder);
 
     list.forEach((name) => {
+      const shortName = name.replace(/^.+郡/, "");
       const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
+      opt.value = shortName;
+      opt.textContent = shortName;
       select.appendChild(opt);
     });
 
