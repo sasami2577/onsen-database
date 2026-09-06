@@ -4682,6 +4682,7 @@
     $("mapSection")?.classList.add("hidden");
     $("siteHeader")?.classList.add("hidden");
     $("heroSection")?.classList.add("hidden");
+    $("homeScrollToTopButton")?.classList.add("hidden");
     detailView.classList.remove("hidden");
     detailView.innerHTML = `<div class="detail-empty">読み込んでいます…</div>`;
     window.scrollTo(0, 0);
@@ -5623,6 +5624,155 @@
 
     $("migrateButton")?.addEventListener("click", () => migrateLocalDataToSupabase());
 
+    // ---------------------------------------------------------
+    // ログイン・アカウント機能
+    // ---------------------------------------------------------
+
+    let authMode = "login";
+
+    function updateAuthHeaderUI(user) {
+      const btn = $("openAuthButton");
+      if (!btn) return;
+      if (user) {
+        const name = user.user_metadata?.display_name || user.email || "ログイン中";
+        btn.textContent = `👤 ${name}`;
+      } else {
+        btn.textContent = "👤 ログイン";
+      }
+    }
+
+    async function refreshAuthState() {
+      if (!supabaseClient) return null;
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data?.session?.user || null;
+      updateAuthHeaderUI(user);
+      return user;
+    }
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      if (mode === "signup") {
+        $("authModalTitle").textContent = "新規登録";
+        $("authModalDesc").textContent = "メールアドレスとパスワードでアカウントを作成します。";
+        $("authSubmit").textContent = "登録する";
+        $("authToggleMode").textContent = "ログインはこちら";
+        $("authToggleMode").previousSibling.textContent = "すでにアカウントをお持ちの方は";
+      } else {
+        $("authModalTitle").textContent = "ログイン";
+        $("authModalDesc").textContent = "アカウントをお持ちの方はログインしてください。";
+        $("authSubmit").textContent = "ログイン";
+        $("authToggleMode").textContent = "新規登録はこちら";
+        $("authToggleMode").previousSibling.textContent = "アカウントをお持ちでない方は";
+      }
+      $("authError")?.classList.add("hidden");
+    }
+
+    async function openAuthModal() {
+      if (!supabaseClient) {
+        alert("現在この機能は利用できません（Supabase未設定）。");
+        return;
+      }
+      const user = await refreshAuthState();
+      $("authModal")?.classList.remove("hidden");
+      $("authModal")?.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+
+      if (user) {
+        $("authLoggedOutView")?.classList.add("hidden");
+        $("authLoggedInView")?.classList.remove("hidden");
+        $("authModalTitle").textContent = "アカウント";
+        $("authModalDesc").textContent = "登録した情報を編集できます。";
+        $("authCurrentEmail").textContent = user.email || "";
+        setValue("authDisplayName", user.user_metadata?.display_name || "");
+      } else {
+        $("authLoggedOutView")?.classList.remove("hidden");
+        $("authLoggedInView")?.classList.add("hidden");
+        setAuthMode("login");
+        setValue("authEmail", "");
+        setValue("authPassword", "");
+      }
+    }
+
+    function closeAuthModal() {
+      $("authModal")?.classList.add("hidden");
+      $("authModal")?.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    }
+
+    $("openAuthButton")?.addEventListener("click", openAuthModal);
+    $("authClose")?.addEventListener("click", closeAuthModal);
+    $("authCancel")?.addEventListener("click", closeAuthModal);
+
+    $("authToggleMode")?.addEventListener("click", () => {
+      setAuthMode(authMode === "login" ? "signup" : "login");
+    });
+
+    $("authSubmit")?.addEventListener("click", async () => {
+      const email = value("authEmail").trim();
+      const password = value("authPassword");
+      const errorEl = $("authError");
+      errorEl?.classList.add("hidden");
+
+      if (!email || !password) {
+        if (errorEl) {
+          errorEl.textContent = "メールアドレスとパスワードを入力してください。";
+          errorEl.classList.remove("hidden");
+        }
+        return;
+      }
+
+      try {
+        if (authMode === "signup") {
+          const { error } = await supabaseClient.auth.signUp({ email, password });
+          if (error) throw error;
+          alert("登録できました。確認メールが届いていればご確認ください。");
+        } else {
+          const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+        }
+        await refreshAuthState();
+        closeAuthModal();
+      } catch (error) {
+        if (errorEl) {
+          errorEl.textContent = error.message || "処理できませんでした。";
+          errorEl.classList.remove("hidden");
+        }
+      }
+    });
+
+    $("authGoogleButton")?.addEventListener("click", async () => {
+      try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: location.href.split("#")[0] }
+        });
+        if (error) throw error;
+      } catch (error) {
+        alert(`Googleログインを開始できませんでした：${error.message || "不明なエラー"}`);
+      }
+    });
+
+    $("authLogoutButton")?.addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      await refreshAuthState();
+      closeAuthModal();
+    });
+
+    $("authSaveProfile")?.addEventListener("click", async () => {
+      try {
+        const { error } = await supabaseClient.auth.updateUser({
+          data: { display_name: value("authDisplayName").trim() }
+        });
+        if (error) throw error;
+        await refreshAuthState();
+        alert("保存しました。");
+      } catch (error) {
+        alert(`保存できませんでした：${error.message || "不明なエラー"}`);
+      }
+    });
+
+    if (supabaseClient) refreshAuthState();
+
     // 絞り込み検索モーダル
     // ご意見・アイデアフォーム
     $("is24Hours")?.addEventListener("change", (event) => {
@@ -5798,6 +5948,13 @@
     });
     $("closedMonthlyDatesEnabled")?.addEventListener("change", (event) => {
       $("closedMonthlyDatesWrap")?.classList.toggle("hidden", !event.target.checked);
+    });
+
+    window.addEventListener("scroll", () => {
+      $("homeScrollToTopButton")?.classList.toggle("hidden", window.scrollY < 400);
+    });
+    $("homeScrollToTopButton")?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     $("mapStyleToggleButton")?.addEventListener("click", () => {

@@ -10,7 +10,10 @@
 <body>
 <header id="siteHeader">
   <div class="brand"><span>♨</span><div><b>温泉データベース</b><small>みんなでつくる温泉情報</small></div></div>
-  <button type="button" id="openFeedbackButton" class="feedback-link-header">💬 ご意見・アイデアはこちら</button>
+  <div class="header-actions">
+    <button type="button" id="openAuthButton" class="auth-link-header">👤 ログイン</button>
+    <button type="button" id="openFeedbackButton" class="feedback-link-header">💬 ご意見</button>
+  </div>
 </header>
 <section class="hero" id="heroSection">
   <img src="header-banner.png" alt="温泉データベース" class="hero-banner">
@@ -20,6 +23,7 @@
   <button id="add" type="button" class="hero-add-button">＋ 温泉・サウナ施設を追加する</button>
   <input id="search" placeholder="温泉名・地域で検索" autocomplete="off">
 </section>
+<button type="button" id="homeScrollToTopButton" class="hidden scroll-to-top" aria-label="先頭に戻る">▲ 先頭へ</button>
 <main>
   <button type="button" id="openFilterButton" class="filter-open-button">🔎 絞り込み検索する</button>
   <section class="map-section" id="mapSection">
@@ -38,6 +42,40 @@
   </div>
   <section id="detailView" class="hidden" aria-live="polite"></section>
 </main>
+<div id="authModal" class="hidden" aria-hidden="true">
+<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+<button id="authClose" class="close" type="button" aria-label="閉じる">×</button>
+<div class="modal-head"><span class="modal-icon">👤</span><div><h2 id="authModalTitle">ログイン</h2><p id="authModalDesc">アカウントをお持ちの方はログインしてください。</p></div></div>
+
+<div id="authLoggedOutView">
+  <label class="full">メールアドレス<input id="authEmail" type="email" autocomplete="username"></label>
+  <label class="full compact-top">パスワード<input id="authPassword" type="password" autocomplete="current-password"></label>
+  <p id="authError" class="hidden field-error"></p>
+  <div class="form-actions">
+    <button type="button" id="authCancel" class="secondary">キャンセル</button>
+    <button type="button" id="authSubmit" class="primary submit">ログイン</button>
+  </div>
+  <p class="note-inline auth-toggle-text">
+    アカウントをお持ちでない方は
+    <button type="button" id="authToggleMode" class="link-button">新規登録はこちら</button>
+  </p>
+  <div class="auth-divider"><span>または</span></div>
+  <button type="button" id="authGoogleButton" class="secondary auth-google-button">Googleでログイン</button>
+</div>
+
+<div id="authLoggedInView" class="hidden">
+  <p class="field-title">ログイン中</p>
+  <p id="authCurrentEmail" class="detail-note"></p>
+  <label class="full compact-top">表示名（ニックネーム）<input id="authDisplayName" placeholder="例：おんせん太郎"></label>
+  <div class="form-actions">
+    <button type="button" id="authLogoutButton" class="secondary">ログアウトする</button>
+    <button type="button" id="authSaveProfile" class="primary submit">保存する</button>
+  </div>
+</div>
+
+</div>
+</div>
+
 <div id="feedbackModal" class="hidden" aria-hidden="true">
 <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackModalTitle">
 <button id="feedbackClose" class="close" type="button" aria-label="閉じる">×</button>
