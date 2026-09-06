@@ -433,6 +433,7 @@
       nearest_station: value("nearestStation"),
       access_method: value("accessMethod"),
 
+      is_24_hours: checkedBool("is24Hours"),
       open_time: timeValue("openTime"),
       close_time: timeValue("closeTime"),
       last_entry: timeValue("lastEntry"),
@@ -1449,6 +1450,10 @@
     setValue("nearestStation", item.nearest_station);
     setValue("accessMethod", item.access_method);
 
+    if (item.is_24_hours) {
+      $("is24Hours").checked = true;
+      $("normalHoursWrap")?.classList.add("hidden");
+    }
     setTimeValue("openTime", item.open_time);
     setTimeValue("closeTime", item.close_time);
     setTimeValue("lastEntry", item.last_entry);
@@ -2479,6 +2484,7 @@
   // 過去バージョンのローカルデータ等に含まれる廃止済みの項目名を
   // 送信時に自動で取り除けるようにする。
   const KNOWN_COLUMNS = new Set([
+    "is_24_hours",
     "weekday_hours_overrides",
     "overnight_open_time", "overnight_close_time",
     "morning_bath_open_time", "morning_bath_close_time",
@@ -3072,19 +3078,13 @@
 
         const status = getOpenStatus(item);
 
-        const hoursText =
-          item.open_time || item.close_time
-            ? `${item.open_time || "?"}〜${item.close_time || "?"}`
-            : "";
+        const hoursText = item.is_24_hours
+          ? "24時間営業"
+          : item.open_time || item.close_time
+          ? `${item.open_time || "?"}〜${item.close_time || "?"}`
+          : "";
 
-        const closedDaysText =
-          Array.isArray(item.closed_days) && item.closed_days.length
-            ? item.closed_days
-                .map((d) =>
-                  ["日", "月", "火", "水", "木", "金", "土"].includes(d) ? `${d}曜日` : d
-                )
-                .join("・")
-            : "";
+        const closedDaysText = getClosedDayTags(item).join("・");
 
         const categoryTags = Object.keys(CATEGORY_TAG_EMOJIS).filter((cat) => {
           const matcher = FACILITY_CATEGORY_MATCHERS[cat];
@@ -3312,6 +3312,26 @@
     return false;
   }
 
+  function getClosedDayTags(item) {
+    const tags = [];
+    if (Array.isArray(item.closed_days)) {
+      item.closed_days.forEach((d) => {
+        tags.push(["日", "月", "火", "水", "木", "金", "土"].includes(d) ? `${d}曜日` : d);
+      });
+    }
+    if (Array.isArray(item.closed_nth_weeks) && item.closed_nth_weeks.length && item.closed_nth_weekday) {
+      tags.push(`📅 ${item.closed_nth_weeks.join("・")}${item.closed_nth_weekday}曜日`);
+    }
+    if (item.closed_monthly_dates) {
+      tags.push(`📅 毎月${item.closed_monthly_dates}`);
+    }
+    if (item.closed_irregular) tags.push("不定休");
+    if (item.closed_calendar_based) tags.push("営業カレンダーによる");
+    if (item.is_temp_closed) tags.push("臨時休業中");
+    if (item.is_closed) tags.push("閉鎖済み");
+    return tags;
+  }
+
   function getOpenStatus(item) {
     // 将来的なフラグ（閉鎖・臨時休業）に対応
     if (item.is_closed) {
@@ -3358,6 +3378,10 @@
       return { label: "定休日", className: "status-holiday" };
     }
 
+    if (item.is_24_hours) {
+      return { label: "現在 営業中", className: "status-open" };
+    }
+
     // 今日が祝日で「祝日」の営業時間が設定されていればそちらを優先し、
     // 次に「曜日によって異なる営業時間」、どちらもなければ通常の営業時間を使う
     const overrides = item.weekday_hours_overrides || {};
@@ -3396,10 +3420,11 @@
       .filter(Boolean)
       .join(" ");
 
-    const hours =
-      item.open_time || item.close_time
-        ? `${item.open_time || ""}${item.open_time || item.close_time ? "〜" : ""}${item.close_time || ""}`
-        : "";
+    const hours = item.is_24_hours
+      ? "24時間営業"
+      : item.open_time || item.close_time
+      ? `${item.open_time || ""}${item.open_time || item.close_time ? "〜" : ""}${item.close_time || ""}`
+      : "";
 
     const links = [
       item.website ? { label: "公式サイト", url: item.website } : null,
@@ -3516,24 +3541,7 @@
 
           ${detailSubhead("🗓 定休日")}
           ${(() => {
-            const closedTags = [];
-            if (Array.isArray(item.closed_days)) {
-              item.closed_days.forEach((d) => {
-                closedTags.push(
-                  ["日", "月", "火", "水", "木", "金", "土"].includes(d) ? `${d}曜日` : d
-                );
-              });
-            }
-            if (Array.isArray(item.closed_nth_weeks) && item.closed_nth_weeks.length && item.closed_nth_weekday) {
-              closedTags.push(`📅 ${item.closed_nth_weeks.join("・")}${item.closed_nth_weekday}曜日`);
-            }
-            if (item.closed_monthly_dates) {
-              closedTags.push(`📅 毎月${item.closed_monthly_dates}`);
-            }
-            if (item.closed_irregular) closedTags.push("不定休");
-            if (item.closed_calendar_based) closedTags.push("営業カレンダーによる");
-            if (item.is_temp_closed) closedTags.push("臨時休業中");
-            if (item.is_closed) closedTags.push("閉鎖済み");
+            const closedTags = getClosedDayTags(item);
 
             return closedTags.length
               ? detailTags(closedTags)
@@ -5122,6 +5130,7 @@
 
     form.reset();
 
+    $("normalHoursWrap")?.classList.remove("hidden");
     populateAreaOptions("", null);
 
     ["sun", "mon", "tue", "wed", "thu", "fri", "sat", "holiday"].forEach((code) => {
@@ -5600,6 +5609,10 @@
 
     // 絞り込み検索モーダル
     // ご意見・アイデアフォーム
+    $("is24Hours")?.addEventListener("change", (event) => {
+      $("normalHoursWrap")?.classList.toggle("hidden", event.target.checked);
+    });
+
     $("prefecture")?.addEventListener("change", (event) => {
       populateAreaOptions(event.target.value, null);
     });
