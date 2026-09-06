@@ -5903,10 +5903,26 @@
 
     leafletMap = L.map("mapContainer").setView([36.5, 138.0], 5);
 
-    L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>'
-    }).addTo(leafletMap);
+    const mapboxToken = window.ONSEN_MAPBOX_CONFIG?.accessToken;
+
+    if (mapboxToken) {
+      L.tileLayer(
+        `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=${mapboxToken}`,
+        {
+          maxZoom: 22,
+          tileSize: 512,
+          zoomOffset: -1,
+          attribution:
+            '&copy; <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener">Mapbox</a> ' +
+            '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+        }
+      ).addTo(leafletMap);
+    } else {
+      L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg", {
+        maxZoom: 18,
+        attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル（航空写真）</a>'
+      }).addTo(leafletMap);
+    }
 
     leafletMarkerGroup = L.layerGroup().addTo(leafletMap);
   }
