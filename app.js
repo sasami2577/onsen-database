@@ -389,6 +389,17 @@
       close_time: timeValue("closeTime"),
       last_entry: timeValue("lastEntry"),
       closed_days: checkedValues("closedDay"),
+      overnight_open_time: timeValue("overnightOpen"),
+      overnight_close_time: timeValue("overnightClose"),
+      closed_nth_weeks: checkedBool("closedNthWeekdayEnabled")
+        ? checkedValues("closedNthWeek")
+        : null,
+      closed_nth_weekday: checkedBool("closedNthWeekdayEnabled") ? value("closedNthWeekday") : null,
+      closed_monthly_dates: checkedBool("closedMonthlyDatesEnabled") ? value("closedMonthlyDates") : null,
+      closed_irregular: checkedBool("closedIrregular"),
+      closed_calendar_based: checkedBool("closedCalendarBased"),
+      closed_holiday_rule: radioValue("closedHolidayRule") || null,
+      closed_day_pattern_note: value("closedDayPatternNote"),
       closed_days_note: value("closedDaysNote"),
       is_temp_closed: checkedBool("tempClosed"),
       is_closed: checkedBool("closedPermanently"),
@@ -1395,6 +1406,23 @@
     }
     if (item.is_temp_closed) $("tempClosed").checked = true;
     if (item.is_closed) $("closedPermanently").checked = true;
+    setTimeValue("overnightOpen", item.overnight_open_time);
+    setTimeValue("overnightClose", item.overnight_close_time);
+    if (Array.isArray(item.closed_nth_weeks) && item.closed_nth_weeks.length) {
+      $("closedNthWeekdayEnabled").checked = true;
+      $("closedNthWeekdayWrap")?.classList.remove("hidden");
+      setCheckboxGroup("closedNthWeek", ["第1", "第2", "第3", "第4", "第5", "最終"], item.closed_nth_weeks);
+    }
+    setValue("closedNthWeekday", item.closed_nth_weekday);
+    if (item.closed_monthly_dates) {
+      $("closedMonthlyDatesEnabled").checked = true;
+      $("closedMonthlyDatesWrap")?.classList.remove("hidden");
+      setValue("closedMonthlyDates", item.closed_monthly_dates);
+    }
+    if (item.closed_irregular) $("closedIrregular").checked = true;
+    if (item.closed_calendar_based) $("closedCalendarBased").checked = true;
+    setRadioValue("closedHolidayRule", item.closed_holiday_rule || "");
+    setValue("closedDayPatternNote", item.closed_day_pattern_note);
     setValue("closedDaysNote", item.closed_days_note);
     (() => {
       const dayChars = { sun: "日", mon: "月", tue: "火", wed: "水", thu: "木", fri: "金", sat: "土", holiday: "祝" };
@@ -2394,6 +2422,9 @@
   // 送信時に自動で取り除けるようにする。
   const KNOWN_COLUMNS = new Set([
     "weekday_hours_overrides",
+    "overnight_open_time", "overnight_close_time",
+    "closed_nth_weeks", "closed_nth_weekday", "closed_monthly_dates",
+    "closed_irregular", "closed_calendar_based", "closed_holiday_rule", "closed_day_pattern_note",
     "access_method", "accommodation_status", "address", "aed_facility_status", 
     "amenity_note_female", "amenity_note_male", "apple_maps_url", "area", "baby_bed_female", 
     "baby_bed_male", "baby_chair_female", "baby_chair_male", "basin_female", "basin_male", 
@@ -3234,9 +3265,33 @@
     const now = new Date();
     const todayChar = weekdayChars[now.getDay()];
     const todayIsHoliday = isJapaneseHoliday(now);
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    const yesterdayChar = weekdayChars[yesterday.getDay()];
+    const yesterdayWasHoliday = isJapaneseHoliday(yesterday);
+
+    const todayNormallyClosed =
+      Array.isArray(item.closed_days) && item.closed_days.includes(todayChar);
+    const holidayRule = item.closed_holiday_rule;
+
+    // 「祝日の場合は翌営業日が定休」：昨日が定休日と重なる祝日だった場合、今日を定休日にする
+    if (
+      holidayRule === "祝日の場合は翌営業日が定休" &&
+      yesterdayWasHoliday &&
+      Array.isArray(item.closed_days) &&
+      item.closed_days.includes(yesterdayChar)
+    ) {
+      return { label: "定休日", className: "status-holiday" };
+    }
+
+    // 定休日の曜日が祝日と重なった場合の特別ルール（今日はいつも通り営業）
+    const holidayOverridesClosure =
+      todayIsHoliday &&
+      todayNormallyClosed &&
+      (holidayRule === "祝日は営業" || holidayRule === "祝日の場合は翌営業日が定休");
 
     // 定休日（曜日の複数選択）に今日が含まれていれば定休日と判定
-    if (Array.isArray(item.closed_days) && item.closed_days.includes(todayChar)) {
+    if (todayNormallyClosed && !holidayOverridesClosure) {
       return { label: "定休日", className: "status-holiday" };
     }
     if (todayIsHoliday && Array.isArray(item.closed_days) && item.closed_days.includes("祝日")) {
@@ -3383,6 +3438,11 @@
               : ""
           }
           ${item.hours_note ? `<p class="detail-note">${escapeHtml(item.hours_note)}</p>` : ""}
+          ${
+            item.overnight_open_time || item.overnight_close_time
+              ? `<p class="detail-note">🛌 宿泊者限定：${escapeHtml(item.overnight_open_time || "?")}〜${escapeHtml(item.overnight_close_time || "?")}</p>`
+              : ""
+          }
 
           ${detailSubhead("🗓 定休日")}
           ${
@@ -3405,6 +3465,24 @@
               : ""
           }
           ${item.closed_days_note ? `<p class="detail-note">${escapeHtml(item.closed_days_note)}</p>` : ""}
+          ${
+            Array.isArray(item.closed_nth_weeks) && item.closed_nth_weeks.length && item.closed_nth_weekday
+              ? `<p class="detail-note">📅 ${escapeHtml(item.closed_nth_weeks.join("・"))}${escapeHtml(item.closed_nth_weekday)}曜日</p>`
+              : ""
+          }
+          ${item.closed_monthly_dates ? `<p class="detail-note">📅 毎月${escapeHtml(item.closed_monthly_dates)}</p>` : ""}
+          ${
+            item.closed_irregular || item.closed_calendar_based
+              ? detailTags(
+                  [
+                    item.closed_irregular ? "不定休" : null,
+                    item.closed_calendar_based ? "営業カレンダーによる" : null
+                  ].filter(Boolean)
+                )
+              : ""
+          }
+          ${item.closed_holiday_rule ? `<p class="detail-note">🎌 ${escapeHtml(item.closed_holiday_rule)}</p>` : ""}
+          ${item.closed_day_pattern_note ? `<p class="detail-note">${escapeHtml(item.closed_day_pattern_note)}</p>` : ""}
 
           ${
             item.notice_info || item.event_info
@@ -4979,6 +5057,8 @@
     ["sun", "mon", "tue", "wed", "thu", "fri", "sat", "holiday"].forEach((code) => {
       $(`weekdayHoursWrap_${code}`)?.classList.add("hidden");
     });
+    $("closedNthWeekdayWrap")?.classList.add("hidden");
+    $("closedMonthlyDatesWrap")?.classList.add("hidden");
 
     // 動的なレンタル欄・料金欄は空に戻す
     const maleRentalRows = $("maleRentalRows");
@@ -5593,6 +5673,13 @@
       $(`weekdayHoursEnabled_${code}`)?.addEventListener("change", (event) => {
         $(`weekdayHoursWrap_${code}`)?.classList.toggle("hidden", !event.target.checked);
       });
+    });
+
+    $("closedNthWeekdayEnabled")?.addEventListener("change", (event) => {
+      $("closedNthWeekdayWrap")?.classList.toggle("hidden", !event.target.checked);
+    });
+    $("closedMonthlyDatesEnabled")?.addEventListener("change", (event) => {
+      $("closedMonthlyDatesWrap")?.classList.toggle("hidden", !event.target.checked);
     });
 
     $("showCurrentLocationButton")?.addEventListener("click", () => {

@@ -309,6 +309,12 @@
 </div></div></div>
 </fieldset>
 
+<fieldset class="full compact-top"><legend>🛌 宿泊者限定の営業時間（該当する場合）</legend>
+<p class="note-inline">日帰り利用とは別に、宿泊者だけが入浴できる時間帯がある場合に入力してください。</p>
+<div class="grid two">
+<label>開始<div class="time-select"><select id="overnightOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="overnightOpenMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label>
+<label>終了<div class="time-select"><select id="overnightCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="overnightCloseMinute"><option value="">--</option><option value="00">00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select></div></label>
+</div></fieldset>
 <fieldset class="full"><legend>定休日</legend><div class="checks">
 <label><input type="checkbox" name="closedDay" value="日">日曜日</label>
 <label><input type="checkbox" name="closedDay" value="月">月曜日</label>
@@ -319,6 +325,52 @@
 <label><input type="checkbox" name="closedDay" value="土">土曜日</label>
 <label><input type="checkbox" name="closedDay" value="祝日">祝日</label>
 </div></fieldset>
+<fieldset class="full compact-top"><legend>📅 定休日の詳細パターン（該当する場合）</legend>
+
+<label class="weekday-hours-check"><input type="checkbox" id="closedNthWeekdayEnabled">第◯曜日を定休日にする</label>
+<div class="hidden compact-top" id="closedNthWeekdayWrap">
+<p class="field-title">週（複数選択可）</p>
+<div class="checks">
+<label><input type="checkbox" name="closedNthWeek" value="第1">第1</label>
+<label><input type="checkbox" name="closedNthWeek" value="第2">第2</label>
+<label><input type="checkbox" name="closedNthWeek" value="第3">第3</label>
+<label><input type="checkbox" name="closedNthWeek" value="第4">第4</label>
+<label><input type="checkbox" name="closedNthWeek" value="第5">第5</label>
+<label><input type="checkbox" name="closedNthWeek" value="最終">最終</label>
+</div>
+<label class="compact-top">曜日
+<select id="closedNthWeekday">
+<option value="">選択してください</option>
+<option value="日">日曜日</option>
+<option value="月">月曜日</option>
+<option value="火">火曜日</option>
+<option value="水">水曜日</option>
+<option value="木">木曜日</option>
+<option value="金">金曜日</option>
+<option value="土">土曜日</option>
+</select>
+</label>
+<p class="note-inline">例：「第2」「第4」にチェック＋「火曜日」を選ぶと「第2・4火曜日」になります。</p>
+</div>
+
+<label class="weekday-hours-check compact-top"><input type="checkbox" id="closedMonthlyDatesEnabled">毎月特定の日を定休日にする</label>
+<div class="hidden compact-top" id="closedMonthlyDatesWrap">
+<label>日にち<input type="text" id="closedMonthlyDates" placeholder="例：15日、末日"></label>
+</div>
+
+<label class="weekday-hours-check compact-top"><input type="checkbox" id="closedIrregular">不定休</label>
+<label class="weekday-hours-check compact-top"><input type="checkbox" id="closedCalendarBased">営業カレンダーによる（公式サイト等を参照）</label>
+
+<p class="field-title compact-top">定休日の曜日が祝日と重なった場合</p>
+<div class="checks">
+<label><input type="radio" name="closedHolidayRule" value="" checked>指定なし</label>
+<label><input type="radio" name="closedHolidayRule" value="祝日は営業">祝日は営業</label>
+<label><input type="radio" name="closedHolidayRule" value="祝日の場合は翌営業日が定休">祝日の場合は翌営業日が定休</label>
+</div>
+
+<label class="full compact-top">その他の定休日パターン（自由記述）<textarea id="closedDayPatternNote" rows="2" placeholder="例：第2日曜日〜第3月曜日が定休、月によって定休日が異なる、など"></textarea></label>
+</fieldset>
+
 
 <label class="full compact-top">定休日の補足事項<textarea id="closedDaysNote" rows="2"></textarea></label>
 <fieldset class="full compact-top"><legend>営業状態フラグ</legend><div class="checks">
