@@ -3354,8 +3354,21 @@
           return matcher ? matcher(item) : false;
         });
 
+        const cardOutlineColors = [];
+        if (Array.isArray(item.usage)) {
+          if (item.usage.includes("宿泊者のみ")) cardOutlineColors.push("#7c5cbf");
+          if (item.usage.includes("男性専用")) cardOutlineColors.push("#3b6fd6");
+          if (item.usage.includes("女性専用")) cardOutlineColors.push("#e0629c");
+          if (item.usage.includes("会員制")) cardOutlineColors.push("#e8c300");
+        }
+        const cardOutlineStyle = cardOutlineColors.length
+          ? ` style="box-shadow:0 5px 18px #3a271610${cardOutlineColors
+              .map((color, i) => `,0 0 0 ${3 * (i + 1)}px ${color}`)
+              .join("")}"`
+          : "";
+
         return `
-          <article class="card" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る">
+          <article class="card" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る"${cardOutlineStyle}>
             ${(() => {
               if (!Array.isArray(item.usage)) return "";
               const badges = [
