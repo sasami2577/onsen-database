@@ -5376,6 +5376,24 @@
       return;
     }
 
+    if (!item.prefecture) {
+      alert("都道府県を選択してください。");
+      $("prefecture")?.focus();
+      return;
+    }
+
+    if (!value("area")) {
+      alert("市区町村・地域を選択してください。");
+      $("area")?.focus();
+      return;
+    }
+
+    if (value("area") === "その他" && !value("areaOther")) {
+      alert("市区町村・地域（その他）を入力してください。");
+      $("areaOther")?.focus();
+      return;
+    }
+
     const isEditing = Boolean(editingId);
     const targetId = editingId;
     const isLocalTarget = isEditing && String(targetId).startsWith("local-");
