@@ -3025,7 +3025,6 @@
 
   const FACILITY_CATEGORY_MATCHERS = {
     "日帰り入浴可": (item) => Array.isArray(item.usage) && item.usage.includes("日帰り入浴可"),
-    "温泉旅館": (item) => item.business_type === "温泉旅館",
     "露天風呂": (item) =>
       [item.bath_shape_male, item.bath_shape_female].some(
         (arr) => Array.isArray(arr) && arr.includes("露天風呂・半露天風呂")
@@ -3072,6 +3071,11 @@
 
       const cities = filters.cities && filters.cities[item.prefecture];
       if (cities && cities.length && !cities.includes(item.area)) return false;
+    }
+
+    // 施設業態
+    if (filters.businessTypes && filters.businessTypes.length) {
+      if (!filters.businessTypes.includes(item.business_type)) return false;
     }
 
     // 施設分類（選んだものすべてに合致する施設だけ表示）
@@ -3170,6 +3174,10 @@
       cities[pref].push(el.value);
     });
 
+    const businessTypes = Array.from(
+      document.querySelectorAll(".filter-business-type:checked")
+    ).map((el) => el.value);
+
     const categories = Array.from(
       document.querySelectorAll(".filter-category:checked")
     ).map((el) => el.value);
@@ -3198,6 +3206,7 @@
     const filters = {
       prefectures,
       cities,
+      businessTypes,
       categories,
       priceMode,
       priceMax,
@@ -3209,6 +3218,7 @@
 
     const isEmpty =
       !filters.prefectures.length &&
+      !filters.businessTypes.length &&
       !filters.categories.length &&
       filters.priceMode === "all" &&
       !filters.kidsOk &&
@@ -3224,6 +3234,7 @@
     document.querySelectorAll(".filter-prefecture").forEach((el) => (el.checked = false));
     document.querySelectorAll(".filter-city").forEach((el) => (el.checked = false));
     $("filterCityContainer").innerHTML = "";
+    document.querySelectorAll(".filter-business-type").forEach((el) => (el.checked = false));
     document.querySelectorAll(".filter-category").forEach((el) => (el.checked = false));
     if ($("filterCategoryAll")) $("filterCategoryAll").checked = false;
     document.querySelectorAll('input[name="filterPrice"]').forEach((el, i) => {
