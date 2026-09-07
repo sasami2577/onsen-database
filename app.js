@@ -713,6 +713,7 @@
       closed_day_pattern_note: value("closedDayPatternNote"),
       closed_days_note: value("closedDaysNote"),
       is_temp_closed: checkedBool("tempClosed"),
+      temp_closed_detail: value("tempClosedDetail"),
       is_closed: checkedBool("closedPermanently"),
       weekday_hours_overrides: (() => {
         const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat", "holiday"];
@@ -1718,6 +1719,7 @@
       });
     }
     if (item.is_temp_closed) $("tempClosed").checked = true;
+    setValue("tempClosedDetail", item.temp_closed_detail);
     if (item.is_closed) $("closedPermanently").checked = true;
     setTimeValue("overnightOpen", item.overnight_open_time);
     setTimeValue("overnightClose", item.overnight_close_time);
@@ -2741,6 +2743,7 @@
   // 送信時に自動で取り除けるようにする。
   const KNOWN_COLUMNS = new Set([
     "is_24_hours",
+    "temp_closed_detail",
     "weekday_hours_overrides",
     "overnight_open_time", "overnight_close_time", "overnight_days",
     "morning_bath_open_time", "morning_bath_close_time", "morning_bath_days",
@@ -3373,6 +3376,7 @@
 
             ${hoursText ? `<p>🕒 営業時間：${escapeHtml(hoursText)}</p>` : ""}
             ${closedDaysText ? `<p>🗓 定休日：${escapeHtml(closedDaysText)}</p>` : ""}
+            ${item.is_temp_closed && item.temp_closed_detail ? `<p class="card-temp-closed-detail">${escapeHtml(item.temp_closed_detail)}</p>` : ""}
             ${(() => {
               if (!Array.isArray(item.bath_fees) || !item.bath_fees.length) return "";
               const parts = item.bath_fees
@@ -3836,6 +3840,7 @@
           ${item.closed_days_note ? `<p class="detail-note">${escapeHtml(item.closed_days_note)}</p>` : ""}
           ${item.closed_holiday_rule ? `<p class="detail-note">🎌 ${escapeHtml(item.closed_holiday_rule)}</p>` : ""}
           ${item.closed_day_pattern_note ? `<p class="detail-note">${escapeHtml(item.closed_day_pattern_note)}</p>` : ""}
+          ${item.is_temp_closed && item.temp_closed_detail ? `<p class="detail-note">${escapeHtml(item.temp_closed_detail)}</p>` : ""}
 
           ${
             item.notice_info || item.event_info
