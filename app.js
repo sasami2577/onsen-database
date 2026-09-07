@@ -66,7 +66,7 @@
     if (!btn) return;
     if (user) {
       const name = user.user_metadata?.display_name || user.email || "ログイン中";
-      btn.textContent = `👤 ${name}`;
+      btn.textContent = `🐥 ${name}`;
     } else {
       btn.textContent = "👤 ログイン";
     }
@@ -3356,6 +3356,28 @@
 
         return `
           <article class="card" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る">
+            ${(() => {
+              if (!Array.isArray(item.usage)) return "";
+              const badges = [
+                item.usage.includes("宿泊者のみ")
+                  ? { cls: "card-corner-badge-guest", label: "🛌 宿泊者限定" }
+                  : null,
+                item.usage.includes("男性専用")
+                  ? { cls: "card-corner-badge-male", label: "🚹 男性専用" }
+                  : null,
+                item.usage.includes("女性専用")
+                  ? { cls: "card-corner-badge-female", label: "🚺 女性専用" }
+                  : null,
+                item.usage.includes("会員制")
+                  ? { cls: "card-corner-badge-member", label: "👤 会員制" }
+                  : null
+              ].filter(Boolean);
+              return badges.length
+                ? `<div class="card-corner-badges">${badges
+                    .map((b) => `<span class="card-corner-badge ${b.cls}">${b.label}</span>`)
+                    .join("")}</div>`
+                : "";
+            })()}
             <div class="card-head">
               <h3>${escapeHtml(item.name || "名称未設定")}</h3>
             </div>
