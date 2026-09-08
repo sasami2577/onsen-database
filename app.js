@@ -3453,6 +3453,14 @@
     "レンタルスペース": "👩🏻‍💻"
   };
 
+  function buildOutlineStyle(outlineColors) {
+    return outlineColors.length
+      ? `box-shadow:0 5px 18px #3a271610${outlineColors
+          .map((color, i) => `,0 0 0 ${3 * (i + 1)}px ${color}`)
+          .join("")}`
+      : "box-shadow:0 5px 18px #3a271610";
+  }
+
   function getUsageBadgesAndOutline(item) {
     const outlineColors = [];
     const badges = [];
@@ -3475,11 +3483,7 @@
       }
     }
 
-    const outlineStyle = outlineColors.length
-      ? `box-shadow:0 5px 18px #3a271610${outlineColors
-          .map((color, i) => `,0 0 0 ${3 * (i + 1)}px ${color}`)
-          .join("")}`
-      : "box-shadow:0 5px 18px #3a271610";
+    const outlineStyle = buildOutlineStyle(outlineColors);
 
     const badgesHtml = badges.length
       ? `<div class="card-corner-badges">${badges
@@ -3487,7 +3491,7 @@
           .join("")}</div>`
       : "";
 
-    return { outlineStyle, badgesHtml };
+    return { outlineStyle, outlineColors, badgesHtml };
   }
 
   function renderCards(list) {
@@ -3531,7 +3535,7 @@
       if (pinnedIndex > -1) {
         const [pinnedItem] = filtered.splice(pinnedIndex, 1);
         filtered.unshift(pinnedItem);
-        pinnedBannerHtml = `<div class="pinned-banner">📍 現在マップ上で確認している施設</div>`;
+        pinnedBannerHtml = `<div class="pinned-banner"><span>📍 現在マップ上で確認している施設</span><button type="button" id="clearHighlightButton" class="pinned-banner-close" aria-label="解除する">✕</button></div>`;
       }
     }
 
@@ -3561,10 +3565,12 @@
           return matcher ? matcher(item) : false;
         });
 
-        const { outlineStyle, badgesHtml } = getUsageBadgesAndOutline(item);
+        const { outlineColors, badgesHtml } = getUsageBadgesAndOutline(item);
+        const isPinnedCard = String(item.id) === String(highlightedFacilityId);
+        const outlineStyle = buildOutlineStyle(isPinnedCard ? [...outlineColors, "#875020"] : outlineColors);
 
         return `
-          <article class="card${String(item.id) === String(highlightedFacilityId) ? " pinned-highlight" : ""}" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る" style="${outlineStyle}">
+          <article class="card${isPinnedCard ? " pinned-highlight" : ""}" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る" style="${outlineStyle}">
             ${badgesHtml}
             <div class="card-head">
               <h3>${escapeHtml(item.name || "名称未設定")}</h3>
@@ -6876,6 +6882,7 @@
     });
 
     $("showCurrentLocationButton")?.addEventListener("click", () => {
+      highlightedFacilityId = null;
       requestUserLocation({ recenter: true });
     });
 
@@ -6926,6 +6933,7 @@
     $("cards")?.addEventListener("click", (event) => {
       if (event.target.closest("a")) return; // 外部リンクはそのまま開く
       if (event.target.closest(".show-on-map")) return; // マップ確認ボタンは別処理
+      if (event.target.closest("#clearHighlightButton")) return; // 解除ボタンは別処理
 
       const card = event.target.closest(".card");
       if (!card) return;
@@ -6938,6 +6946,12 @@
       const button = event.target.closest(".show-on-map");
       if (!button) return;
       showFacilityOnMap(button.dataset.id);
+    });
+
+    $("cards")?.addEventListener("click", (event) => {
+      if (!event.target.closest("#clearHighlightButton")) return;
+      highlightedFacilityId = null;
+      renderCardsWithData(window.__onsenData || getLocalData());
     });
 
     $("cards")?.addEventListener("keydown", (event) => {
