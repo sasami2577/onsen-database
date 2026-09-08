@@ -3307,6 +3307,43 @@
     "レンタルスペース": "👩🏻‍💻"
   };
 
+  function getUsageBadgesAndOutline(item) {
+    const outlineColors = [];
+    const badges = [];
+    if (Array.isArray(item.usage)) {
+      if (item.usage.includes("宿泊者のみ")) {
+        outlineColors.push("#7c5cbf");
+        badges.push({ cls: "card-corner-badge-guest", label: "🛌 宿泊者限定" });
+      }
+      if (item.usage.includes("男性専用")) {
+        outlineColors.push("#3b6fd6");
+        badges.push({ cls: "card-corner-badge-male", label: "🚹 男性専用" });
+      }
+      if (item.usage.includes("女性専用")) {
+        outlineColors.push("#e0629c");
+        badges.push({ cls: "card-corner-badge-female", label: "🚺 女性専用" });
+      }
+      if (item.usage.includes("会員制")) {
+        outlineColors.push("#e8c300");
+        badges.push({ cls: "card-corner-badge-member", label: "👤 会員制" });
+      }
+    }
+
+    const outlineStyle = outlineColors.length
+      ? `box-shadow:0 5px 18px #3a271610${outlineColors
+          .map((color, i) => `,0 0 0 ${3 * (i + 1)}px ${color}`)
+          .join("")}`
+      : "box-shadow:0 5px 18px #3a271610";
+
+    const badgesHtml = badges.length
+      ? `<div class="card-corner-badges">${badges
+          .map((b) => `<span class="card-corner-badge ${b.cls}">${b.label}</span>`)
+          .join("")}</div>`
+      : "";
+
+    return { outlineStyle, badgesHtml };
+  }
+
   function renderCards(list) {
     const cards = $("cards");
     const count = $("count");
@@ -3365,43 +3402,11 @@
           return matcher ? matcher(item) : false;
         });
 
-        const cardOutlineColors = [];
-        if (Array.isArray(item.usage)) {
-          if (item.usage.includes("宿泊者のみ")) cardOutlineColors.push("#7c5cbf");
-          if (item.usage.includes("男性専用")) cardOutlineColors.push("#3b6fd6");
-          if (item.usage.includes("女性専用")) cardOutlineColors.push("#e0629c");
-          if (item.usage.includes("会員制")) cardOutlineColors.push("#e8c300");
-        }
-        const cardOutlineStyle = cardOutlineColors.length
-          ? ` style="box-shadow:0 5px 18px #3a271610${cardOutlineColors
-              .map((color, i) => `,0 0 0 ${3 * (i + 1)}px ${color}`)
-              .join("")}"`
-          : "";
+        const { outlineStyle, badgesHtml } = getUsageBadgesAndOutline(item);
 
         return `
-          <article class="card" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る"${cardOutlineStyle}>
-            ${(() => {
-              if (!Array.isArray(item.usage)) return "";
-              const badges = [
-                item.usage.includes("宿泊者のみ")
-                  ? { cls: "card-corner-badge-guest", label: "🛌 宿泊者限定" }
-                  : null,
-                item.usage.includes("男性専用")
-                  ? { cls: "card-corner-badge-male", label: "🚹 男性専用" }
-                  : null,
-                item.usage.includes("女性専用")
-                  ? { cls: "card-corner-badge-female", label: "🚺 女性専用" }
-                  : null,
-                item.usage.includes("会員制")
-                  ? { cls: "card-corner-badge-member", label: "👤 会員制" }
-                  : null
-              ].filter(Boolean);
-              return badges.length
-                ? `<div class="card-corner-badges">${badges
-                    .map((b) => `<span class="card-corner-badge ${b.cls}">${b.label}</span>`)
-                    .join("")}</div>`
-                : "";
-            })()}
+          <article class="card" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る" style="${outlineStyle}">
+            ${badgesHtml}
             <div class="card-head">
               <h3>${escapeHtml(item.name || "名称未設定")}</h3>
             </div>
@@ -5234,6 +5239,122 @@
     });
   }
 
+  function renderAreaFacilityCard(item) {
+    const { outlineStyle, badgesHtml } = getUsageBadgesAndOutline(item);
+    const status = getOpenStatus(item);
+    const hoursText = item.is_24_hours
+      ? "24時間営業"
+      : item.open_time || item.close_time
+      ? `${item.open_time || "?"}〜${item.close_time || "?"}`
+      : "";
+    const closedDaysText = getClosedDayTags(item).join("・");
+    const priceParts = Array.isArray(item.bath_fees)
+      ? item.bath_fees
+          .filter((f) => f.category && f.amount != null && f.amount !== "")
+          .map((f) => `${f.category} ${f.amount}円`)
+      : [];
+
+    return `
+      <div class="area-facility-card" style="${outlineStyle}">
+        ${badgesHtml}
+        <div class="area-facility-card-body">
+          <h3>${escapeHtml(item.name || "名称未設定")}</h3>
+          <div class="card-badges">
+            ${item.business_type ? renderBusinessTypeBadge(item.business_type) : ""}
+            ${status ? `<span class="status-badge ${status.className}">${escapeHtml(status.label)}</span>` : ""}
+          </div>
+          ${hoursText ? `<p>🕒 営業時間：${escapeHtml(hoursText)}</p>` : ""}
+          ${closedDaysText ? `<p>📅 定休日：${escapeHtml(closedDaysText)}</p>` : ""}
+          ${priceParts.length ? `<p class="card-price">💰 料金：${escapeHtml(priceParts.join("　"))}</p>` : ""}
+        </div>
+        <button type="button" class="area-facility-detail-btn" data-id="${escapeHtml(item.id ?? "")}">温泉詳細</button>
+      </div>
+    `;
+  }
+
+  async function showAreasPage() {
+    const listView = $("listView");
+    const areasView = $("areasView");
+    if (!areasView) return;
+
+    listView?.classList.add("hidden");
+    $("mapSection")?.classList.add("hidden");
+    $("siteHeader")?.classList.add("hidden");
+    $("heroSection")?.classList.add("hidden");
+    $("homeScrollToTopButton")?.classList.add("hidden");
+    $("detailView")?.classList.add("hidden");
+    areasView.classList.remove("hidden");
+    areasView.innerHTML = `<div class="detail-empty">読み込んでいます…</div>`;
+    window.scrollTo(0, 0);
+
+    if (!supabaseClient) {
+      areasView.innerHTML = `
+        <div class="detail-toolbar"><button type="button" id="areasBack" class="detail-back">← 一覧に戻る</button></div>
+        <div class="detail-empty">この機能はSupabase未設定のため利用できません。</div>
+      `;
+      $("areasBack")?.addEventListener("click", () => {
+        location.hash = "";
+      });
+      return;
+    }
+
+    try {
+      const { data: areas, error } = await supabaseClient
+        .from("onsen_areas")
+        .select("*")
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+
+      const facilityById = {};
+      (window.__onsenData || []).forEach((f) => {
+        facilityById[f.id] = f;
+      });
+
+      const sectionsHtml = (areas || [])
+        .map((area) => {
+          const facilities = (area.facility_ids || []).map((id) => facilityById[id]).filter(Boolean);
+          if (!facilities.length) return "";
+          return `
+            <section class="onsen-area-section">
+              <h2 class="onsen-area-heading">📍${escapeHtml(area.prefecture || "")} ${escapeHtml(area.area || "")}「<span class="onsen-area-name">${escapeHtml(area.name)}</span>」</h2>
+              <div class="onsen-area-facility-list">
+                ${facilities.map((item) => renderAreaFacilityCard(item)).join("")}
+              </div>
+            </section>
+          `;
+        })
+        .join("");
+
+      areasView.innerHTML = `
+        <div class="detail-toolbar">
+          <button type="button" id="areasBack" class="detail-back">← 一覧に戻る</button>
+        </div>
+        <div class="areas-page-body">
+          <h1>♨️ 各地の温泉地まとめ</h1>
+          ${sectionsHtml || `<p class="detail-empty">まだ温泉地がまとめられていません。</p>`}
+        </div>
+      `;
+
+      $("areasBack")?.addEventListener("click", () => {
+        location.hash = "";
+      });
+      areasView.querySelectorAll(".area-facility-detail-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          location.hash = `#detail-${btn.dataset.id}`;
+        });
+      });
+    } catch (error) {
+      console.error(error);
+      areasView.innerHTML = `
+        <div class="detail-toolbar"><button type="button" id="areasBack" class="detail-back">← 一覧に戻る</button></div>
+        <div class="detail-empty">読み込みに失敗しました。</div>
+      `;
+      $("areasBack")?.addEventListener("click", () => {
+        location.hash = "";
+      });
+    }
+  }
+
   function showList() {
     const listView = $("listView");
     const detailView = $("detailView");
@@ -5241,6 +5362,7 @@
 
     detailView.classList.add("hidden");
     detailView.innerHTML = "";
+    $("areasView")?.classList.add("hidden");
     listView.classList.remove("hidden");
     $("mapSection")?.classList.remove("hidden");
     $("siteHeader")?.classList.remove("hidden");
@@ -5254,6 +5376,8 @@
     const match = location.hash.match(/^#detail-(.+)$/);
     if (match) {
       showDetail(decodeURIComponent(match[1]));
+    } else if (location.hash === "#areas") {
+      showAreasPage();
     } else {
       showList();
     }
@@ -6205,6 +6329,10 @@
       } catch (error) {
         alert(`送信できませんでした。\n\n詳細：${error.message || "不明なエラー"}`);
       }
+    });
+
+    $("openAreasButton")?.addEventListener("click", () => {
+      location.hash = "#areas";
     });
 
     $("openFilterButton")?.addEventListener("click", () => {

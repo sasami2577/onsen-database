@@ -26,6 +26,7 @@
 <button type="button" id="homeScrollToTopButton" class="hidden scroll-to-top" aria-label="先頭に戻る">▲ 先頭へ</button>
 <main>
   <button type="button" id="openFilterButton" class="filter-open-button">🔎 絞り込み検索する</button>
+  <button type="button" id="openAreasButton" class="areas-open-button">♨️ 各地の温泉地まとめ</button>
   <section class="map-section" id="mapSection">
     <div class="title"><h2>📍地図で探す</h2><span id="mapCount"></span></div>
     <div class="map-toolbar"><button type="button" id="showCurrentLocationButton" class="secondary">📍 現在地を表示</button><button type="button" id="mapStyleToggleButton" class="secondary">🗺 通常マップに変更</button></div>
@@ -42,6 +43,7 @@
     <div id="cards"></div>
   </div>
   <section id="detailView" class="hidden" aria-live="polite"></section>
+  <section id="areasView" class="hidden" aria-live="polite"></section>
 </main>
 <div id="authModal" class="hidden" aria-hidden="true">
 <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
