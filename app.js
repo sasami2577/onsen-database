@@ -7149,7 +7149,6 @@
       <div class="map-pin">
         <div class="map-pin-head" style="background:${style.bg}">${style.emoji}</div>
         <div class="map-pin-tip" style="border-top-color:${style.bg}"></div>
-        ${name ? `<div class="map-pin-label">${escapeHtml(name)}</div>` : ""}
       </div>
     `;
 
