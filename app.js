@@ -3137,6 +3137,12 @@
     return amounts.length ? Math.min(...amounts) : null;
   }
 
+  function getAdultBathFeeAmount(item) {
+    if (!Array.isArray(item.bath_fees) || !item.bath_fees.length) return null;
+    const adult = item.bath_fees.find((f) => f.category === "大人");
+    return adult && adult.amount != null ? adult.amount : null;
+  }
+
   const FACILITY_CATEGORY_MATCHERS = {
     "日帰り入浴可": (item) => Array.isArray(item.usage) && item.usage.includes("日帰り入浴可"),
     "露天風呂": (item) =>
@@ -3404,8 +3410,8 @@
       });
     } else if (sortMode === "priceAsc") {
       filtered.sort((a, b) => {
-        const aPrice = getMinBathFeeAmount(a);
-        const bPrice = getMinBathFeeAmount(b);
+        const aPrice = getAdultBathFeeAmount(a);
+        const bPrice = getAdultBathFeeAmount(b);
         if (aPrice == null && bPrice == null) return 0;
         if (aPrice == null) return 1;
         if (bPrice == null) return -1;
