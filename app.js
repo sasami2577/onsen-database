@@ -5272,6 +5272,9 @@
     `;
   }
 
+  let areasPageData = [];
+  let areasFilterState = { prefectures: [], cities: [] };
+
   async function showAreasPage() {
     const listView = $("listView");
     const areasView = $("areasView");
@@ -5311,30 +5314,84 @@
       });
 
       // 温泉地ごとに、実在する施設だけを紐づける
-      const areasWithFacilities = (areas || [])
+      areasPageData = (areas || [])
         .map((area) => ({
           ...area,
           facilities: (area.facility_ids || []).map((id) => facilityById[id]).filter(Boolean)
         }))
         .filter((area) => area.facilities.length);
 
-      // 都道府県＋市区町村ごとにグループ化
-      const groups = [];
-      const groupIndexByKey = {};
-      areasWithFacilities.forEach((area) => {
-        const key = `${area.prefecture || ""}__${area.area || ""}`;
-        if (!(key in groupIndexByKey)) {
-          groupIndexByKey[key] = groups.length;
-          groups.push({ prefecture: area.prefecture || "", city: area.area || "", areas: [] });
-        }
-        groups[groupIndexByKey[key]].areas.push(area);
-      });
+      areasFilterState = { prefectures: [], cities: [] };
 
-      const sectionsHtml = groups
+      areasView.innerHTML = `
+        <div class="detail-toolbar">
+          <button type="button" id="areasBack" class="detail-back">← 一覧に戻る</button>
+        </div>
+        <div class="areas-page-body">
+          <h1>♨️ 各地の温泉地まとめ</h1>
+          <button type="button" id="openAreasFilterButton" class="filter-open-button">🔎 温泉地を絞り込む</button>
+          <p id="areasFilterStatus" class="detail-note-tight hidden"></p>
+          <div id="areasContent"></div>
+        </div>
+      `;
+
+      $("areasBack")?.addEventListener("click", () => {
+        location.hash = "";
+      });
+      $("openAreasFilterButton")?.addEventListener("click", openAreasFilterModal);
+
+      renderAreasPageContent();
+    } catch (error) {
+      console.error(error);
+      areasView.innerHTML = `
+        <div class="detail-toolbar"><button type="button" id="areasBack" class="detail-back">← 一覧に戻る</button></div>
+        <div class="detail-empty">読み込みに失敗しました。</div>
+      `;
+      $("areasBack")?.addEventListener("click", () => {
+        location.hash = "";
+      });
+    }
+  }
+
+  function renderAreasPageContent() {
+    const content = $("areasContent");
+    if (!content) return;
+
+    const filtered = areasPageData.filter((area) => {
+      if (areasFilterState.prefectures.length && !areasFilterState.prefectures.includes(area.prefecture || "")) {
+        return false;
+      }
+      if (areasFilterState.cities.length && !areasFilterState.cities.includes(area.area || "")) {
+        return false;
+      }
+      return true;
+    });
+
+    const statusEl = $("areasFilterStatus");
+    const filterActive = areasFilterState.prefectures.length > 0 || areasFilterState.cities.length > 0;
+    if (statusEl) {
+      statusEl.classList.toggle("hidden", !filterActive);
+      statusEl.textContent = filterActive ? `🔎 絞り込み中：${filtered.length}件の温泉地を表示中です` : "";
+    }
+
+    // 都道府県＋市区町村ごとにグループ化
+    const groups = [];
+    const groupIndexByKey = {};
+    filtered.forEach((area) => {
+      const key = `${area.prefecture || ""}__${area.area || ""}`;
+      if (!(key in groupIndexByKey)) {
+        groupIndexByKey[key] = groups.length;
+        groups.push({ prefecture: area.prefecture || "", city: area.area || "", areas: [] });
+      }
+      groups[groupIndexByKey[key]].areas.push(area);
+    });
+
+    content.innerHTML =
+      groups
         .map(
           (group) => `
             <section class="onsen-area-group">
-              <h2 class="onsen-area-group-heading">📍${escapeHtml(group.prefecture)}${escapeHtml(group.city)}</h2>
+              <h2 class="onsen-area-group-heading">📍${escapeHtml(group.prefecture)} ${escapeHtml(group.city)}</h2>
               ${group.areas
                 .map(
                   (area) => `
@@ -5353,37 +5410,110 @@
             </section>
           `
         )
-        .join("");
+        .join("") || `<p class="detail-empty">該当する温泉地がありません。</p>`;
 
-      areasView.innerHTML = `
-        <div class="detail-toolbar">
-          <button type="button" id="areasBack" class="detail-back">← 一覧に戻る</button>
-        </div>
-        <div class="areas-page-body">
-          <h1>♨️ 各地の温泉地まとめ</h1>
-          ${sectionsHtml || `<p class="detail-empty">まだ温泉地がまとめられていません。</p>`}
+    content.querySelectorAll(".area-facility-detail-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        location.hash = `#detail-${btn.dataset.id}`;
+      });
+    });
+  }
+
+  function openAreasFilterModal() {
+    const prefectures = [...new Set(areasPageData.map((a) => a.prefecture || "").filter(Boolean))].sort();
+
+    let modal = $("areasFilterModal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "areasFilterModal";
+      modal.className = "hidden";
+      modal.setAttribute("aria-hidden", "true");
+      document.body.appendChild(modal);
+    }
+
+    function citiesForSelectedPrefectures(selectedPrefs) {
+      const source = selectedPrefs.length
+        ? areasPageData.filter((a) => selectedPrefs.includes(a.prefecture || ""))
+        : areasPageData;
+      return [...new Set(source.map((a) => a.area || "").filter(Boolean))].sort();
+    }
+
+    function renderModalContent() {
+      const cities = citiesForSelectedPrefectures(areasFilterState.prefectures);
+      modal.innerHTML = `
+        <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="areasFilterModalTitle">
+          <button id="areasFilterClose" class="close" type="button" aria-label="閉じる">×</button>
+          <div class="modal-head"><span class="modal-icon">🔎</span><div><h2 id="areasFilterModalTitle">温泉地を絞り込む</h2><p>都道府県・市区町村で絞り込みます。</p></div></div>
+
+          <p class="field-title">都道府県</p>
+          <div class="checks">
+            ${prefectures
+              .map(
+                (p) =>
+                  `<label><input type="checkbox" class="areas-filter-prefecture" value="${escapeHtml(p)}" ${areasFilterState.prefectures.includes(p) ? "checked" : ""}>${escapeHtml(p)}</label>`
+              )
+              .join("")}
+          </div>
+
+          <p class="field-title compact-top">市区町村</p>
+          <div class="checks">
+            ${
+              cities.length
+                ? cities
+                    .map(
+                      (c) =>
+                        `<label><input type="checkbox" class="areas-filter-city" value="${escapeHtml(c)}" ${areasFilterState.cities.includes(c) ? "checked" : ""}>${escapeHtml(c)}</label>`
+                    )
+                    .join("")
+                : `<p class="note-inline">都道府県を選ぶと市区町村が表示されます。</p>`
+            }
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="areasFilterReset" class="secondary">条件をリセット</button>
+            <button type="button" id="areasFilterApply" class="primary submit">この条件で絞り込む</button>
+          </div>
         </div>
       `;
 
-      $("areasBack")?.addEventListener("click", () => {
-        location.hash = "";
-      });
-      areasView.querySelectorAll(".area-facility-detail-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          location.hash = `#detail-${btn.dataset.id}`;
+      modal.querySelectorAll(".areas-filter-prefecture").forEach((el) => {
+        el.addEventListener("change", () => {
+          areasFilterState.prefectures = Array.from(modal.querySelectorAll(".areas-filter-prefecture:checked")).map(
+            (e) => e.value
+          );
+          // 都道府県を変えたら、選択に合わない市区町村はクリア
+          const validCities = citiesForSelectedPrefectures(areasFilterState.prefectures);
+          areasFilterState.cities = areasFilterState.cities.filter((c) => validCities.includes(c));
+          renderModalContent();
         });
       });
-    } catch (error) {
-      console.error(error);
-      areasView.innerHTML = `
-        <div class="detail-toolbar"><button type="button" id="areasBack" class="detail-back">← 一覧に戻る</button></div>
-        <div class="detail-empty">読み込みに失敗しました。</div>
-      `;
-      $("areasBack")?.addEventListener("click", () => {
-        location.hash = "";
+
+      $("areasFilterClose")?.addEventListener("click", closeAreasFilterModal);
+      $("areasFilterReset")?.addEventListener("click", () => {
+        areasFilterState = { prefectures: [], cities: [] };
+        renderModalContent();
+      });
+      $("areasFilterApply")?.addEventListener("click", () => {
+        areasFilterState.cities = Array.from(modal.querySelectorAll(".areas-filter-city:checked")).map((e) => e.value);
+        closeAreasFilterModal();
+        renderAreasPageContent();
       });
     }
+
+    renderModalContent();
+    modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
   }
+
+  function closeAreasFilterModal() {
+    const modal = $("areasFilterModal");
+    if (!modal) return;
+    modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+  }
+
 
   function showList() {
     const listView = $("listView");
