@@ -3131,7 +3131,7 @@
 
   function getMinBathFeeAmount(item) {
     if (!Array.isArray(item.bath_fees) || !item.bath_fees.length) return null;
-    const adult = item.bath_fees.find((f) => f.category === "大人");
+    const adult = item.bath_fees.find((f) => f.category && f.category.includes("大人"));
     if (adult && adult.amount != null) return adult.amount;
     const amounts = item.bath_fees.map((f) => f.amount).filter((a) => a != null);
     return amounts.length ? Math.min(...amounts) : null;
@@ -3139,7 +3139,7 @@
 
   function getAdultBathFeeAmount(item) {
     if (!Array.isArray(item.bath_fees) || !item.bath_fees.length) return null;
-    const adult = item.bath_fees.find((f) => f.category === "大人");
+    const adult = item.bath_fees.find((f) => f.category && f.category.includes("大人"));
     return adult && adult.amount != null ? adult.amount : null;
   }
 
