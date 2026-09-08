@@ -59,6 +59,7 @@
   let editingId = null;
   let currentUser = null;
   let myCurrentRating = 0;
+  let highlightedFacilityId = null;
   let authMode = "login";
 
   function updateAuthHeaderUI(user) {
@@ -3523,8 +3524,21 @@
       return;
     }
 
-    cards.innerHTML = filtered
-      .map((item) => {
+    // マップで確認中の施設があれば、一覧の先頭に移動する
+    let pinnedBannerHtml = "";
+    if (highlightedFacilityId) {
+      const pinnedIndex = filtered.findIndex((it) => String(it.id) === String(highlightedFacilityId));
+      if (pinnedIndex > -1) {
+        const [pinnedItem] = filtered.splice(pinnedIndex, 1);
+        filtered.unshift(pinnedItem);
+        pinnedBannerHtml = `<div class="pinned-banner">📍 現在マップ上で確認している施設</div>`;
+      }
+    }
+
+    cards.innerHTML =
+      pinnedBannerHtml +
+      filtered
+        .map((item) => {
         const address = item.address || "";
 
         const distanceText =
@@ -3550,7 +3564,7 @@
         const { outlineStyle, badgesHtml } = getUsageBadgesAndOutline(item);
 
         return `
-          <article class="card" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る" style="${outlineStyle}">
+          <article class="card${String(item.id) === String(highlightedFacilityId) ? " pinned-highlight" : ""}" data-id="${escapeHtml(item.id ?? "")}" tabindex="0" role="button" aria-label="${escapeHtml(item.name || "名称未設定")}の詳細を見る" style="${outlineStyle}">
             ${badgesHtml}
             <div class="card-head">
               <h3>${escapeHtml(item.name || "名称未設定")}</h3>
@@ -3606,7 +3620,14 @@
                 : "";
             })()}
 
-            <button type="button" class="detail" data-id="${escapeHtml(item.id ?? "")}">この施設の詳細を見る</button>
+            <div class="card-action-row">
+              <button type="button" class="detail card-action-half" data-id="${escapeHtml(item.id ?? "")}">この施設の詳細を見る</button>
+              ${
+                item.lat != null && item.lng != null
+                  ? `<button type="button" class="show-on-map card-action-half" data-id="${escapeHtml(item.id ?? "")}">🗺 マップで確認する</button>`
+                  : ""
+              }
+            </div>
           </article>
         `;
       })
@@ -6904,12 +6925,19 @@
     // カードクリック・Enterキーで詳細画面へ
     $("cards")?.addEventListener("click", (event) => {
       if (event.target.closest("a")) return; // 外部リンクはそのまま開く
+      if (event.target.closest(".show-on-map")) return; // マップ確認ボタンは別処理
 
       const card = event.target.closest(".card");
       if (!card) return;
 
       const id = card.getAttribute("data-id");
       if (id) location.hash = `detail-${encodeURIComponent(id)}`;
+    });
+
+    $("cards")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".show-on-map");
+      if (!button) return;
+      showFacilityOnMap(button.dataset.id);
     });
 
     $("cards")?.addEventListener("keydown", (event) => {
@@ -7139,14 +7167,14 @@
     return null;
   }
 
-  function buildMapPinIcon(businessType, name) {
+  function buildMapPinIcon(businessType, name, highlighted = false) {
     const style = BUSINESS_TYPE_STYLES[businessType] || {
       emoji: "📍",
       bg: "#8a968f"
     };
 
     const html = `
-      <div class="map-pin">
+      <div class="map-pin${highlighted ? " map-pin-highlighted" : ""}">
         <div class="map-pin-head" style="background:${style.bg}">${style.emoji}</div>
         <div class="map-pin-tip" style="border-top-color:${style.bg}"></div>
       </div>
@@ -7159,6 +7187,16 @@
       iconAnchor: [17, 46],
       popupAnchor: [0, -44]
     });
+  }
+
+  function showFacilityOnMap(id) {
+    if (!id) return;
+    highlightedFacilityId = id;
+
+    const data = window.__onsenData || getLocalData();
+    renderCardsWithData(data);
+
+    $("mapSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function updateMap(list) {
@@ -7177,9 +7215,13 @@
       mapCount.textContent = items.length ? `${items.length}件表示中` : "";
     }
 
+    let highlightedMarker = null;
+
     items.forEach((item) => {
+      const isHighlighted = String(item.id) === String(highlightedFacilityId);
       const marker = L.marker([Number(item.lat), Number(item.lng)], {
-        icon: buildMapPinIcon(item.business_type, item.name || "名称未設定")
+        icon: buildMapPinIcon(item.business_type, item.name || "名称未設定", isHighlighted),
+        zIndexOffset: isHighlighted ? 1000 : 0
       });
 
       const name = escapeHtml(item.name || "名称未設定");
@@ -7201,9 +7243,16 @@
         </div>`
       );
       marker.addTo(leafletMarkerGroup);
+
+      if (isHighlighted) {
+        highlightedMarker = marker;
+      }
     });
 
-    if (items.length) {
+    if (highlightedMarker) {
+      leafletMap.setView(highlightedMarker.getLatLng(), 15);
+      setTimeout(() => highlightedMarker.openPopup(), 300);
+    } else if (items.length) {
       const bounds = L.latLngBounds(items.map((item) => [Number(item.lat), Number(item.lng)]));
       leafletMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
     } else {
