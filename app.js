@@ -708,6 +708,83 @@
   // 会員優待・優待券（対象サービス名・優待内容の2項目）
   let benefitRowSeq = 0;
 
+  // 追加の営業時間帯（開始・終了のペアを複数登録できる）
+  let hoursRangeRowSeq = 0;
+
+  function buildHourOptions() {
+    let html = '<option value="">--</option>';
+    for (let h = 0; h < 24; h++) {
+      const v = String(h).padStart(2, "0");
+      html += `<option value="${v}">${v}</option>`;
+    }
+    return html;
+  }
+
+  function buildMinuteOptions() {
+    let html = '<option value="">--</option>';
+    for (let m = 0; m < 60; m += 10) {
+      const v = String(m).padStart(2, "0");
+      html += `<option value="${v}">${v}</option>`;
+    }
+    return html;
+  }
+
+  function addHoursRangeRow(containerId, open = "", close = "", { focus = true } = {}) {
+    const rows = $(containerId);
+    if (!rows) return;
+
+    const rowId = `hoursrange-${++hoursRangeRowSeq}`;
+    const [openH = "", openM = ""] = (open || "").split(":");
+    const [closeH = "", closeM = ""] = (close || "").split(":");
+    const hourOptions = buildHourOptions();
+    const minuteOptions = buildMinuteOptions();
+
+    const row = document.createElement("div");
+    row.className = "rental-row hours-range-row";
+    row.dataset.rowId = rowId;
+    row.innerHTML = `
+      <div class="time-select"><select class="hours-open-hour">${hourOptions}</select><span>:</span><select class="hours-open-minute">${minuteOptions}</select></div>
+      <span>〜</span>
+      <div class="time-select"><select class="hours-close-hour">${hourOptions}</select><span>:</span><select class="hours-close-minute">${minuteOptions}</select></div>
+      <button type="button" class="remove-rental" aria-label="この時間帯を削除">×</button>
+    `;
+    rows.appendChild(row);
+
+    if (openH) row.querySelector(".hours-open-hour").value = openH;
+    if (openM) row.querySelector(".hours-open-minute").value = openM;
+    if (closeH) row.querySelector(".hours-close-hour").value = closeH;
+    if (closeM) row.querySelector(".hours-close-minute").value = closeM;
+
+    if (focus) row.querySelector(".hours-open-hour")?.focus();
+  }
+
+  function collectHoursRangeRows(containerId) {
+    const rows = $(containerId);
+    if (!rows) return [];
+
+    const result = [];
+    rows.querySelectorAll(".hours-range-row").forEach((row) => {
+      const oh = row.querySelector(".hours-open-hour")?.value || "";
+      const om = row.querySelector(".hours-open-minute")?.value || "";
+      const ch = row.querySelector(".hours-close-hour")?.value || "";
+      const cm = row.querySelector(".hours-close-minute")?.value || "";
+      const open = oh && om ? `${oh}:${om}` : "";
+      const close = ch && cm ? `${ch}:${cm}` : "";
+      if (!open && !close) return;
+      result.push({ open, close });
+    });
+
+    return result;
+  }
+
+  function populateHoursRangeRows(containerId, items) {
+    const rows = $(containerId);
+    if (!rows) return;
+    rows.innerHTML = "";
+    if (!Array.isArray(items) || !items.length) return;
+    items.forEach((it) => addHoursRangeRow(containerId, it.open || "", it.close || "", { focus: false }));
+  }
+
   function addBenefitRow(containerId, service = "", content = "", { focus = true } = {}) {
     const rows = $(containerId);
     if (!rows) return;
@@ -789,6 +866,14 @@
           ? value("businessTypeOther")
           : value("businessType"),
       phone: value("phone"),
+      spring_type:
+        radioValue("springType") === "その他" && value("springTypeOther")
+          ? value("springTypeOther")
+          : radioValue("springType"),
+      source_type:
+        radioValue("sourceType") === "その他" && value("sourceTypeOther")
+          ? value("sourceTypeOther")
+          : radioValue("sourceType"),
       nearest_station: value("nearestStation"),
       access_method: value("accessMethod"),
 
@@ -851,10 +936,12 @@
       special_coupons: collectBenefitRows("specialCouponRows"),
       discount_supplementary_note: value("discountSupplementaryNote"),
       other_fees: collectFeeRows("otherFeeRows"),
-      purchase_method:
-        radioValue("purchaseMethod") === "その他" && value("purchaseMethodOther")
-          ? value("purchaseMethodOther")
-          : radioValue("purchaseMethod"),
+      purchase_method: [
+        ...checkedValues("purchaseMethod"),
+        ...(checkedBool("purchaseMethodOtherCheck")
+          ? [value("purchaseMethodOther") || "その他"]
+          : [])
+      ],
       payment: [
         ...checkedValues("payment"),
         ...(checkedBool("paymentOtherCheck")
@@ -1530,6 +1617,7 @@
       ],
       restaurant_feature: value("restaurantFeature"),
       restaurant_hours_type: radioValue("restaurantHoursType"),
+      restaurant_additional_hours: collectHoursRangeRows("restaurantAdditionalHoursRows"),
       restaurant_open_time: timeValue("restaurantOpenTime"),
       restaurant_close_time: timeValue("restaurantCloseTime"),
       restaurant_last_order: timeValue("restaurantLastOrder"),
@@ -1577,6 +1665,7 @@
       massage_hours_type: radioValue("massageHoursType"),
       massage_hours_open: timeValue("massageHoursOpen"),
       massage_hours_close: timeValue("massageHoursClose"),
+      massage_additional_hours: collectHoursRangeRows("massageAdditionalHoursRows"),
       massage_chair_status: radioValue("massageChairStatus"),
       massage_chair_count: numberValue("massageChairCount"),
       massage_chair_minutes: numberValue("massageChairMinutes"),
@@ -1622,6 +1711,10 @@
       shop_hours_type: radioValue("shopHoursType"),
       shop_hours_open: timeValue("shopHoursOpen"),
       shop_hours_close: timeValue("shopHoursClose"),
+      shop_additional_hours: collectHoursRangeRows("shopAdditionalHoursRows"),
+      convenience_store_status: radioValue("convenienceStoreStatus"),
+      convenience_store_hours_type: radioValue("convenienceStoreHoursType"),
+      convenience_store_hours: collectHoursRangeRows("convenienceStoreHoursRows"),
       shop_payment: [
         ...checkedValues("shopPayment"),
         ...(checkedBool("shopPaymentOtherCheck")
@@ -1814,6 +1907,24 @@
 
     setValue("address", item.address);
     setValue("phone", item.phone);
+
+    const springTypeKnown = ["不明", "天然温泉", "人工温泉", "天然温泉 + 人工温泉"];
+    if (springTypeKnown.includes(item.spring_type)) {
+      setRadioValue("springType", item.spring_type);
+    } else if (item.spring_type) {
+      setRadioValue("springType", "その他");
+      setValue("springTypeOther", item.spring_type);
+      $("springTypeOther")?.classList.remove("hidden");
+    }
+
+    const sourceTypeKnown = ["不明", "自家源泉", "共同源泉", "引湯", "運び湯"];
+    if (sourceTypeKnown.includes(item.source_type)) {
+      setRadioValue("sourceType", item.source_type);
+    } else if (item.source_type) {
+      setRadioValue("sourceType", "その他");
+      setValue("sourceTypeOther", item.source_type);
+      $("sourceTypeOther")?.classList.remove("hidden");
+    }
     setValue("nearestStation", item.nearest_station);
     setValue("accessMethod", item.access_method);
 
@@ -1882,13 +1993,13 @@
     setValue("discountSupplementaryNote", item.discount_supplementary_note);
     populateFeeRows("otherFeeRows", item.other_fees);
 
-    if (item.purchase_method === "券売機" || item.purchase_method === "受付購入") {
-      setRadioValue("purchaseMethod", item.purchase_method);
-    } else if (item.purchase_method) {
-      setRadioValue("purchaseMethod", "その他");
-      setValue("purchaseMethodOther", item.purchase_method);
-      $("purchaseMethodOtherWrap")?.classList.remove("hidden");
-    }
+    setCheckboxGroup(
+      "purchaseMethod",
+      ["券売機", "受付購入", "インターネット予約"],
+      item.purchase_method,
+      "purchaseMethodOtherCheck",
+      "purchaseMethodOther"
+    );
 
     setCheckboxGroup(
       "payment",
@@ -2056,7 +2167,7 @@
     setRadioValue("maleSaunaFacility", item.sauna_facility_male);
     if (item.sauna_facility_suspended_male) $("maleSaunaFacilitySuspended").checked = true;
 
-    if (["屋内", "屋外", "両方設置"].includes(item.sauna_facility_location_male)) {
+    if (["不明", "屋内", "屋外", "両方設置", "なし"].includes(item.sauna_facility_location_male)) {
       setRadioValue("maleSaunaFacilityLocation", item.sauna_facility_location_male);
     } else if (item.sauna_facility_location_male) {
       setRadioValue("maleSaunaFacilityLocation", "その他");
@@ -2099,7 +2210,7 @@
     setRadioValue("maleSaunaEmergencyButton", item.sauna_emergency_button_male);
     setRadioValue("maleSaunaStones", item.sauna_stones_male);
 
-    if (["電気ストーブ", "薪ストーブ", "ガスストーブ", "遠赤外線ストーブ", "ハイブリッド"].includes(item.sauna_stove_type_male)) {
+    if (["不明", "電気ストーブ", "薪ストーブ", "ガスストーブ", "遠赤外線ストーブ", "ハイブリッド"].includes(item.sauna_stove_type_male)) {
       setRadioValue("maleSaunaStoveType", item.sauna_stove_type_male);
     } else if (item.sauna_stove_type_male) {
       setRadioValue("maleSaunaStoveType", "その他");
@@ -2152,7 +2263,7 @@
     setRadioValue("maleSaunaLoylyReservation", item.sauna_loyly_reservation_male);
     setValue("maleSaunaLoylyNote", item.sauna_loyly_note_male);
 
-    if (["押し引きタイプ", "取っ手を回すタイプ"].includes(item.sauna_door_type_male)) {
+    if (["不明", "押し引きタイプ", "取っ手を回すタイプ"].includes(item.sauna_door_type_male)) {
       setRadioValue("maleSaunaDoorType", item.sauna_door_type_male);
     } else if (item.sauna_door_type_male) {
       setRadioValue("maleSaunaDoorType", "その他");
@@ -2201,7 +2312,7 @@
     setRadioValue("femaleSaunaFacility", item.sauna_facility_female);
     if (item.sauna_facility_suspended_female) $("femaleSaunaFacilitySuspended").checked = true;
 
-    if (["屋内", "屋外", "両方設置"].includes(item.sauna_facility_location_female)) {
+    if (["不明", "屋内", "屋外", "両方設置", "なし"].includes(item.sauna_facility_location_female)) {
       setRadioValue("femaleSaunaFacilityLocation", item.sauna_facility_location_female);
     } else if (item.sauna_facility_location_female) {
       setRadioValue("femaleSaunaFacilityLocation", "その他");
@@ -2244,7 +2355,7 @@
     setRadioValue("femaleSaunaEmergencyButton", item.sauna_emergency_button_female);
     setRadioValue("femaleSaunaStones", item.sauna_stones_female);
 
-    if (["電気ストーブ", "薪ストーブ", "ガスストーブ", "遠赤外線ストーブ", "ハイブリッド"].includes(item.sauna_stove_type_female)) {
+    if (["不明", "電気ストーブ", "薪ストーブ", "ガスストーブ", "遠赤外線ストーブ", "ハイブリッド"].includes(item.sauna_stove_type_female)) {
       setRadioValue("femaleSaunaStoveType", item.sauna_stove_type_female);
     } else if (item.sauna_stove_type_female) {
       setRadioValue("femaleSaunaStoveType", "その他");
@@ -2297,7 +2408,7 @@
     setRadioValue("femaleSaunaLoylyReservation", item.sauna_loyly_reservation_female);
     setValue("femaleSaunaLoylyNote", item.sauna_loyly_note_female);
 
-    if (["押し引きタイプ", "取っ手を回すタイプ"].includes(item.sauna_door_type_female)) {
+    if (["不明", "押し引きタイプ", "取っ手を回すタイプ"].includes(item.sauna_door_type_female)) {
       setRadioValue("femaleSaunaDoorType", item.sauna_door_type_female);
     } else if (item.sauna_door_type_female) {
       setRadioValue("femaleSaunaDoorType", "その他");
@@ -2567,6 +2678,7 @@
     );
     setValue("restaurantFeature", item.restaurant_feature);
     setRadioValue("restaurantHoursType", item.restaurant_hours_type);
+    populateHoursRangeRows("restaurantAdditionalHoursRows", item.restaurant_additional_hours);
     if (item.restaurant_hours_type === "営業時間あり") {
       $("restaurantHoursWrap")?.classList.remove("hidden");
     }
@@ -2644,6 +2756,7 @@
     }
     setTimeValue("massageHoursOpen", item.massage_hours_open);
     setTimeValue("massageHoursClose", item.massage_hours_close);
+    populateHoursRangeRows("massageAdditionalHoursRows", item.massage_additional_hours);
     setRadioValue("massageChairStatus", item.massage_chair_status);
     setValue("massageChairCount", item.massage_chair_count);
     setValue("massageChairMinutes", item.massage_chair_minutes);
@@ -2696,6 +2809,13 @@
     }
     setTimeValue("shopHoursOpen", item.shop_hours_open);
     setTimeValue("shopHoursClose", item.shop_hours_close);
+    populateHoursRangeRows("shopAdditionalHoursRows", item.shop_additional_hours);
+    setRadioValue("convenienceStoreStatus", item.convenience_store_status);
+    setRadioValue("convenienceStoreHoursType", item.convenience_store_hours_type);
+    if (item.convenience_store_hours_type === "営業時間あり") {
+      $("convenienceStoreHoursWrap")?.classList.remove("hidden");
+    }
+    populateHoursRangeRows("convenienceStoreHoursRows", item.convenience_store_hours);
     setCheckboxGroup(
       "shopPayment",
       ["現金", "クレジットカード", "電子マネー", "QRコード決済", "リストバンド決済"],
@@ -2915,14 +3035,14 @@
     "locker_valuables_female", "locker_valuables_male", "locker_wristband_type_female", 
     "locker_wristband_type_male", "locker_wristband_use_female", "locker_wristband_use_male", 
     "massage_chair_count", "massage_chair_minutes", "massage_chair_price", "massage_chair_status", 
-    "massage_hours_close", "massage_hours_open", "massage_hours_type", "massage_menu_fees", 
+    "massage_hours_close", "massage_hours_open", "massage_hours_type", "massage_additional_hours", "massage_menu_fees", 
     "massage_note", "massage_status", "massage_types", "membership_card", "motorcycle_parking", 
     "my_impression", "name", "nearest_station", "note", "notice_info", "onsen_tamago_status", 
     "open_time", "other_facility_note", "other_fees", "outdoor_facility_status", "outdoor_female", 
     "outdoor_indoor_note_female", "outdoor_indoor_note_male", "outdoor_location_female", 
     "outdoor_location_male", "outdoor_male", "parking_accessible", "parking_capacity", 
     "parking_conditions", "parking_fee_amount", "parking_fee_type", "parking_note", 
-    "parking_status", "parking_temporary", "parking_types", "payment", "phone", "point_card", 
+    "parking_status", "parking_temporary", "parking_types", "payment", "phone", "point_card", "spring_type", "source_type", 
     "pool_facility_status", "powder_room_female", "powder_room_male", "pre_rinse_water_female", 
     "pre_rinse_water_male", "prefecture", "price_note", "private_bath_capacity_female", 
     "private_bath_capacity_male", "private_bath_capacity_status_female", 
@@ -2934,7 +3054,7 @@
     "rest_space_fee_type", "rest_space_hours_close", "rest_space_hours_open", 
     "rest_space_hours_type", "rest_space_note", "rest_space_per_person_minutes", 
     "rest_space_per_person_type", "rest_space_status", "rest_space_type", "restaurant_close_time", 
-    "restaurant_feature", "restaurant_hours_type", "restaurant_last_order", "restaurant_note", 
+    "restaurant_feature", "restaurant_hours_type", "restaurant_additional_hours", "restaurant_last_order", "restaurant_note", 
     "restaurant_open_time", "restaurant_other_info", "restaurant_payment", "restaurant_status", 
     "restaurant_types", "roof_rain_protection_female", "roof_rain_protection_male", 
     "sauna_aroma_loyly_female", "sauna_aroma_loyly_male", "sauna_aroma_type_female", 
@@ -2975,7 +3095,7 @@
     "scale_male", "scenery_female", "scenery_male", "shampoo_conditioner_female", 
     "shampoo_conditioner_male", "shoebox_count_female", "shoebox_count_male", "shoebox_fee_female", 
     "shoebox_fee_male", "shoebox_key_type_female", "shoebox_key_type_male", "shoebox_note_female", 
-    "shoebox_note_male", "shoebox_type_female", "shoebox_type_male", "shop_hours_close", 
+    "shoebox_note_male", "shoebox_type_female", "shoebox_type_male", "shop_hours_close", "shop_additional_hours", "convenience_store_status", "convenience_store_hours_type", "convenience_store_hours", 
     "shop_hours_open", "shop_hours_type", "shop_items", "shop_note", "shop_payment", "shop_status", 
     "shower_booth_female", "shower_booth_male", "shower_chair_female", "shower_chair_male", 
     "shower_count_female", "shower_count_male", "shower_faucet_female", "shower_faucet_male", 
@@ -3005,6 +3125,7 @@
   // 単純な文字列のまま入っている場合、そのままでは型エラーになるため
   // 送信前に配列へ変換する。
   const ARRAY_COLUMNS = new Set([
+    "purchase_method",
     "overnight_days", "morning_bath_days", "other_hours_days",
     "bath_function_female", "bath_function_male", "bath_location_female", "bath_location_male", 
     "bath_shape_female", "bath_shape_male", "child_info_source", "closed_days", 
@@ -4168,7 +4289,7 @@
           <div class="detail-gap"></div>
 
           ${detailSubhead("💳 購入方法")}
-          <p class="detail-note-tight">${item.purchase_method ? escapeHtml(item.purchase_method) : "情報がありません。"}</p>
+          ${detailTags(item.purchase_method) || `<p class="detail-note-tight">情報がありません。</p>`}
 
           ${detailSubhead("👛 決済方法")}
           ${
@@ -6082,7 +6203,7 @@
     if (otherFeeRows) {
       otherFeeRows.innerHTML = "";
     }
-    ["ticketFeeRows", "disabilityFeeRows", "memberBenefitRows", "specialCouponRows"].forEach((id) => {
+    ["ticketFeeRows", "disabilityFeeRows", "memberBenefitRows", "specialCouponRows", "restaurantAdditionalHoursRows", "shopAdditionalHoursRows", "massageAdditionalHoursRows", "convenienceStoreHoursRows"].forEach((id) => {
       const el = $(id);
       if (el) el.innerHTML = "";
     });
@@ -6090,7 +6211,7 @@
     // 「その他」の自由記述欄も隠しておく
     $("businessTypeOtherWrap")?.classList.add("hidden");
     $("usageOther")?.classList.add("hidden");
-    $("purchaseMethodOtherWrap")?.classList.add("hidden");
+    $("purchaseMethodOther")?.classList.add("hidden");
     $("paymentOther")?.classList.add("hidden");
     $("maleSaunaStoveCountWrap")?.classList.add("hidden");
     $("femaleSaunaStoveCountWrap")?.classList.add("hidden");
@@ -6175,6 +6296,7 @@
     $("parkingAccessibleOther")?.classList.add("hidden");
     $("userInfoSourceOther")?.classList.add("hidden");
     $("shopHoursWrap")?.classList.add("hidden");
+    $("convenienceStoreHoursWrap")?.classList.add("hidden");
     $("wifiFeeWrap")?.classList.add("hidden");
     $("chargingFeeWrap")?.classList.add("hidden");
     const massageFeeRows = $("massageFeeRows");
@@ -6309,6 +6431,34 @@
     $("maleAddRental")?.addEventListener("click", () => addRentalRow("maleRentalRows"));
     $("femaleAddRental")?.addEventListener("click", () => addRentalRow("femaleRentalRows"));
     $("addBathFee")?.addEventListener("click", () => addFeeRow("bathFeeRows"));
+    $("addRestaurantAdditionalHours")?.addEventListener("click", () =>
+      addHoursRangeRow("restaurantAdditionalHoursRows")
+    );
+    $("restaurantAdditionalHoursRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+      button.closest(".hours-range-row")?.remove();
+    });
+    $("addShopAdditionalHours")?.addEventListener("click", () => addHoursRangeRow("shopAdditionalHoursRows"));
+    $("shopAdditionalHoursRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+      button.closest(".hours-range-row")?.remove();
+    });
+    $("addConvenienceStoreHours")?.addEventListener("click", () => addHoursRangeRow("convenienceStoreHoursRows"));
+    $("convenienceStoreHoursRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+      button.closest(".hours-range-row")?.remove();
+    });
+    $("addMassageAdditionalHours")?.addEventListener("click", () =>
+      addHoursRangeRow("massageAdditionalHoursRows")
+    );
+    $("massageAdditionalHoursRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+      button.closest(".hours-range-row")?.remove();
+    });
     $("addTicketFee")?.addEventListener("click", () => addTicketFeeRow("ticketFeeRows"));
     $("ticketFeeRows")?.addEventListener("click", (event) => {
       const button = event.target.closest(".remove-rental");
@@ -6349,15 +6499,15 @@
       other.classList.toggle("hidden", !event.target.checked);
     });
 
-    // ラジオボタン方式の「その他」を選んだ時だけ自由記述欄を表示
-    [
-      ["purchaseMethod", "purchaseMethodOtherWrap"]
-    ].forEach(([groupName, wrapId]) => {
+    // 購入方法の「その他」にチェックが入った時だけ自由記述欄を表示
+    $("purchaseMethodOtherCheck")?.addEventListener("change", (event) => {
+      $("purchaseMethodOther")?.classList.toggle("hidden", !event.target.checked);
+    });
+
+    ["springType", "sourceType"].forEach((groupName) => {
       document.querySelectorAll(`input[name="${groupName}"]`).forEach((radio) => {
         radio.addEventListener("change", () => {
-          const wrap = $(wrapId);
-          if (!wrap) return;
-          wrap.classList.toggle("hidden", radioValue(groupName) !== "その他");
+          $(`${groupName}Other`)?.classList.toggle("hidden", radioValue(groupName) !== "その他");
         });
       });
     });
@@ -6428,6 +6578,7 @@
       ["restSpacePerPersonType", "時間指定", "restSpacePerPersonWrap"],
       ["massageHoursType", "営業時間あり", "massageHoursWrap"],
       ["shopHoursType", "利用時間あり", "shopHoursWrap"],
+      ["convenienceStoreHoursType", "営業時間あり", "convenienceStoreHoursWrap"],
       ["wifiFacility", "有料", "wifiFeeWrap"],
       ["chargingSpot", "有料", "chargingFeeWrap"]
     ].forEach(([name, triggerValue, wrapId]) => {

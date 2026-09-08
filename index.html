@@ -529,11 +529,12 @@
 </fieldset>
 
 <fieldset class="full compact-top"><legend>💳 購入方法</legend><div class="checks">
-<label><input type="radio" name="purchaseMethod" value="券売機">券売機</label>
-<label><input type="radio" name="purchaseMethod" value="受付購入">受付購入</label>
-<label><input type="radio" name="purchaseMethod" value="その他" id="purchaseMethodOtherRadio">その他</label>
+<label><input type="checkbox" name="purchaseMethod" value="券売機">券売機</label>
+<label><input type="checkbox" name="purchaseMethod" value="受付購入">受付購入</label>
+<label><input type="checkbox" name="purchaseMethod" value="インターネット予約">インターネット予約</label>
+<label><input type="checkbox" id="purchaseMethodOtherCheck">その他</label>
 </div></fieldset>
-<label class="full hidden" id="purchaseMethodOtherWrap">購入方法（その他の内容）<input id="purchaseMethodOther" placeholder="例：LINE決済のみ"></label>
+<input type="text" id="purchaseMethodOther" class="hidden compact-top" placeholder="購入方法（その他の内容）">
 
 <fieldset class="full compact-top"><legend>👛 決済方法</legend><div class="checks">
 <label><input type="checkbox" name="payment" value="現金決済">現金決済</label>
@@ -636,6 +637,7 @@
 <label><input type="checkbox" name="maleBathLocation" value="週替わり">週替わり</label>
 <label><input type="checkbox" name="maleBathLocation" value="隔週">隔週</label>
 <label><input type="checkbox" name="maleBathLocation" value="時間交代制">時間交代制</label>
+<label><input type="checkbox" name="maleBathLocation" value="入れ替え制">入れ替え制</label>
 <label><input type="checkbox" name="maleBathLocation" value="男湯のみ">男湯のみ</label>
 <label><input type="checkbox" name="maleBathLocation" value="女湯のみ">女湯のみ</label>
 <label><input type="checkbox" name="maleBathLocation" value="混浴">混浴</label>
@@ -753,6 +755,7 @@
 <label><input type="checkbox" name="femaleBathLocation" value="週替わり">週替わり</label>
 <label><input type="checkbox" name="femaleBathLocation" value="隔週">隔週</label>
 <label><input type="checkbox" name="femaleBathLocation" value="時間交代制">時間交代制</label>
+<label><input type="checkbox" name="femaleBathLocation" value="入れ替え制">入れ替え制</label>
 <label><input type="checkbox" name="femaleBathLocation" value="男湯のみ">男湯のみ</label>
 <label><input type="checkbox" name="femaleBathLocation" value="女湯のみ">女湯のみ</label>
 <label><input type="checkbox" name="femaleBathLocation" value="混浴">混浴</label>
@@ -832,11 +835,16 @@
 <label><input type="checkbox" name="indications" value="腰痛">腰痛</label>
 <label><input type="checkbox" name="indications" value="四十肩・五十肩">四十肩・五十肩</label>
 <label><input type="checkbox" name="indications" value="打撲・捻挫">打撲・捻挫</label>
+<label><input type="checkbox" name="indications" value="運動麻痺">運動麻痺</label>
+<label><input type="checkbox" name="indications" value="関節リウマチ">関節リウマチ</label>
+<label><input type="checkbox" name="indications" value="関節拘縮">関節拘縮</label>
 </div>
 <p class="field-title">冷え・血行</p><div class="checks">
 <label><input type="checkbox" name="indications" value="冷え症">冷え症</label>
 <label><input type="checkbox" name="indications" value="血行促進">血行促進</label>
 <label><input type="checkbox" name="indications" value="慢性的な循環器系不全">慢性的な循環器系不全</label>
+<label><input type="checkbox" name="indications" value="痔疾">痔疾</label>
+<label><input type="checkbox" name="indications" value="動脈硬化症">動脈硬化症</label>
 </div>
 <p class="field-title">疲労・ストレス</p><div class="checks">
 <label><input type="checkbox" name="indications" value="疲労回復">疲労回復</label>
@@ -862,6 +870,27 @@
 <label><input type="checkbox" name="indications" value="慢性的な呼吸器症状など">慢性的な呼吸器症状など</label>
 </div>
 <p class="field-title">その他の適応症</p><input type="text" id="indicationsOther" placeholder="自由記載">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>♨️ 温泉の種類</legend><div class="checks">
+<label><input type="radio" name="springType" value="不明" checked>不明</label>
+<label><input type="radio" name="springType" value="天然温泉">天然温泉</label>
+<label><input type="radio" name="springType" value="人工温泉">人工温泉</label>
+<label><input type="radio" name="springType" value="天然温泉 + 人工温泉">天然温泉 + 人工温泉</label>
+<label><input type="radio" name="springType" value="その他" id="springTypeOtherRadio">その他</label>
+</div>
+<input type="text" id="springTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>♨️ 源泉の種類</legend><div class="checks">
+<label><input type="radio" name="sourceType" value="不明" checked>不明</label>
+<label><input type="radio" name="sourceType" value="自家源泉">自家源泉</label>
+<label><input type="radio" name="sourceType" value="共同源泉">共同源泉</label>
+<label><input type="radio" name="sourceType" value="引湯">引湯</label>
+<label><input type="radio" name="sourceType" value="運び湯">運び湯</label>
+<label><input type="radio" name="sourceType" value="その他" id="sourceTypeOtherRadio">その他</label>
+</div>
+<input type="text" id="sourceTypeOther" class="hidden compact-top" placeholder="その他の内容を入力">
 </fieldset>
 
 <fieldset class="full compact-top"><legend>♨️ 温泉の状態・特徴</legend>
@@ -2900,7 +2929,11 @@
 <label><input type="radio" name="restaurantHoursType" value="営業時間あり" id="restaurantHoursTypeCustom">営業時間あり</label>
 </div>
 <div class="hidden compact-top" id="restaurantHoursWrap"><div class="grid two">
-<label>開店時間<div class="time-select"><select id="restaurantOpenTimeHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="restaurantOpenTimeMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>閉店時間<div class="time-select"><select id="restaurantCloseTimeHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="restaurantCloseTimeMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>ラストオーダー<div class="time-select"><select id="restaurantLastOrderHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="restaurantLastOrderMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label></div></div>
+<label>開店時間<div class="time-select"><select id="restaurantOpenTimeHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="restaurantOpenTimeMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>閉店時間<div class="time-select"><select id="restaurantCloseTimeHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="restaurantCloseTimeMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>ラストオーダー<div class="time-select"><select id="restaurantLastOrderHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="restaurantLastOrderMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label></div>
+<p class="field-title compact-top">その他の営業時間帯（あれば）</p>
+<div id="restaurantAdditionalHoursRows"></div>
+<button type="button" id="addRestaurantAdditionalHours" class="secondary">＋ 追加</button>
+</div>
 </fieldset>
 
 <fieldset class="full compact-top"><legend>💴 決済方法（お食事処）</legend><div class="checks">
@@ -2995,7 +3028,11 @@
 <label><input type="radio" name="shopHoursType" value="利用時間あり" id="shopHoursTypeCustom">利用時間あり</label>
 </div>
 <div class="hidden compact-top" id="shopHoursWrap"><div class="grid two">
-<label>開始<div class="time-select"><select id="shopHoursOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="shopHoursOpenMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>終了<div class="time-select"><select id="shopHoursCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="shopHoursCloseMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label></div></div>
+<label>開始<div class="time-select"><select id="shopHoursOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="shopHoursOpenMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>終了<div class="time-select"><select id="shopHoursCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="shopHoursCloseMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label></div>
+<p class="field-title compact-top">その他の営業時間帯（あれば）</p>
+<div id="shopAdditionalHoursRows"></div>
+<button type="button" id="addShopAdditionalHours" class="secondary">＋ 追加</button>
+</div>
 </fieldset>
 
 <fieldset class="full compact-top"><legend>💴 決済方法（売店）</legend><div class="checks">
@@ -3007,6 +3044,24 @@
 <label><input type="checkbox" id="shopPaymentOtherCheck">その他</label>
 </div>
 <input type="text" id="shopPaymentOther" class="hidden compact-top" placeholder="その他の内容を入力">
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🏪 コンビニエンスストア</legend><div class="checks">
+<label><input type="radio" name="convenienceStoreStatus" value="不明" checked>不明</label>
+<label><input type="radio" name="convenienceStoreStatus" value="あり">あり</label>
+<label><input type="radio" name="convenienceStoreStatus" value="なし">なし</label>
+</div>
+<p class="field-title compact-top">🕒 営業時間</p>
+<div class="checks">
+<label><input type="radio" name="convenienceStoreHoursType" value="不明" checked>不明</label>
+<label><input type="radio" name="convenienceStoreHoursType" value="24時間営業">24時間営業</label>
+<label><input type="radio" name="convenienceStoreHoursType" value="施設の営業時間と同じ">施設の営業時間と同じ</label>
+<label><input type="radio" name="convenienceStoreHoursType" value="営業時間あり" id="convenienceStoreHoursTypeCustom">営業時間あり</label>
+</div>
+<div class="hidden compact-top" id="convenienceStoreHoursWrap">
+<div id="convenienceStoreHoursRows"></div>
+<button type="button" id="addConvenienceStoreHours" class="secondary">＋ 追加</button>
+</div>
 </fieldset>
 
 <label class="full compact-top">🛍 備考（売店コーナー）<textarea id="shopNote" rows="2"></textarea></label>
@@ -3107,7 +3162,11 @@
 <label><input type="radio" name="massageHoursType" value="営業時間あり" id="massageHoursTypeCustom">営業時間あり</label>
 </div>
 <div class="hidden compact-top" id="massageHoursWrap"><div class="grid two">
-<label>開始<div class="time-select"><select id="massageHoursOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="massageHoursOpenMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>終了<div class="time-select"><select id="massageHoursCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="massageHoursCloseMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label></div></div>
+<label>開始<div class="time-select"><select id="massageHoursOpenHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="massageHoursOpenMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label><label>終了<div class="time-select"><select id="massageHoursCloseHour"><option value="">--</option><option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select><span>:</span><select id="massageHoursCloseMinute"><option value="">--</option><option value="00">00</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option></select></div></label></div>
+<p class="field-title compact-top">その他の営業時間帯（あれば）</p>
+<div id="massageAdditionalHoursRows"></div>
+<button type="button" id="addMassageAdditionalHours" class="secondary">＋ 追加</button>
+</div>
 </fieldset>
 
 <fieldset class="full compact-top"><legend>💆‍♀️ マッサージチェア</legend><div class="checks">
