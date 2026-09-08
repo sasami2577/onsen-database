@@ -844,7 +844,8 @@
 
       bath_fees: collectFeeRows("bathFeeRows"),
       ticket_fees: collectTicketFeeRows("ticketFeeRows"),
-      ticket_fee_note: value("ticketFeeNote"),
+      disability_fees: collectFeeRows("disabilityFeeRows"),
+      disability_fee_note: value("disabilityFeeNote"),
       member_benefits: collectBenefitRows("memberBenefitRows"),
       special_coupons: collectBenefitRows("specialCouponRows"),
       discount_supplementary_note: value("discountSupplementaryNote"),
@@ -1873,7 +1874,8 @@
 
     populateFeeRows("bathFeeRows", item.bath_fees);
     populateTicketFeeRows("ticketFeeRows", item.ticket_fees);
-    setValue("ticketFeeNote", item.ticket_fee_note);
+    populateFeeRows("disabilityFeeRows", item.disability_fees);
+    setValue("disabilityFeeNote", item.disability_fee_note);
     populateBenefitRows("memberBenefitRows", item.member_benefits);
     populateBenefitRows("specialCouponRows", item.special_coupons);
     setValue("discountSupplementaryNote", item.discount_supplementary_note);
@@ -2869,7 +2871,7 @@
     "baby_bed_male", "baby_chair_female", "baby_chair_male", "basin_female", "basin_male", 
     "bath_anteroom_female", "bath_anteroom_male", "bath_chair_female", "bath_chair_male", 
     "bath_event_detail_female", "bath_event_detail_male", "bath_event_female", "bath_event_male", 
-    "bath_fees", "ticket_fees", "ticket_fee_note", "member_benefits", "special_coupons", "discount_supplementary_note", "bath_function_female", "bath_function_male", "bath_handrail_female", 
+    "bath_fees", "ticket_fees", "disability_fees", "disability_fee_note", "member_benefits", "special_coupons", "discount_supplementary_note", "bath_function_female", "bath_function_male", "bath_handrail_female", 
     "bath_handrail_male", "bath_location_female", "bath_location_male", "bath_note_female", 
     "bath_note_male", "bath_shape_female", "bath_shape_male", "bath_toys_detail_female", 
     "bath_toys_detail_male", "bath_toys_female", "bath_toys_male", "bath_trash_bin_female", 
@@ -4112,7 +4114,12 @@
 
           ${detailSubhead("🔁 回数券")}
           ${renderTicketFeeList(item.ticket_fees)}
-          ${item.ticket_fee_note ? `<p class="detail-note">${escapeHtml(item.ticket_fee_note)}</p>` : ""}
+
+          <div class="detail-gap"></div>
+
+          ${detailSubhead("♿️ 障がい者料金")}
+          ${renderFeeList(item.disability_fees)}
+          ${item.disability_fee_note ? `<p class="detail-note">${escapeHtml(item.disability_fee_note)}</p>` : ""}
 
           <div class="detail-gap"></div>
 
@@ -6048,7 +6055,7 @@
     if (otherFeeRows) {
       otherFeeRows.innerHTML = "";
     }
-    ["ticketFeeRows", "memberBenefitRows", "specialCouponRows"].forEach((id) => {
+    ["ticketFeeRows", "disabilityFeeRows", "memberBenefitRows", "specialCouponRows"].forEach((id) => {
       const el = $(id);
       if (el) el.innerHTML = "";
     });
@@ -6280,6 +6287,12 @@
       const button = event.target.closest(".remove-rental");
       if (!button) return;
       button.closest(".rental-row-3")?.remove();
+    });
+    $("addDisabilityFee")?.addEventListener("click", () => addFeeRow("disabilityFeeRows"));
+    $("disabilityFeeRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+      button.closest(".rental-row")?.remove();
     });
     $("addMemberBenefit")?.addEventListener("click", () => addBenefitRow("memberBenefitRows"));
     $("memberBenefitRows")?.addEventListener("click", (event) => {
