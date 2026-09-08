@@ -5144,7 +5144,7 @@
 
     $("detailShare")?.addEventListener("click", async () => {
       const shareData = {
-        title: item.name || "温泉データベース",
+        title: item.name || "ゆのしるべ",
         text: `${item.name || "温泉情報"}の詳細ページ`,
         url: location.href
       };
