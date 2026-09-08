@@ -5310,19 +5310,49 @@
         facilityById[f.id] = f;
       });
 
-      const sectionsHtml = (areas || [])
-        .map((area) => {
-          const facilities = (area.facility_ids || []).map((id) => facilityById[id]).filter(Boolean);
-          if (!facilities.length) return "";
-          return `
-            <section class="onsen-area-section">
-              <h2 class="onsen-area-heading">📍${escapeHtml(area.prefecture || "")} ${escapeHtml(area.area || "")}「<span class="onsen-area-name">${escapeHtml(area.name)}</span>」</h2>
-              <div class="onsen-area-facility-list">
-                ${facilities.map((item) => renderAreaFacilityCard(item)).join("")}
-              </div>
+      // 温泉地ごとに、実在する施設だけを紐づける
+      const areasWithFacilities = (areas || [])
+        .map((area) => ({
+          ...area,
+          facilities: (area.facility_ids || []).map((id) => facilityById[id]).filter(Boolean)
+        }))
+        .filter((area) => area.facilities.length);
+
+      // 都道府県＋市区町村ごとにグループ化
+      const groups = [];
+      const groupIndexByKey = {};
+      areasWithFacilities.forEach((area) => {
+        const key = `${area.prefecture || ""}__${area.area || ""}`;
+        if (!(key in groupIndexByKey)) {
+          groupIndexByKey[key] = groups.length;
+          groups.push({ prefecture: area.prefecture || "", city: area.area || "", areas: [] });
+        }
+        groups[groupIndexByKey[key]].areas.push(area);
+      });
+
+      const sectionsHtml = groups
+        .map(
+          (group) => `
+            <section class="onsen-area-group">
+              <h2 class="onsen-area-group-heading">📍${escapeHtml(group.prefecture)}${escapeHtml(group.city)}</h2>
+              ${group.areas
+                .map(
+                  (area) => `
+                    <div class="onsen-area-box">
+                      <div class="onsen-area-box-header">
+                        <span class="onsen-area-name">♨️ ${escapeHtml(area.name)}</span>
+                        <span class="onsen-area-count">${area.facilities.length}件表示</span>
+                      </div>
+                      <div class="onsen-area-facility-list">
+                        ${area.facilities.map((item) => renderAreaFacilityCard(item)).join("")}
+                      </div>
+                    </div>
+                  `
+                )
+                .join("")}
             </section>
-          `;
-        })
+          `
+        )
         .join("");
 
       areasView.innerHTML = `
