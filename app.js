@@ -647,6 +647,110 @@
     return result;
   }
 
+  // 回数券（区分・枚つづり・円の3項目）
+  let ticketRowSeq = 0;
+
+  function addTicketFeeRow(containerId, category = "", sheets = "", price = "", { focus = true } = {}) {
+    const rows = $(containerId);
+    if (!rows) return;
+
+    const rowId = `ticket-${++ticketRowSeq}`;
+    const row = document.createElement("div");
+    row.className = "rental-row rental-row-3";
+    row.dataset.rowId = rowId;
+
+    row.innerHTML = `
+      <input type="text" class="ticket-category" name="ticket-category-${rowId}" autocomplete="off" placeholder="区分（例：大人）" maxlength="40" value="${escapeHtml(category)}">
+      <input type="number" class="ticket-sheets" name="ticket-sheets-${rowId}" autocomplete="off" placeholder="枚つづり" min="0" value="${escapeHtml(sheets)}">
+      <input type="number" class="ticket-price" name="ticket-price-${rowId}" autocomplete="off" placeholder="円" min="0" value="${escapeHtml(price)}">
+      <button type="button" class="remove-rental" aria-label="この項目を削除">×</button>
+    `;
+
+    rows.appendChild(row);
+    if (focus) {
+      row.querySelector(".ticket-category")?.focus();
+    }
+  }
+
+  function collectTicketFeeRows(containerId) {
+    const rows = $(containerId);
+    if (!rows) return [];
+
+    const result = [];
+    rows.querySelectorAll(".rental-row-3").forEach((row) => {
+      const category = row.querySelector(".ticket-category")?.value.trim() || "";
+      const sheets = row.querySelector(".ticket-sheets")?.value.trim() || "";
+      const price = row.querySelector(".ticket-price")?.value.trim() || "";
+
+      if (!category && !sheets && !price) return;
+
+      result.push({
+        category: category || "回数券",
+        sheets: sheets ? Number(sheets) : null,
+        price: price ? Number(price) : null
+      });
+    });
+
+    return result;
+  }
+
+  function populateTicketFeeRows(containerId, items) {
+    const rows = $(containerId);
+    if (!rows) return;
+    rows.innerHTML = "";
+    if (!Array.isArray(items) || !items.length) return;
+    items.forEach((it) =>
+      addTicketFeeRow(containerId, it.category || "", it.sheets ?? "", it.price ?? "", { focus: false })
+    );
+  }
+
+  // 会員優待・優待券（対象サービス名・優待内容の2項目）
+  let benefitRowSeq = 0;
+
+  function addBenefitRow(containerId, service = "", content = "", { focus = true } = {}) {
+    const rows = $(containerId);
+    if (!rows) return;
+
+    const rowId = `benefit-${++benefitRowSeq}`;
+    const row = document.createElement("div");
+    row.className = "rental-row";
+    row.dataset.rowId = rowId;
+
+    row.innerHTML = `
+      <input type="text" class="benefit-service" name="benefit-service-${rowId}" autocomplete="off" placeholder="対象サービス名" maxlength="60" value="${escapeHtml(service)}">
+      <input type="text" class="benefit-content" name="benefit-content-${rowId}" autocomplete="off" placeholder="優待内容" maxlength="100" value="${escapeHtml(content)}">
+      <button type="button" class="remove-rental" aria-label="この項目を削除">×</button>
+    `;
+
+    rows.appendChild(row);
+    if (focus) {
+      row.querySelector(".benefit-service")?.focus();
+    }
+  }
+
+  function collectBenefitRows(containerId) {
+    const rows = $(containerId);
+    if (!rows) return [];
+
+    const result = [];
+    rows.querySelectorAll(".rental-row").forEach((row) => {
+      const service = row.querySelector(".benefit-service")?.value.trim() || "";
+      const content = row.querySelector(".benefit-content")?.value.trim() || "";
+      if (!service && !content) return;
+      result.push({ service, content });
+    });
+
+    return result;
+  }
+
+  function populateBenefitRows(containerId, items) {
+    const rows = $(containerId);
+    if (!rows) return;
+    rows.innerHTML = "";
+    if (!Array.isArray(items) || !items.length) return;
+    items.forEach((it) => addBenefitRow(containerId, it.service || "", it.content || "", { focus: false }));
+  }
+
   const DEFAULT_BATH_FEE_CATEGORIES = [
     "大人",
     "子ども",
@@ -739,6 +843,11 @@
       ],
 
       bath_fees: collectFeeRows("bathFeeRows"),
+      ticket_fees: collectTicketFeeRows("ticketFeeRows"),
+      ticket_fee_note: value("ticketFeeNote"),
+      member_benefits: collectBenefitRows("memberBenefitRows"),
+      special_coupons: collectBenefitRows("specialCouponRows"),
+      discount_supplementary_note: value("discountSupplementaryNote"),
       other_fees: collectFeeRows("otherFeeRows"),
       purchase_method:
         radioValue("purchaseMethod") === "その他" && value("purchaseMethodOther")
@@ -1763,6 +1872,11 @@
     setValue("hoursNote", item.hours_note);
 
     populateFeeRows("bathFeeRows", item.bath_fees);
+    populateTicketFeeRows("ticketFeeRows", item.ticket_fees);
+    setValue("ticketFeeNote", item.ticket_fee_note);
+    populateBenefitRows("memberBenefitRows", item.member_benefits);
+    populateBenefitRows("specialCouponRows", item.special_coupons);
+    setValue("discountSupplementaryNote", item.discount_supplementary_note);
     populateFeeRows("otherFeeRows", item.other_fees);
 
     if (item.purchase_method === "券売機" || item.purchase_method === "受付購入") {
@@ -2755,7 +2869,7 @@
     "baby_bed_male", "baby_chair_female", "baby_chair_male", "basin_female", "basin_male", 
     "bath_anteroom_female", "bath_anteroom_male", "bath_chair_female", "bath_chair_male", 
     "bath_event_detail_female", "bath_event_detail_male", "bath_event_female", "bath_event_male", 
-    "bath_fees", "bath_function_female", "bath_function_male", "bath_handrail_female", 
+    "bath_fees", "ticket_fees", "ticket_fee_note", "member_benefits", "special_coupons", "discount_supplementary_note", "bath_function_female", "bath_function_male", "bath_handrail_female", 
     "bath_handrail_male", "bath_location_female", "bath_location_male", "bath_note_female", 
     "bath_note_male", "bath_shape_female", "bath_shape_male", "bath_toys_detail_female", 
     "bath_toys_detail_male", "bath_toys_female", "bath_toys_male", "bath_trash_bin_female", 
@@ -3272,7 +3386,9 @@
     });
 
     const userLoc = window.__userLocation;
-    if (userLoc) {
+    const sortMode = $("sortModeSelect")?.value || "distance";
+
+    if (sortMode === "distance" && userLoc) {
       filtered.sort((a, b) => {
         const aHas = a.lat != null && a.lng != null;
         const bHas = b.lat != null && b.lng != null;
@@ -3286,6 +3402,27 @@
         if (bHas) return 1;
         return 0;
       });
+    } else if (sortMode === "priceAsc") {
+      filtered.sort((a, b) => {
+        const aPrice = getMinBathFeeAmount(a);
+        const bPrice = getMinBathFeeAmount(b);
+        if (aPrice == null && bPrice == null) return 0;
+        if (aPrice == null) return 1;
+        if (bPrice == null) return -1;
+        return aPrice - bPrice;
+      });
+    } else if (sortMode === "ratingDesc") {
+      filtered.sort((a, b) => {
+        const aRating = window.__ratingSummary?.[a.id]?.average ?? -1;
+        const bRating = window.__ratingSummary?.[b.id]?.average ?? -1;
+        return bRating - aRating;
+      });
+    } else if (sortMode === "nameAsc") {
+      filtered.sort((a, b) => (a.name || "").localeCompare(b.name || "", "ja"));
+    } else if (sortMode === "newest") {
+      filtered.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    } else if (sortMode === "updated") {
+      filtered.sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
     }
 
     return filtered;
@@ -3543,6 +3680,35 @@
       <ul class="rental-list">
         ${fees
           .map((f) => `<li>${escapeHtml(f.category)}：${f.amount != null ? `${f.amount}円` : "料金不明"}</li>`)
+          .join("")}
+      </ul>
+    `;
+  }
+
+  function renderTicketFeeList(fees) {
+    if (!Array.isArray(fees) || !fees.length) {
+      return `<p class="detail-note-tight">情報がありません。</p>`;
+    }
+    return `
+      <ul class="rental-list">
+        ${fees
+          .map(
+            (f) =>
+              `<li>${escapeHtml(f.category)}：${f.sheets != null ? `${f.sheets}枚つづり` : ""}${f.price != null ? `　${f.price}円` : ""}</li>`
+          )
+          .join("")}
+      </ul>
+    `;
+  }
+
+  function renderBenefitList(items) {
+    if (!Array.isArray(items) || !items.length) {
+      return `<p class="detail-note-tight">情報がありません。</p>`;
+    }
+    return `
+      <ul class="rental-list">
+        ${items
+          .map((it) => `<li>${escapeHtml(it.service || "対象サービス不明")}：${escapeHtml(it.content || "")}</li>`)
           .join("")}
       </ul>
     `;
@@ -3935,6 +4101,24 @@
 
           ${detailSubhead("♨️ 入浴料")}
           ${renderFeeList(item.bath_fees)}
+
+          <div class="detail-gap"></div>
+
+          ${detailSubhead("🔁 回数券")}
+          ${renderTicketFeeList(item.ticket_fees)}
+          ${item.ticket_fee_note ? `<p class="detail-note">${escapeHtml(item.ticket_fee_note)}</p>` : ""}
+
+          <div class="detail-gap"></div>
+
+          ${detailSubhead("✨️ 会員優待")}
+          ${renderBenefitList(item.member_benefits)}
+
+          <div class="detail-gap"></div>
+
+          ${detailSubhead("🎫 優待券")}
+          ${renderBenefitList(item.special_coupons)}
+
+          ${item.discount_supplementary_note ? `<p class="detail-note">${escapeHtml(item.discount_supplementary_note)}</p>` : ""}
 
           <div class="detail-gap"></div>
 
@@ -5858,6 +6042,10 @@
     if (otherFeeRows) {
       otherFeeRows.innerHTML = "";
     }
+    ["ticketFeeRows", "memberBenefitRows", "specialCouponRows"].forEach((id) => {
+      const el = $(id);
+      if (el) el.innerHTML = "";
+    });
 
     // 「その他」の自由記述欄も隠しておく
     $("businessTypeOtherWrap")?.classList.add("hidden");
@@ -6003,6 +6191,16 @@
       }
     });
 
+    $("sortModeSelect")?.addEventListener("change", () => {
+      if (window.__onsenData) {
+        renderCards(window.__onsenData);
+        updateMap(getFilteredSortedList(window.__onsenData));
+      } else {
+        renderCards(getLocalData());
+        updateMap(getFilteredSortedList(getLocalData()));
+      }
+    });
+
     $("add")?.addEventListener("click", () => {
       const modal = $("modal");
       if (!modal) return;
@@ -6071,6 +6269,24 @@
     $("maleAddRental")?.addEventListener("click", () => addRentalRow("maleRentalRows"));
     $("femaleAddRental")?.addEventListener("click", () => addRentalRow("femaleRentalRows"));
     $("addBathFee")?.addEventListener("click", () => addFeeRow("bathFeeRows"));
+    $("addTicketFee")?.addEventListener("click", () => addTicketFeeRow("ticketFeeRows"));
+    $("ticketFeeRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+      button.closest(".rental-row-3")?.remove();
+    });
+    $("addMemberBenefit")?.addEventListener("click", () => addBenefitRow("memberBenefitRows"));
+    $("memberBenefitRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+      button.closest(".rental-row")?.remove();
+    });
+    $("addSpecialCoupon")?.addEventListener("click", () => addBenefitRow("specialCouponRows"));
+    $("specialCouponRows")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-rental");
+      if (!button) return;
+      button.closest(".rental-row")?.remove();
+    });
     $("addOtherFee")?.addEventListener("click", () => addFeeRow("otherFeeRows"));
 
     // 施設業態で「その他」を選んだ時だけ自由記述欄を表示

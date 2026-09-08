@@ -39,6 +39,16 @@
       <button type="button" id="migrateButton" class="secondary">Supabaseに移行する</button>
     </div>
     <div id="status" class="status"></div>
+    <label class="sort-select-wrap">並び順
+      <select id="sortModeSelect">
+        <option value="distance">📍 現在地から近い順</option>
+        <option value="priceAsc">💰 安い順</option>
+        <option value="ratingDesc">⭐️ 評価が高い順</option>
+        <option value="nameAsc">🔤 名前順</option>
+        <option value="newest">🆕 新着順</option>
+        <option value="updated">🔄 更新順</option>
+      </select>
+    </label>
     <div id="cards"></div>
   </div>
   <section id="detailView" class="hidden" aria-live="polite"></section>
@@ -487,6 +497,24 @@
 <div id="bathFeeRows"></div>
 <button type="button" id="addBathFee" class="secondary">＋ 追加</button>
 </fieldset>
+
+<fieldset class="full compact-top"><legend>🔁 回数券</legend>
+<div id="ticketFeeRows"></div>
+<button type="button" id="addTicketFee" class="secondary">＋ 追加</button>
+<label class="full compact-top">割引対象者の概要<textarea id="ticketFeeNote" rows="2"></textarea></label>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>✨️ 会員優待</legend>
+<div id="memberBenefitRows"></div>
+<button type="button" id="addMemberBenefit" class="secondary">＋ 追加</button>
+</fieldset>
+
+<fieldset class="full compact-top"><legend>🎫 優待券</legend>
+<div id="specialCouponRows"></div>
+<button type="button" id="addSpecialCoupon" class="secondary">＋ 追加</button>
+</fieldset>
+
+<label class="full compact-top">その他 割引・優待内容に関する補足事項<textarea id="discountSupplementaryNote" rows="2"></textarea></label>
 
 <fieldset class="full compact-top"><legend>🧖‍♀️ その他料金区分</legend>
 <div id="otherFeeRows"></div>
