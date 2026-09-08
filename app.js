@@ -7139,7 +7139,7 @@
     return null;
   }
 
-  function buildMapPinIcon(businessType) {
+  function buildMapPinIcon(businessType, name) {
     const style = BUSINESS_TYPE_STYLES[businessType] || {
       emoji: "📍",
       bg: "#8a968f"
@@ -7149,6 +7149,7 @@
       <div class="map-pin">
         <div class="map-pin-head" style="background:${style.bg}">${style.emoji}</div>
         <div class="map-pin-tip" style="border-top-color:${style.bg}"></div>
+        ${name ? `<div class="map-pin-label">${escapeHtml(name)}</div>` : ""}
       </div>
     `;
 
@@ -7179,7 +7180,7 @@
 
     items.forEach((item) => {
       const marker = L.marker([Number(item.lat), Number(item.lng)], {
-        icon: buildMapPinIcon(item.business_type)
+        icon: buildMapPinIcon(item.business_type, item.name || "名称未設定")
       });
 
       const name = escapeHtml(item.name || "名称未設定");
