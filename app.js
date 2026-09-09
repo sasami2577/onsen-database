@@ -60,14 +60,14 @@
   let currentUser = null;
   let myCurrentRating = 0;
   let highlightedFacilityId = null;
+  let myFacilityStatusMap = {};
   let authMode = "login";
 
   function updateAuthHeaderUI(user) {
     const btn = $("openAuthButton");
     if (!btn) return;
     if (user) {
-      const name = user.user_metadata?.display_name || user.email || "ログイン中";
-      btn.textContent = `🐥 ${name}`;
+      btn.textContent = "🐥 マイページ";
     } else {
       btn.textContent = "👤 ログイン";
     }
@@ -92,6 +92,7 @@
     currentUser = user;
     updateAuthHeaderUI(user);
     updateUserInfoLoginGate();
+    loadMyFacilityStatuses();
     return user;
   }
 
@@ -177,6 +178,58 @@
     }
   }
 
+
+  async function loadMyFacilityStatuses() {
+    myFacilityStatusMap = {};
+    if (!supabaseClient || !currentUser) return;
+
+    try {
+      const { data, error } = await supabaseClient
+        .from("user_facility_status")
+        .select("onsen_id, interested, visited")
+        .eq("user_id", currentUser.id);
+      if (error) throw error;
+
+      (data || []).forEach((row) => {
+        myFacilityStatusMap[row.onsen_id] = { interested: row.interested, visited: row.visited };
+      });
+
+      if (window.__onsenData) renderCardsWithData(window.__onsenData);
+    } catch (error) {
+      console.error("お気に入り状態の取得に失敗:", error);
+    }
+  }
+
+  async function toggleFacilityFlag(onsenId, flagName) {
+    if (!supabaseClient) return;
+    if (!currentUser) {
+      openAuthModal();
+      return;
+    }
+    if (!onsenId) return;
+
+    const current = myFacilityStatusMap[onsenId] || { interested: false, visited: false };
+    const nextValue = !current[flagName];
+
+    try {
+      const { error } = await supabaseClient.from("user_facility_status").upsert(
+        {
+          user_id: currentUser.id,
+          onsen_id: onsenId,
+          [flagName]: nextValue,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: "user_id,onsen_id" }
+      );
+      if (error) throw error;
+
+      myFacilityStatusMap[onsenId] = { ...current, [flagName]: nextValue };
+      if (window.__onsenData) renderCardsWithData(window.__onsenData);
+      renderMyPageIfActive();
+    } catch (error) {
+      alert(`保存できませんでした：${error.message || "不明なエラー"}`);
+    }
+  }
 
   async function loadRatingSummary() {
     if (!supabaseClient) return;
@@ -3763,6 +3816,15 @@
                   : ""
               }
             </div>
+            <div class="card-action-row">
+              ${(() => {
+                const status = myFacilityStatusMap[item.id] || {};
+                return `
+                  <button type="button" class="toggle-interested card-action-half${status.interested ? " active" : ""}" data-id="${escapeHtml(item.id ?? "")}">❤️ ここ気になる</button>
+                  <button type="button" class="toggle-visited card-action-half${status.visited ? " active" : ""}" data-id="${escapeHtml(item.id ?? "")}">✅ 行ったことある</button>
+                `;
+              })()}
+            </div>
           </article>
         `;
       })
@@ -5881,6 +5943,78 @@
   }
 
 
+  function showMyPageList(type) {
+    const listView = $("listView");
+    const myPageView = $("myPageListView");
+    if (!myPageView) return;
+
+    listView?.classList.add("hidden");
+    $("mapSection")?.classList.add("hidden");
+    $("siteHeader")?.classList.add("hidden");
+    $("heroSection")?.classList.add("hidden");
+    $("homeScrollToTopButton")?.classList.add("hidden");
+    $("detailView")?.classList.add("hidden");
+    $("areasView")?.classList.add("hidden");
+    myPageView.classList.remove("hidden");
+    window.scrollTo(0, 0);
+
+    if (!currentUser) {
+      myPageView.innerHTML = `
+        <div class="detail-toolbar"><button type="button" id="myPageBack" class="detail-back">← 一覧に戻る</button></div>
+        <div class="detail-empty">ログインすると見られます。</div>
+      `;
+      $("myPageBack")?.addEventListener("click", () => {
+        location.hash = "";
+      });
+      return;
+    }
+
+    myPageView.dataset.type = type;
+
+    const facilityById = {};
+    (window.__onsenData || []).forEach((f) => {
+      facilityById[f.id] = f;
+    });
+
+    const matchedFacilities = Object.keys(myFacilityStatusMap)
+      .filter((id) => myFacilityStatusMap[id]?.[type])
+      .map((id) => facilityById[id])
+      .filter(Boolean);
+
+    const title = type === "interested" ? "❤️ ここ気になる一覧" : "✅ 行ったことある一覧";
+
+    myPageView.innerHTML = `
+      <div class="detail-toolbar">
+        <button type="button" id="myPageBack" class="detail-back">← 一覧に戻る</button>
+      </div>
+      <div class="areas-page-body">
+        <h1>${title}</h1>
+        ${
+          matchedFacilities.length
+            ? `<div class="onsen-area-facility-list">${matchedFacilities
+                .map((item) => renderAreaFacilityCard(item))
+                .join("")}</div>`
+            : `<p class="detail-empty">まだ登録されている施設がありません。</p>`
+        }
+      </div>
+    `;
+
+    $("myPageBack")?.addEventListener("click", () => {
+      location.hash = "";
+    });
+    myPageView.querySelectorAll(".area-facility-detail-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        location.hash = `#detail-${btn.dataset.id}`;
+      });
+    });
+  }
+
+  function renderMyPageIfActive() {
+    const myPageView = $("myPageListView");
+    if (!myPageView || myPageView.classList.contains("hidden")) return;
+    if (myPageView.dataset.type) showMyPageList(myPageView.dataset.type);
+  }
+
   function showList() {
     const listView = $("listView");
     const detailView = $("detailView");
@@ -5889,6 +6023,7 @@
     detailView.classList.add("hidden");
     detailView.innerHTML = "";
     $("areasView")?.classList.add("hidden");
+    $("myPageListView")?.classList.add("hidden");
     listView.classList.remove("hidden");
     $("mapSection")?.classList.remove("hidden");
     $("siteHeader")?.classList.remove("hidden");
@@ -5904,6 +6039,10 @@
       showDetail(decodeURIComponent(match[1]));
     } else if (location.hash === "#areas") {
       showAreasPage();
+    } else if (location.hash === "#mypage-interested") {
+      showMyPageList("interested");
+    } else if (location.hash === "#mypage-visited") {
+      showMyPageList("visited");
     } else {
       showList();
     }
@@ -6834,6 +6973,15 @@
       }
     });
 
+    $("goToInterestedList")?.addEventListener("click", () => {
+      closeAuthModal();
+      location.hash = "#mypage-interested";
+    });
+    $("goToVisitedList")?.addEventListener("click", () => {
+      closeAuthModal();
+      location.hash = "#mypage-visited";
+    });
+
     if (supabaseClient) refreshAuthState();
 
     // ---------------------------------------------------------
@@ -7106,6 +7254,8 @@
       if (event.target.closest("a")) return; // 外部リンクはそのまま開く
       if (event.target.closest(".show-on-map")) return; // マップ確認ボタンは別処理
       if (event.target.closest("#clearHighlightButton")) return; // 解除ボタンは別処理
+      if (event.target.closest(".toggle-interested")) return; // 気になるボタンは別処理
+      if (event.target.closest(".toggle-visited")) return; // 行った済みボタンは別処理
 
       const card = event.target.closest(".card");
       if (!card) return;
@@ -7124,6 +7274,18 @@
       if (!event.target.closest("#clearHighlightButton")) return;
       highlightedFacilityId = null;
       renderCardsWithData(window.__onsenData || getLocalData());
+    });
+
+    $("cards")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".toggle-interested");
+      if (!button) return;
+      toggleFacilityFlag(button.dataset.id, "interested");
+    });
+
+    $("cards")?.addEventListener("click", (event) => {
+      const button = event.target.closest(".toggle-visited");
+      if (!button) return;
+      toggleFacilityFlag(button.dataset.id, "visited");
     });
 
     $("cards")?.addEventListener("keydown", (event) => {

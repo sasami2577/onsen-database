@@ -76,6 +76,10 @@
 .card-action-half{flex:1;margin-top:0;background:#faf7f4;color:#714117;border:1px solid #e1d7cf;padding:11px 6px;border-radius:8px;font-weight:700;font-size:13px;text-align:center;display:flex;align-items:center;justify-content:center;text-decoration:none;box-sizing:border-box}
 .show-on-map.card-action-half{background:#e8f4ec;color:#177144;border-color:#b9e4cc}
 .card-action-route{background:#eaf1fb;color:#2c5aa0;border-color:#c5d8f0}
+.toggle-interested{background:#fff;color:#b5473c;border-color:#f0c9c5}
+.toggle-interested.active{background:#e0392b;color:#fff;border-color:#b52e22}
+.toggle-visited{background:#fff;color:#a9790c;border-color:#f0dfa8}
+.toggle-visited.active{background:#e8c300;color:#3a2c1c;border-color:#b89600}
 .pinned-banner{grid-column:1/-1;background:#875020;color:#fff;font-weight:700;font-size:14px;padding:10px 16px;border-radius:12px;margin-bottom:-4px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .pinned-banner-close{background:#fff3;border:none;color:#fff;width:24px;height:24px;border-radius:50%;font-size:13px;line-height:1;flex-shrink:0}
 .hidden{display:none}#modal,#filterModal,#feedbackModal,#reportModal,#authModal,#areasFilterModal{position:fixed;inset:0;background:#0008;z-index:2000;display:grid;place-items:center;padding:20px}.dialog{background:#fff;width:min(500px,100%);padding:25px;border-radius:20px;position:relative}.dialog #close{position:absolute;right:10px;top:8px;background:none;color:#555;font-size:28px;padding:5px}.dialog label{display:block;font-weight:700;margin:13px 0}.dialog input,.dialog textarea{display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #e1dcd7;border-radius:9px;font:inherit}.dialog form button{width:100%;margin-top:5px}@media(max-width:600px){.hero h1{font-size:22px}header{padding:12px}.brand b{font-size:14px}header>button{font-size:12px;padding:9px}}
