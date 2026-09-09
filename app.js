@@ -3748,7 +3748,15 @@
             })()}
 
             <div class="card-action-row">
-              <button type="button" class="detail card-action-half" data-id="${escapeHtml(item.id ?? "")}">この施設の詳細を見る</button>
+              ${(() => {
+                const destination =
+                  item.lat != null && item.lng != null
+                    ? `${item.lat},${item.lng}`
+                    : item.address || item.name;
+                if (!destination) return `<span class="card-action-half"></span>`;
+                const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
+                return `<a href="${escapeHtml(directionsUrl)}" target="_blank" rel="noopener" class="card-action-half card-action-route">🚗 経路を確認する</a>`;
+              })()}
               ${
                 item.lat != null && item.lng != null
                   ? `<button type="button" class="show-on-map card-action-half" data-id="${escapeHtml(item.id ?? "")}">🗺 マップで確認する</button>`
@@ -4095,16 +4103,29 @@
 
     const status = getOpenStatus(item);
 
+    const detailDestination =
+      item.lat != null && item.lng != null ? `${item.lat},${item.lng}` : item.address || item.name;
+    const detailDirectionsUrl = detailDestination
+      ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(detailDestination)}`
+      : null;
+
     return `
       <div class="detail-toolbar">
         <div class="detail-toolbar-row">
           <button type="button" id="detailBack" class="detail-back">← 一覧に戻る</button>
-          <button type="button" id="detailDelete" class="detail-action detail-action-danger">🗑 削除する</button>
+          <div class="detail-toolbar-right">
+            <button type="button" id="detailReport" class="detail-action">⚠️ 報告する</button>
+            <button type="button" id="detailDelete" class="detail-action detail-action-danger">🗑 削除する</button>
+          </div>
         </div>
         <div class="detail-toolbar-actions">
           <button type="button" id="detailEdit" class="detail-action">✏️ 情報を編集する</button>
           <button type="button" id="detailShare" class="detail-action">↗️ 共有する</button>
-          <button type="button" id="detailReport" class="detail-action detail-action-push-right">⚠️ 報告する</button>
+          ${
+            detailDirectionsUrl
+              ? `<a href="${escapeHtml(detailDirectionsUrl)}" target="_blank" rel="noopener" class="detail-action">🚗 経路を確認する</a>`
+              : ""
+          }
         </div>
       </div>
       <div class="detail-heading-block">
