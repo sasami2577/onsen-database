@@ -26,14 +26,15 @@
 .onsen-area-group{margin-bottom:36px}
 .onsen-pref-group{margin-bottom:40px}
 .onsen-pref-heading{font-size:22px;font-weight:900;margin:0 0 14px;padding-bottom:8px;border-bottom:3px solid #875020;color:#3a2c1c}
-.onsen-region-heading{font-size:16px;font-weight:800;margin:22px 0 12px;color:#a85a12}
-.onsen-city-heading{font-size:17px;font-weight:800;margin:18px 0 10px;color:#3a2c1c}
+.onsen-region-heading{font-size:19px;font-weight:800;margin:22px 0 12px;color:#a85a12}
+.onsen-city-heading{font-size:19px;font-weight:800;margin:18px 0 10px;color:#3a2c1c}
+.onsen-area-toggle-btn{display:block;width:100%;background:#faf7f4;color:#875020;border:1px solid #e1d7cf;padding:10px;border-radius:10px;font-weight:700;font-size:13px;margin-top:10px}
 .onsen-area-group-heading{font-size:18px;font-weight:800;margin:0 0 14px;color:#3a2c1c}
 .onsen-area-box{border:2px solid #e1d7cf;border-radius:16px;padding:18px 16px 16px;margin-bottom:20px;position:relative}
 .onsen-area-box-header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:-28px 0 14px;padding:0 8px}
 .onsen-area-name{font-weight:900;font-size:20px;color:#875020;background:#f8f6f5;padding:0 6px}
 .onsen-area-count{font-size:13px;font-weight:700;color:#807972;background:#f8f6f5;padding:0 6px;white-space:nowrap}
-.onsen-area-facility-list{display:flex;flex-direction:column;gap:12px}
+.onsen-area-facility-list{display:flex;flex-direction:column;gap:12px;margin-top:12px}
 .area-facility-card{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid #e8e4e0;border-radius:16px;padding:16px 18px;position:relative}
 .area-facility-card-body{flex:1;min-width:0}
 .area-facility-card-body h3{margin:0 0 6px;font-size:17px}

@@ -125,6 +125,8 @@
         <input id="areaPrefecture" style="width:100%;padding:10px;border:1px solid #e3ddd7;border-radius:10px;font-size:14px" placeholder="例：島根県">
         <label style="display:block;font-size:13px;font-weight:700;margin:10px 0 4px">地方区分（任意・例：東部地方、西部地方、隠岐地方）</label>
         <input id="areaRegion" style="width:100%;padding:10px;border:1px solid #e3ddd7;border-radius:10px;font-size:14px" placeholder="例：東部地方">
+        <label style="display:block;font-size:13px;font-weight:700;margin:10px 0 4px">地方区分の並び順（数字が小さいほど先に表示）</label>
+        <input id="areaRegionOrder" type="number" value="0" style="width:100%;padding:10px;border:1px solid #e3ddd7;border-radius:10px;font-size:14px" placeholder="例：1">
         <label style="display:block;font-size:13px;font-weight:700;margin:10px 0 4px">市区町村</label>
         <input id="areaCity" style="width:100%;padding:10px;border:1px solid #e3ddd7;border-radius:10px;font-size:14px" placeholder="例：松江市">
         <label style="display:block;font-size:13px;font-weight:700;margin:10px 0 4px">含める施設（検索して追加）</label>
@@ -608,6 +610,7 @@
     $("areaName").value = "";
     $("areaPrefecture").value = "";
     $("areaRegion").value = "";
+    $("areaRegionOrder").value = "0";
     $("areaCity").value = "";
     $("areaCancelEditButton").style.display = "none";
     renderSelectedAreaFacilities();
@@ -625,6 +628,7 @@
       name,
       prefecture: $("areaPrefecture").value.trim() || null,
       region: $("areaRegion").value.trim() || null,
+      region_order: Number($("areaRegionOrder").value) || 0,
       area: $("areaCity").value.trim() || null,
       facility_ids: selectedAreaFacilityIds
     };
@@ -685,6 +689,7 @@
         $("areaName").value = area.name || "";
         $("areaPrefecture").value = area.prefecture || "";
         $("areaRegion").value = area.region || "";
+        $("areaRegionOrder").value = area.region_order ?? 0;
         $("areaCity").value = area.area || "";
         $("areaCancelEditButton").style.display = "inline-block";
         renderSelectedAreaFacilities();

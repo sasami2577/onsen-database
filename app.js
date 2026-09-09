@@ -5787,6 +5787,7 @@
 
     // 都道府県 → 地方区分 → 市区町村 の階層でグループ化
     const prefMap = {};
+    const regionOrderMap = {};
     filtered.forEach((area) => {
       const pref = area.prefecture || "";
       const region = area.region || "";
@@ -5795,6 +5796,12 @@
       if (!prefMap[pref][region]) prefMap[pref][region] = {};
       if (!prefMap[pref][region][city]) prefMap[pref][region][city] = [];
       prefMap[pref][region][city].push(area);
+
+      const regionKey = `${pref}__${region}`;
+      const order = Number(area.region_order) || 0;
+      if (!(regionKey in regionOrderMap) || order < regionOrderMap[regionKey]) {
+        regionOrderMap[regionKey] = order;
+      }
     });
 
     const prefectures = Object.keys(prefMap).sort(
@@ -5804,7 +5811,11 @@
     content.innerHTML =
       prefectures
         .map((pref) => {
-          const regions = Object.keys(prefMap[pref]).sort((a, b) => a.localeCompare(b, "ja"));
+          const regions = Object.keys(prefMap[pref]).sort((a, b) => {
+            const orderDiff = regionOrderMap[`${pref}__${a}`] - regionOrderMap[`${pref}__${b}`];
+            if (orderDiff !== 0) return orderDiff;
+            return a.localeCompare(b, "ja");
+          });
           const cityOrder = window.MUNICIPALITIES_BY_PREFECTURE?.[pref] || [];
 
           const regionsHtml = regions
@@ -5834,7 +5845,8 @@
                               <span class="onsen-area-name">♨️ ${escapeHtml(area.name)}</span>
                               <span class="onsen-area-count">${area.facilities.length}件表示</span>
                             </div>
-                            <div class="onsen-area-facility-list">
+                            <button type="button" class="onsen-area-toggle-btn">登録施設一覧はこちら</button>
+                            <div class="onsen-area-facility-list hidden">
                               ${area.facilities.map((item) => renderAreaFacilityCard(item)).join("")}
                             </div>
                           </div>
@@ -5864,6 +5876,15 @@
     content.querySelectorAll(".area-facility-detail-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         location.hash = `#detail-${btn.dataset.id}`;
+      });
+    });
+
+    content.querySelectorAll(".onsen-area-toggle-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const list = btn.nextElementSibling;
+        if (!list) return;
+        const isHidden = list.classList.toggle("hidden");
+        btn.textContent = isHidden ? "登録施設一覧はこちら" : "閉じる";
       });
     });
   }
