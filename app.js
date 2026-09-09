@@ -4123,7 +4123,7 @@
           <button type="button" id="detailShare" class="detail-action">↗️ 共有する</button>
           ${
             detailDirectionsUrl
-              ? `<a href="${escapeHtml(detailDirectionsUrl)}" target="_blank" rel="noopener" class="detail-action">🚗 経路を確認する</a>`
+              ? `<a href="${escapeHtml(detailDirectionsUrl)}" target="_blank" rel="noopener" class="detail-action detail-action-route detail-action-push-right">🚗 経路を確認する</a>`
               : ""
           }
         </div>

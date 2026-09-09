@@ -155,6 +155,7 @@ body.modal-open{overflow:hidden}.primary{background:#875020;color:#fff}.secondar
 .detail-toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
 .detail-action{background:#faf7f4;color:#714117;border:1px solid #e1d7cf;padding:9px 13px;font-weight:700;font-size:13px;white-space:nowrap;text-decoration:none;display:inline-block}
 .detail-action-push-right{margin-left:auto}
+.detail-action-route{background:#eaf1fb;color:#2c5aa0;border-color:#c5d8f0}
 .detail-action-danger{background:#fdecea;color:#b5473c;border-color:#f0c9c5}
 .detail-heading-block{padding:20px 22px 24px;background:linear-gradient(135deg,#f5ebe3,#fcfbfa)}
 .detail-location{margin:0 0 6px;font-size:13px;color:#59524c;font-weight:700}
