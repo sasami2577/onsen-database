@@ -24,6 +24,10 @@
 .areas-page-body{padding:20px;max-width:900px;margin:0 auto}
 .areas-page-body h1{font-size:22px;margin:0 0 20px}
 .onsen-area-group{margin-bottom:36px}
+.onsen-pref-group{margin-bottom:40px}
+.onsen-pref-heading{font-size:22px;font-weight:900;margin:0 0 14px;padding-bottom:8px;border-bottom:3px solid #875020;color:#3a2c1c}
+.onsen-region-heading{font-size:16px;font-weight:800;margin:22px 0 12px;color:#a85a12}
+.onsen-city-heading{font-size:17px;font-weight:800;margin:18px 0 10px;color:#3a2c1c}
 .onsen-area-group-heading{font-size:18px;font-weight:800;margin:0 0 14px;color:#3a2c1c}
 .onsen-area-box{border:2px solid #e1d7cf;border-radius:16px;padding:18px 16px 16px;margin-bottom:20px;position:relative}
 .onsen-area-box-header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:-28px 0 14px;padding:0 8px}

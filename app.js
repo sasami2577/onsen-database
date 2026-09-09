@@ -5785,52 +5785,80 @@
       statusEl.textContent = filterActive ? `🔎 絞り込み中：${filtered.length}件の温泉地を表示中です` : "";
     }
 
-    // 都道府県＋市区町村ごとにグループ化
-    const groups = [];
-    const groupIndexByKey = {};
+    // 都道府県 → 地方区分 → 市区町村 の階層でグループ化
+    const prefMap = {};
     filtered.forEach((area) => {
-      const key = `${area.prefecture || ""}__${area.area || ""}`;
-      if (!(key in groupIndexByKey)) {
-        groupIndexByKey[key] = groups.length;
-        groups.push({ prefecture: area.prefecture || "", city: area.area || "", areas: [] });
-      }
-      groups[groupIndexByKey[key]].areas.push(area);
+      const pref = area.prefecture || "";
+      const region = area.region || "";
+      const city = area.area || "";
+      if (!prefMap[pref]) prefMap[pref] = {};
+      if (!prefMap[pref][region]) prefMap[pref][region] = {};
+      if (!prefMap[pref][region][city]) prefMap[pref][region][city] = [];
+      prefMap[pref][region][city].push(area);
     });
 
-    // 都道府県順→市区町村順に並べ、各グループ内は温泉地名のあいうえお順にする
-    groups.sort((a, b) => {
-      const prefDiff = PREFECTURE_ORDER.indexOf(a.prefecture) - PREFECTURE_ORDER.indexOf(b.prefecture);
-      if (prefDiff !== 0) return prefDiff;
-      return a.city.localeCompare(b.city, "ja");
-    });
-    groups.forEach((group) => {
-      group.areas.sort((a, b) => (a.name || "").localeCompare(b.name || "", "ja"));
-    });
+    const prefectures = Object.keys(prefMap).sort(
+      (a, b) => PREFECTURE_ORDER.indexOf(a) - PREFECTURE_ORDER.indexOf(b)
+    );
 
     content.innerHTML =
-      groups
-        .map(
-          (group) => `
-            <section class="onsen-area-group">
-              <h2 class="onsen-area-group-heading">📍${escapeHtml(group.prefecture)} ${escapeHtml(group.city)}</h2>
-              ${group.areas
-                .map(
-                  (area) => `
-                    <div class="onsen-area-box">
-                      <div class="onsen-area-box-header">
-                        <span class="onsen-area-name">♨️ ${escapeHtml(area.name)}</span>
-                        <span class="onsen-area-count">${area.facilities.length}件表示</span>
-                      </div>
-                      <div class="onsen-area-facility-list">
-                        ${area.facilities.map((item) => renderAreaFacilityCard(item)).join("")}
-                      </div>
-                    </div>
-                  `
-                )
-                .join("")}
+      prefectures
+        .map((pref) => {
+          const regions = Object.keys(prefMap[pref]).sort((a, b) => a.localeCompare(b, "ja"));
+          const cityOrder = window.MUNICIPALITIES_BY_PREFECTURE?.[pref] || [];
+
+          const regionsHtml = regions
+            .map((region) => {
+              const cityMap = prefMap[pref][region];
+              const cities = Object.keys(cityMap).sort((a, b) => {
+                const ai = cityOrder.indexOf(a);
+                const bi = cityOrder.indexOf(b);
+                if (ai === -1 && bi === -1) return a.localeCompare(b, "ja");
+                if (ai === -1) return 1;
+                if (bi === -1) return -1;
+                return ai - bi;
+              });
+
+              const citiesHtml = cities
+                .map((city) => {
+                  const areasInCity = [...cityMap[city]].sort((a, b) =>
+                    (a.name || "").localeCompare(b.name || "", "ja")
+                  );
+                  return `
+                    <h4 class="onsen-city-heading">📍${escapeHtml(city)}</h4>
+                    ${areasInCity
+                      .map(
+                        (area) => `
+                          <div class="onsen-area-box">
+                            <div class="onsen-area-box-header">
+                              <span class="onsen-area-name">♨️ ${escapeHtml(area.name)}</span>
+                              <span class="onsen-area-count">${area.facilities.length}件表示</span>
+                            </div>
+                            <div class="onsen-area-facility-list">
+                              ${area.facilities.map((item) => renderAreaFacilityCard(item)).join("")}
+                            </div>
+                          </div>
+                        `
+                      )
+                      .join("")}
+                  `;
+                })
+                .join("");
+
+              return `
+                ${region ? `<h3 class="onsen-region-heading">${escapeHtml(region)}</h3>` : ""}
+                ${citiesHtml}
+              `;
+            })
+            .join("");
+
+          return `
+            <section class="onsen-pref-group">
+              <h2 class="onsen-pref-heading">${escapeHtml(pref)}</h2>
+              ${regionsHtml}
             </section>
-          `
-        )
+          `;
+        })
         .join("") || `<p class="detail-empty">該当する温泉地がありません。</p>`;
 
     content.querySelectorAll(".area-facility-detail-btn").forEach((btn) => {
