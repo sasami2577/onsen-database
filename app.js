@@ -4177,7 +4177,6 @@
           <button type="button" id="detailBack" class="detail-back">← 一覧に戻る</button>
           <div class="detail-toolbar-right">
             <button type="button" id="detailReport" class="detail-action">⚠️ 報告する</button>
-            <button type="button" id="detailDelete" class="detail-action detail-action-danger">🗑 削除する</button>
           </div>
         </div>
         <div class="detail-toolbar-actions">
@@ -5638,33 +5637,6 @@
       $("reportClose")?.addEventListener("click", closeReportModal);
       $("reportCancel")?.addEventListener("click", closeReportModal);
     });
-
-    $("detailDelete")?.addEventListener("click", async () => {
-      const ok = confirm(
-        `「${item.name || "この温泉"}」の削除を申請します。管理者が確認したあと削除されます。よろしいですか？`
-      );
-      if (!ok) return;
-
-      try {
-        const isLocalItem = String(item.id).startsWith("local-");
-        if (supabaseClient && !isLocalItem) {
-          await submitModerationRequest("delete", item.id, null, item.name);
-          alert("削除を申請しました。管理者の確認後にサイトから削除されます。");
-        } else {
-          deleteLocalData(item.id);
-          alert("削除しました。");
-        }
-
-        location.hash = "";
-        await loadAll();
-      } catch (error) {
-        console.error(error);
-        alert(
-          "削除を申請できませんでした。\n\n" +
-          `詳細：${error.message || "不明なエラー"}`
-        );
-      }
-    });
   }
 
   function renderAreaFacilityCard(item) {
@@ -5781,6 +5753,17 @@
     }
   }
 
+  const PREFECTURE_ORDER = [
+    "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
+    "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
+    "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県",
+    "岐阜県", "静岡県", "愛知県", "三重県",
+    "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県",
+    "鳥取県", "島根県", "岡山県", "広島県", "山口県",
+    "徳島県", "香川県", "愛媛県", "高知県",
+    "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
+  ];
+
   function renderAreasPageContent() {
     const content = $("areasContent");
     if (!content) return;
@@ -5812,6 +5795,16 @@
         groups.push({ prefecture: area.prefecture || "", city: area.area || "", areas: [] });
       }
       groups[groupIndexByKey[key]].areas.push(area);
+    });
+
+    // 都道府県順→市区町村順に並べ、各グループ内は温泉地名のあいうえお順にする
+    groups.sort((a, b) => {
+      const prefDiff = PREFECTURE_ORDER.indexOf(a.prefecture) - PREFECTURE_ORDER.indexOf(b.prefecture);
+      if (prefDiff !== 0) return prefDiff;
+      return a.city.localeCompare(b.city, "ja");
+    });
+    groups.forEach((group) => {
+      group.areas.sort((a, b) => (a.name || "").localeCompare(b.name || "", "ja"));
     });
 
     content.innerHTML =
