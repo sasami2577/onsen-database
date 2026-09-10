@@ -7445,7 +7445,14 @@
       applyMapStyle("aerial");
     }
 
-    leafletMarkerGroup = L.layerGroup().addTo(leafletMap);
+    leafletMarkerGroup = window.L.markerClusterGroup
+      ? L.markerClusterGroup({
+          maxClusterRadius: 50,
+          spiderfyOnMaxZoom: true,
+          disableClusteringAtZoom: 16
+        })
+      : L.layerGroup();
+    leafletMarkerGroup.addTo(leafletMap);
     renderMapLegend();
   }
 
