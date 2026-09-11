@@ -61,6 +61,8 @@
   let myCurrentRating = 0;
   let highlightedFacilityId = null;
   let onsenAreasForMap = [];
+  let lastMapItems = [];
+  const AREA_CLUSTER_ZOOM_THRESHOLD = 13;
   let myFacilityStatusMap = {};
   let authMode = "login";
 
@@ -7460,6 +7462,9 @@
     }
 
     leafletMarkerGroup = L.layerGroup().addTo(leafletMap);
+    leafletMap.on("zoomend", () => {
+      renderMapMarkers(lastMapItems);
+    });
     renderMapLegend();
   }
 
@@ -7593,23 +7598,6 @@
     });
   }
 
-  function buildAreaLabelIcon(name, count, highlighted = false) {
-    const html = `
-      <div class="map-area-label${highlighted ? " map-area-label-highlighted" : ""}">
-        <span class="map-area-label-icon">♨️</span>
-        <span class="map-area-label-text">${escapeHtml(name)}</span>
-        <span class="map-area-label-count">${count}</span>
-      </div>
-    `;
-    return L.divIcon({
-      html,
-      className: "map-area-label-wrapper",
-      iconSize: [0, 0],
-      iconAnchor: [0, 0],
-      popupAnchor: [0, -20]
-    });
-  }
-
   function showFacilityOnMap(id) {
     if (!id) return;
     highlightedFacilityId = id;
@@ -7620,21 +7608,10 @@
     $("mapSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function updateMap(list) {
-    if (!window.L || !$("mapContainer")) return;
-    if (!leafletMap) initMap();
-    if (!leafletMap || !leafletMarkerGroup) return;
+  function renderMapMarkers(items) {
+    if (!leafletMap || !leafletMarkerGroup) return null;
 
     leafletMarkerGroup.clearLayers();
-
-    const items = (Array.isArray(list) ? list : []).filter(
-      (item) => item.lat != null && item.lng != null && !Number.isNaN(Number(item.lat)) && !Number.isNaN(Number(item.lng))
-    );
-
-    const mapCount = $("mapCount");
-    if (mapCount) {
-      mapCount.textContent = items.length ? `${items.length}件表示中` : "";
-    }
 
     // 表示中の施設のうち、登録済みの「温泉地」に属するものをグループ化する
     const itemById = {};
@@ -7665,9 +7642,12 @@
       areaGroupsById[area.id].items.push(item);
     });
 
+    const currentZoom = leafletMap.getZoom();
+    const isWideView = currentZoom < AREA_CLUSTER_ZOOM_THRESHOLD;
+
     let highlightedMarker = null;
 
-    individualItems.forEach((item) => {
+    function addIndividualPin(item) {
       const isHighlighted = String(item.id) === String(highlightedFacilityId);
       const marker = L.marker([Number(item.lat), Number(item.lng)], {
         icon: buildMapPinIcon(item.business_type, item.name || "名称未設定", isHighlighted),
@@ -7694,37 +7674,85 @@
       );
       marker.addTo(leafletMarkerGroup);
 
-      if (isHighlighted) {
-        highlightedMarker = marker;
-      }
-    });
+      if (isHighlighted) highlightedMarker = marker;
+    }
+
+    individualItems.forEach(addIndividualPin);
 
     Object.values(areaGroupsById).forEach(({ area, items: groupItems }) => {
-      const lat = groupItems.reduce((sum, it) => sum + Number(it.lat), 0) / groupItems.length;
-      const lng = groupItems.reduce((sum, it) => sum + Number(it.lng), 0) / groupItems.length;
       const isHighlighted = groupItems.some((it) => String(it.id) === String(highlightedFacilityId));
 
-      const marker = L.marker([lat, lng], {
-        icon: buildAreaLabelIcon(area.name, groupItems.length, isHighlighted),
-        zIndexOffset: isHighlighted ? 1000 : 500
-      });
-
-      marker.bindPopup(
-        `<div class="map-popup">
-          <b>♨️ ${escapeHtml(area.name)}</b>
-          <div class="map-popup-links map-popup-list">
-            ${groupItems
-              .map((it) => `<a href="#detail-${encodeURIComponent(it.id)}">${escapeHtml(it.name || "名称未設定")}</a>`)
-              .join("")}
-          </div>
-        </div>`
-      );
-      marker.addTo(leafletMarkerGroup);
-
-      if (isHighlighted) {
-        highlightedMarker = marker;
+      // 拡大表示中、またはハイライト中の施設を含む場合は個別ピンで表示
+      if (!isWideView || isHighlighted) {
+        groupItems.forEach(addIndividualPin);
+        return;
       }
+
+      // 広域表示：施設全体を囲む円＋件数＋温泉地名のラベルで表示
+      const lat = groupItems.reduce((sum, it) => sum + Number(it.lat), 0) / groupItems.length;
+      const lng = groupItems.reduce((sum, it) => sum + Number(it.lng), 0) / groupItems.length;
+      const maxDistKm = Math.max(
+        ...groupItems.map((it) => distanceKm(lat, lng, Number(it.lat), Number(it.lng))),
+        0.1
+      );
+      const radiusMeters = Math.max(maxDistKm * 1000 * 1.3, 400);
+
+      const circle = L.circle([lat, lng], {
+        radius: radiusMeters,
+        color: "#e0392b",
+        weight: 2,
+        fillColor: "#e0392b",
+        fillOpacity: 0.22
+      });
+      circle.on("click", () => {
+        const bounds = L.latLngBounds(groupItems.map((it) => [Number(it.lat), Number(it.lng)]));
+        leafletMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+      });
+      circle.addTo(leafletMarkerGroup);
+
+      const countMarker = L.marker([lat, lng], {
+        icon: L.divIcon({
+          html: `<div class="map-cluster-count">${groupItems.length}</div>`,
+          className: "map-cluster-count-wrapper",
+          iconSize: [0, 0],
+          iconAnchor: [0, 0]
+        }),
+        interactive: false
+      });
+      countMarker.addTo(leafletMarkerGroup);
+
+      const offsetDeg = radiusMeters / 111320 + 0.012;
+      const labelMarker = L.marker([lat - offsetDeg, lng], {
+        icon: L.divIcon({
+          html: `<div class="map-cluster-name">♨️ ${escapeHtml(area.name)}</div>`,
+          className: "map-cluster-name-wrapper",
+          iconSize: [0, 0],
+          iconAnchor: [0, 0]
+        }),
+        interactive: false
+      });
+      labelMarker.addTo(leafletMarkerGroup);
     });
+
+    return highlightedMarker;
+  }
+
+  function updateMap(list) {
+    if (!window.L || !$("mapContainer")) return;
+    if (!leafletMap) initMap();
+    if (!leafletMap || !leafletMarkerGroup) return;
+
+    const items = (Array.isArray(list) ? list : []).filter(
+      (item) => item.lat != null && item.lng != null && !Number.isNaN(Number(item.lat)) && !Number.isNaN(Number(item.lng))
+    );
+    lastMapItems = items;
+
+    const mapCount = $("mapCount");
+    if (mapCount) {
+      mapCount.textContent = items.length ? `${items.length}件表示中` : "";
+    }
+
+    const highlightedMarker = renderMapMarkers(items);
 
     if (highlightedMarker) {
       leafletMap.setView(highlightedMarker.getLatLng(), 15);
