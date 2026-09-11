@@ -7704,9 +7704,20 @@
         fillColor: "#e0392b",
         fillOpacity: 0.22
       });
-      circle.on("click", () => {
-        const bounds = L.latLngBounds(groupItems.map((it) => [Number(it.lat), Number(it.lng)]));
-        leafletMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+
+      const popupId = `cluster-zoom-${area.id}`;
+      circle.bindPopup(
+        `<div class="map-popup">
+          <b>♨️ ${escapeHtml(area.name)}</b>
+          <p class="map-popup-place">${groupItems.length}件の施設があります</p>
+          <button type="button" class="map-cluster-zoom-btn" id="${popupId}">さらに拡大する</button>
+        </div>`
+      );
+      circle.on("popupopen", () => {
+        $(popupId)?.addEventListener("click", () => {
+          const bounds = L.latLngBounds(groupItems.map((it) => [Number(it.lat), Number(it.lng)]));
+          leafletMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+        });
       });
       circle.addTo(leafletMarkerGroup);
 
@@ -7720,18 +7731,6 @@
         interactive: false
       });
       countMarker.addTo(leafletMarkerGroup);
-
-      const offsetDeg = radiusMeters / 111320 + 0.012;
-      const labelMarker = L.marker([lat - offsetDeg, lng], {
-        icon: L.divIcon({
-          html: `<div class="map-cluster-name">♨️ ${escapeHtml(area.name)}</div>`,
-          className: "map-cluster-name-wrapper",
-          iconSize: [0, 0],
-          iconAnchor: [0, 0]
-        }),
-        interactive: false
-      });
-      labelMarker.addTo(leafletMarkerGroup);
     });
 
     return highlightedMarker;
