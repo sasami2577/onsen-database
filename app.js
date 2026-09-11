@@ -60,6 +60,7 @@
   let currentUser = null;
   let myCurrentRating = 0;
   let highlightedFacilityId = null;
+  let onsenAreasForMap = [];
   let myFacilityStatusMap = {};
   let authMode = "login";
 
@@ -228,6 +229,18 @@
       renderMyPageIfActive();
     } catch (error) {
       alert(`保存できませんでした：${error.message || "不明なエラー"}`);
+    }
+  }
+
+  async function loadOnsenAreasForMap() {
+    if (!supabaseClient) return;
+    try {
+      const { data, error } = await supabaseClient.from("onsen_areas").select("id, name, facility_ids");
+      if (error) throw error;
+      onsenAreasForMap = data || [];
+      if (window.__onsenData) updateMap(getFilteredSortedList(window.__onsenData));
+    } catch (error) {
+      console.error("マップ用の温泉地データの取得に失敗:", error);
     }
   }
 
@@ -7050,6 +7063,7 @@
     });
 
     if (supabaseClient) loadRatingSummary();
+    if (supabaseClient) loadOnsenAreasForMap();
 
     // 絞り込み検索モーダル
     // ご意見・アイデアフォーム
@@ -7445,14 +7459,7 @@
       applyMapStyle("aerial");
     }
 
-    leafletMarkerGroup = window.L.markerClusterGroup
-      ? L.markerClusterGroup({
-          maxClusterRadius: 50,
-          spiderfyOnMaxZoom: true,
-          disableClusteringAtZoom: 16
-        })
-      : L.layerGroup();
-    leafletMarkerGroup.addTo(leafletMap);
+    leafletMarkerGroup = L.layerGroup().addTo(leafletMap);
     renderMapLegend();
   }
 
@@ -7586,6 +7593,23 @@
     });
   }
 
+  function buildAreaLabelIcon(name, count, highlighted = false) {
+    const html = `
+      <div class="map-area-label${highlighted ? " map-area-label-highlighted" : ""}">
+        <span class="map-area-label-icon">♨️</span>
+        <span class="map-area-label-text">${escapeHtml(name)}</span>
+        <span class="map-area-label-count">${count}</span>
+      </div>
+    `;
+    return L.divIcon({
+      html,
+      className: "map-area-label-wrapper",
+      iconSize: [0, 0],
+      iconAnchor: [0, 0],
+      popupAnchor: [0, -20]
+    });
+  }
+
   function showFacilityOnMap(id) {
     if (!id) return;
     highlightedFacilityId = id;
@@ -7612,9 +7636,38 @@
       mapCount.textContent = items.length ? `${items.length}件表示中` : "";
     }
 
+    // 表示中の施設のうち、登録済みの「温泉地」に属するものをグループ化する
+    const itemById = {};
+    items.forEach((item) => {
+      itemById[item.id] = item;
+    });
+
+    const facilityToArea = {};
+    onsenAreasForMap.forEach((area) => {
+      (area.facility_ids || []).forEach((id) => {
+        if (itemById[id] && !facilityToArea[id]) {
+          facilityToArea[id] = area;
+        }
+      });
+    });
+
+    const areaGroupsById = {};
+    const individualItems = [];
+    items.forEach((item) => {
+      const area = facilityToArea[item.id];
+      if (!area) {
+        individualItems.push(item);
+        return;
+      }
+      if (!areaGroupsById[area.id]) {
+        areaGroupsById[area.id] = { area, items: [] };
+      }
+      areaGroupsById[area.id].items.push(item);
+    });
+
     let highlightedMarker = null;
 
-    items.forEach((item) => {
+    individualItems.forEach((item) => {
       const isHighlighted = String(item.id) === String(highlightedFacilityId);
       const marker = L.marker([Number(item.lat), Number(item.lng)], {
         icon: buildMapPinIcon(item.business_type, item.name || "名称未設定", isHighlighted),
@@ -7636,6 +7689,33 @@
           <div class="map-popup-links">
             <a href="#detail-${encodeURIComponent(item.id)}">施設詳細を見る</a>
             <a href="${escapeHtml(mapsUrl)}" target="_blank" rel="noopener">Googleマップで見る</a>
+          </div>
+        </div>`
+      );
+      marker.addTo(leafletMarkerGroup);
+
+      if (isHighlighted) {
+        highlightedMarker = marker;
+      }
+    });
+
+    Object.values(areaGroupsById).forEach(({ area, items: groupItems }) => {
+      const lat = groupItems.reduce((sum, it) => sum + Number(it.lat), 0) / groupItems.length;
+      const lng = groupItems.reduce((sum, it) => sum + Number(it.lng), 0) / groupItems.length;
+      const isHighlighted = groupItems.some((it) => String(it.id) === String(highlightedFacilityId));
+
+      const marker = L.marker([lat, lng], {
+        icon: buildAreaLabelIcon(area.name, groupItems.length, isHighlighted),
+        zIndexOffset: isHighlighted ? 1000 : 500
+      });
+
+      marker.bindPopup(
+        `<div class="map-popup">
+          <b>♨️ ${escapeHtml(area.name)}</b>
+          <div class="map-popup-links map-popup-list">
+            ${groupItems
+              .map((it) => `<a href="#detail-${encodeURIComponent(it.id)}">${escapeHtml(it.name || "名称未設定")}</a>`)
+              .join("")}
           </div>
         </div>`
       );
