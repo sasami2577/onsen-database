@@ -1,14 +1,11 @@
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:#f8f6f5;color:#221c17}header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid #e6e1dd;position:sticky;top:0;z-index:1500}.brand{display:flex;gap:10px;align-items:center}.brand>span{font-size:30px;background:#f5ebe2;padding:6px 10px;border-radius:12px}.brand b{display:block}.brand small{display:block;color:#807a74;font-size:11px;margin-top:3px}button{border:0;border-radius:11px;padding:11px 15px;background:#875020;color:#fff;font-weight:700}.site-offline{text-align:center;padding:60px 20px;color:#615a53;font-size:16px;line-height:1.8}
 .site-footer{text-align:center;padding:30px 20px 50px}
-.ad-banner-wrap{position:fixed;left:0;right:0;bottom:0;z-index:1400;padding:10px 40px 10px 12px;max-width:1000px;margin:0 auto;background:#fff;box-shadow:0 -4px 16px rgba(0,0,0,.15)}
-.ad-banner{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#fff6ec,#fcfbfa);border:1px solid #f0d3a8;border-radius:14px;padding:10px 14px;text-decoration:none;color:#3a2c1c;font-weight:700;margin-bottom:6px}
-.ad-banner:last-child{margin-bottom:0}
-.ad-banner-label{background:#a85a12;color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;flex-shrink:0}
-.ad-banner-text{flex:1;font-size:13px}
-.ad-banner-arrow{font-size:18px;color:#a85a12}
+.ad-banner-wrap{position:fixed;left:0;right:0;bottom:0;z-index:1400;padding:8px 40px 8px 8px;text-align:center;background:#fff;box-shadow:0 -4px 16px rgba(0,0,0,.15)}
+.ad-banner-image-link{display:inline-block;line-height:0}
+.ad-banner-image-link img{max-width:100%;height:auto;border-radius:6px}
 .ad-banner-close{position:absolute;top:6px;right:6px;background:#f0ece8;color:#615a53;border:none;width:26px;height:26px;border-radius:50%;font-size:13px;line-height:1;z-index:1}
 .ad-banner-wrap.hidden{display:none}
-body{padding-bottom:70px}
+body{padding-bottom:80px}
 .feedback-link{background:none;border:none;color:#875020;font-weight:700;font-size:14px;text-decoration:underline;cursor:pointer}
 .hero{padding:38px 20px 15px;background:linear-gradient(135deg,#f5ebe3,#fcfbfa)}
 .hero-banner{width:100%;max-width:720px;height:auto;border-radius:18px;display:block;margin:0 0 20px;box-shadow:0 6px 20px #16130f1a}
