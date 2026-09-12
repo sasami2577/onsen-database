@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sasami2577.github.io/onsen-database/sitemap.xml
+Sitemap: https://sasami2577.github.io/yunoshirube/sitemap.xml
