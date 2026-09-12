@@ -3454,7 +3454,18 @@
             .filter((item) => item.prefecture === pref && item.area)
             .map((item) => item.area)
         )
-      ).sort();
+      );
+
+      const rawCityOrder = window.MUNICIPALITIES_BY_PREFECTURE?.[pref] || [];
+      const cityOrder = rawCityOrder.map((name) => name.replace(/^.+?郡/, ""));
+      areas.sort((a, b) => {
+        const ai = cityOrder.indexOf(a);
+        const bi = cityOrder.indexOf(b);
+        if (ai === -1 && bi === -1) return a.localeCompare(b, "ja");
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;
+      });
 
       if (!areas.length) return;
 
