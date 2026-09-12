@@ -44,6 +44,7 @@ body.ad-banner-visible{padding-bottom:80px}
 .area-facility-card{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid #e8e4e0;border-radius:16px;padding:16px 18px;position:relative}
 .area-facility-card-body{flex:1;min-width:0}
 .area-facility-card-body h3{margin:0 0 6px;font-size:17px}
+.area-facility-card:has(.card-corner-badges) .area-facility-card-body h3{margin-top:24px}
 .area-facility-card-body p{margin:2px 0}
 .area-facility-detail-btn{flex-shrink:0;background:#875020;color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:13px;white-space:nowrap}
 @media(max-width:600px){.area-facility-card{flex-direction:column;align-items:stretch}.area-facility-detail-btn{width:100%}}
