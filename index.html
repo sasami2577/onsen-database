@@ -3499,6 +3499,7 @@
   <a id="adBannerLink" href="#" target="_blank" rel="nofollow sponsored noopener" class="ad-banner-image-link">
     <img id="adBannerImg" src="" alt="" title="" width="468" height="60">
   </a>
+  <img id="adBannerPixel" src="" alt="" width="1" height="1" style="position:absolute;left:-9999px">
 </div>
 <script>
   document.body.classList.add("ad-banner-visible");
@@ -3524,22 +3525,60 @@
       {
         href: "https://hb.afl.rakuten.co.jp/hsc/57749bb9.2bd73c20.57712bff.daa9cf75/_RTLink145252?link_type=pict&ut=eyJwYWdlIjoic2hvcCIsInR5cGUiOiJwaWN0IiwiY29sIjoxLCJjYXQiOiIxMTgiLCJiYW4iOjMzMDg0NDAsImFtcCI6dHJ1ZX0%3D",
         img: "https://hbb.afl.rakuten.co.jp/hsb/57749bb9.2bd73c20.57712bff.daa9cf75/?me_id=2100001&me_adv_id=3308440&t=pict"
+      },
+      {
+        href: "https://px.a8.net/svt/ejp?a8mat=4BC9F8+E3URSI+14CS+66WOX",
+        img: "https://www25.a8.net/svt/bgt?aid=260912564853&wid=001&eno=01&mid=s00000005230001040000&mc=1",
+        pixel: "https://www19.a8.net/0.gif?a8mat=4BC9F8+E3URSI+14CS+66WOX"
+      },
+      {
+        href: "https://px.a8.net/svt/ejp?a8mat=4BC9F8+E3URSI+14CS+6I1XD",
+        img: "https://www23.a8.net/svt/bgt?aid=260912564853&wid=001&eno=01&mid=s00000005230001092000&mc=1",
+        pixel: "https://www13.a8.net/0.gif?a8mat=4BC9F8+E3URSI+14CS+6I1XD"
+      },
+      {
+        href: "https://px.a8.net/svt/ejp?a8mat=4BC9F8+E3URSI+14CS+5ZEMP",
+        img: "https://www23.a8.net/svt/bgt?aid=260912564853&wid=001&eno=01&mid=s00000005230001005000&mc=1",
+        pixel: "https://www13.a8.net/0.gif?a8mat=4BC9F8+E3URSI+14CS+5ZEMP"
+      },
+      {
+        href: "https://px.a8.net/svt/ejp?a8mat=4BC9F8+E3URSI+14CS+674EP",
+        img: "https://www20.a8.net/svt/bgt?aid=260912564853&wid=001&eno=01&mid=s00000005230001041000&mc=1",
+        pixel: "https://www12.a8.net/0.gif?a8mat=4BC9F8+E3URSI+14CS+674EP"
+      },
+      {
+        href: "https://px.a8.net/svt/ejp?a8mat=4BC9F8+E3URSI+14CS+5ZMCH",
+        img: "https://www24.a8.net/svt/bgt?aid=260912564853&wid=001&eno=01&mid=s00000005230001006000&mc=1",
+        pixel: "https://www12.a8.net/0.gif?a8mat=4BC9F8+E3URSI+14CS+5ZMCH"
       }
     ];
 
-    let currentAdIndex = 0;
+    let currentAdIndex = Math.floor(Math.random() * ads.length);
     const linkEl = document.getElementById("adBannerLink");
     const imgEl = document.getElementById("adBannerImg");
+    const pixelEl = document.getElementById("adBannerPixel");
 
     function showAd(index) {
       if (!linkEl || !imgEl) return;
       linkEl.href = ads[index].href;
       imgEl.src = ads[index].img;
+      if (pixelEl) {
+        pixelEl.src = ads[index].pixel || "";
+      }
+    }
+
+    function nextRandomAdIndex() {
+      if (ads.length <= 1) return 0;
+      let next;
+      do {
+        next = Math.floor(Math.random() * ads.length);
+      } while (next === currentAdIndex);
+      return next;
     }
 
     showAd(currentAdIndex);
     setInterval(() => {
-      currentAdIndex = (currentAdIndex + 1) % ads.length;
+      currentAdIndex = nextRandomAdIndex();
       showAd(currentAdIndex);
     }, 6000);
   })();
