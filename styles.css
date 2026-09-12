@@ -5,7 +5,7 @@
 .ad-banner-image-link img{max-width:100%;height:auto;border-radius:6px}
 .ad-banner-close{position:absolute;top:6px;right:6px;background:transparent;color:#615a53;border:none;width:26px;height:26px;font-size:15px;line-height:1;z-index:1}
 .ad-banner-wrap.hidden{display:none}
-body{padding-bottom:80px}
+body.ad-banner-visible{padding-bottom:80px}
 .feedback-link{background:none;border:none;color:#875020;font-weight:700;font-size:14px;text-decoration:underline;cursor:pointer}
 .hero{padding:38px 20px 15px;background:linear-gradient(135deg,#f5ebe3,#fcfbfa)}
 .hero-banner{width:100%;max-width:720px;height:auto;border-radius:18px;display:block;margin:0 0 20px;box-shadow:0 6px 20px #16130f1a}
@@ -155,7 +155,8 @@ body.modal-open{overflow:hidden}.primary{background:#875020;color:#fff}.secondar
 .time-select select{width:auto;flex:1;margin-top:0;padding:11px 8px}
 .time-select span{color:#837d77;font-weight:700}
 .dialog{max-height:94vh;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative}
-.scroll-to-top{position:fixed;right:24px;bottom:24px;z-index:500;background:#875020;color:#fff;border:none;padding:12px 18px;border-radius:99px;font-size:14px;font-weight:700;box-shadow:0 4px 14px #0004}
+.scroll-to-top{position:fixed;right:24px;bottom:24px;z-index:500;background:#875020;color:#fff;border:none;padding:12px 18px;border-radius:99px;font-size:14px;font-weight:700;box-shadow:0 4px 14px #0004;transition:bottom .2s ease}
+body.ad-banner-visible .scroll-to-top{bottom:90px}
 #modal .scroll-to-top{z-index:50}
 @media(max-width:600px){.dialog{max-height:calc(100dvh - 20px);padding-bottom:32px}.form-section{scroll-margin-top:12px}}
 

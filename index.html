@@ -3495,8 +3495,10 @@
   </a>
 </div>
 <script>
+  document.body.classList.add("ad-banner-visible");
   document.getElementById("adBannerClose")?.addEventListener("click", () => {
     document.getElementById("adBannerWrap")?.classList.add("hidden");
+    document.body.classList.remove("ad-banner-visible");
   });
 
   (function () {
