@@ -3433,16 +3433,21 @@
   }
 
   function buildCityFilterGroups() {
-    const container = $("filterCityContainer");
-    if (!container) return;
+    // 古いフラットなコンテナは常に空にしておく（レイアウト変更前の名残）
+    const legacyContainer = $("filterCityContainer");
+    if (legacyContainer) legacyContainer.innerHTML = "";
 
-    const checkedPrefs = Array.from(
+    // 各地方区分のスロットをいったんクリア
+    document.querySelectorAll(".filter-city-slot").forEach((slot) => {
+      slot.innerHTML = "";
+    });
+
+    const checkedPrefBoxes = Array.from(
       document.querySelectorAll(".filter-prefecture:checked")
-    ).map((el) => el.value);
+    );
 
-    container.innerHTML = "";
-
-    checkedPrefs.forEach((pref) => {
+    checkedPrefBoxes.forEach((prefBox) => {
+      const pref = prefBox.value;
       const areas = Array.from(
         new Set(
           (window.__onsenData || [])
@@ -3452,6 +3457,10 @@
       ).sort();
 
       if (!areas.length) return;
+
+      const regionFieldset = prefBox.closest(".filter-region");
+      const slot = regionFieldset ? regionFieldset.querySelector(".filter-city-slot") : null;
+      if (!slot) return;
 
       const group = document.createElement("div");
       group.className = "filter-city-group";
@@ -3470,7 +3479,7 @@
         checksWrap.appendChild(label);
       });
       group.appendChild(checksWrap);
-      container.appendChild(group);
+      slot.appendChild(group);
     });
   }
 
@@ -3546,6 +3555,7 @@
     document.querySelectorAll(".filter-prefecture").forEach((el) => (el.checked = false));
     document.querySelectorAll(".filter-city").forEach((el) => (el.checked = false));
     $("filterCityContainer").innerHTML = "";
+    document.querySelectorAll(".filter-city-slot").forEach((slot) => (slot.innerHTML = ""));
     document.querySelectorAll(".filter-business-type").forEach((el) => (el.checked = false));
     document.querySelectorAll(".filter-category").forEach((el) => (el.checked = false));
     if ($("filterCategoryAll")) $("filterCategoryAll").checked = false;

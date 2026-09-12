@@ -58,7 +58,7 @@ body.ad-banner-visible{padding-bottom:80px}
 .filter-category-card-emoji{font-size:28px}
 .filter-category-card-label{font-size:13px;font-weight:700;color:#403730}
 @media(max-width:600px){.filter-category-grid{grid-template-columns:repeat(2,1fr)}}
-#filterCityContainer .filter-city-group{border-top:1px solid #e5ece8;padding-top:12px;margin-top:12px}
+.filter-city-group{border-top:1px solid #e5ece8;padding-top:12px;margin-top:12px}
 #filterPriceSlider{accent-color:#875020;margin-top:8px}
 .map-toolbar{margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .map-toolbar button{background:#f2efed;color:#403730;border:1px solid #e1dcd7;font-size:13px;padding:8px 14px}
