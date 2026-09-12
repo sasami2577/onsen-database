@@ -86,6 +86,7 @@
       <button type="button" class="tab-btn" data-panel="reportsPanel">報告<span id="reportsCountBadge"></span></button>
       <button type="button" class="tab-btn" data-panel="feedbackPanel">ご意見・アイデア</button>
       <button type="button" class="tab-btn" data-panel="areasPanel">温泉地追加・編集</button>
+      <button type="button" class="tab-btn" data-panel="deletePanel">施設の削除</button>
       <button type="button" class="tab-btn" data-panel="settingsPanel">サイト公開設定</button>
     </div>
 
@@ -141,6 +142,13 @@
 
       <h3 style="margin-top:24px">登録済みの温泉地</h3>
       <div id="areasList"></div>
+    </section>
+
+        <section id="deletePanel" class="panel">
+      <h2>施設の削除</h2>
+      <p class="panel-desc">登録済みの施設を検索して、承認フローを介さず直接削除できます。この操作は取り消せません。</p>
+      <input id="deleteFacilitySearch" style="width:100%;padding:10px;border:1px solid #e3ddd7;border-radius:10px;font-size:14px" placeholder="施設名で検索">
+      <div id="deleteFacilityResults" style="margin-top:14px"></div>
     </section>
 
     <section id="settingsPanel" class="panel">
@@ -706,6 +714,68 @@
   }
 
   renderSelectedAreaFacilities();
+
+  // ---------------------------------------------------------
+  // 施設の削除
+  // ---------------------------------------------------------
+
+  let deleteSearchTimer = null;
+  $("deleteFacilitySearch").addEventListener("input", () => {
+    clearTimeout(deleteSearchTimer);
+    const q = $("deleteFacilitySearch").value.trim();
+    const resultsBox = $("deleteFacilityResults");
+    if (!q) {
+      resultsBox.innerHTML = "";
+      return;
+    }
+    deleteSearchTimer = setTimeout(async () => {
+      const { data, error } = await supabaseClient
+        .from("onsen_database")
+        .select("id, name, prefecture, area")
+        .ilike("name", `%${q}%`)
+        .order("name", { ascending: true })
+        .limit(20);
+
+      if (error) {
+        resultsBox.innerHTML = `<div class="empty">検索に失敗しました：${escapeHtml(error.message)}</div>`;
+        return;
+      }
+      if (!data.length) {
+        resultsBox.innerHTML = `<div class="empty">該当する施設が見つかりません。</div>`;
+        return;
+      }
+
+      resultsBox.innerHTML = data
+        .map(
+          (f) => `
+            <div class="card" data-id="${f.id}">
+              <h3>${escapeHtml(f.name || "名称未設定")}</h3>
+              <p class="meta">${escapeHtml(f.prefecture || "")}${escapeHtml(f.area || "")}</p>
+              <div class="btn-row">
+                <button class="action reject" data-delete-facility="${f.id}" data-name="${escapeHtml(f.name || "")}">削除する</button>
+              </div>
+            </div>
+          `
+        )
+        .join("");
+
+      resultsBox.querySelectorAll("[data-delete-facility]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          if (!confirm(`「${btn.dataset.name}」を完全に削除します。この操作は取り消せません。よろしいですか？`)) return;
+          const { error: deleteError } = await supabaseClient
+            .from("onsen_database")
+            .delete()
+            .eq("id", btn.dataset.deleteFacility);
+          if (deleteError) {
+            alert("削除できませんでした：" + deleteError.message);
+            return;
+          }
+          alert("削除しました。");
+          btn.closest(".card")?.remove();
+        });
+      });
+    }, 300);
+  });
 
   // ---------------------------------------------------------
   // サイト公開設定

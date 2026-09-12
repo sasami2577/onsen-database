@@ -5621,6 +5621,10 @@
           alert("現在この機能は利用できません（Supabase未設定）。");
           return;
         }
+        const btn = $("reportSubmit");
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = "送信中…";
         try {
           const { error } = await supabaseClient.from("reports").insert([
             {
@@ -5635,6 +5639,9 @@
           alert("報告を送信しました。ご協力ありがとうございます。");
         } catch (error) {
           alert(`送信できませんでした。\n\n詳細：${error.message || "不明なエラー"}`);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalText;
         }
       };
 
@@ -7121,6 +7128,10 @@
         alert("現在この機能は利用できません（Supabase未設定）。");
         return;
       }
+      const btn = $("feedbackSubmit");
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "送信中…";
       try {
         const { error } = await supabaseClient.from("feedback").insert([{ message }]);
         if (error) throw error;
@@ -7128,6 +7139,9 @@
         alert("ご意見を送信しました。ありがとうございます！");
       } catch (error) {
         alert(`送信できませんでした。\n\n詳細：${error.message || "不明なエラー"}`);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
       }
     });
 
