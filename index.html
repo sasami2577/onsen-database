@@ -3490,13 +3490,50 @@
 <script src="app.js"></script>
 <div class="ad-banner-wrap" id="adBannerWrap">
   <button type="button" id="adBannerClose" class="ad-banner-close" aria-label="広告を閉じる">✕</button>
-  <a href="https://hb.afl.rakuten.co.jp/hsc/57748ce0.6d086463.57712bff.daa9cf75/_RTLink145252?link_type=pict&ut=eyJwYWdlIjoic2hvcCIsInR5cGUiOiJwaWN0IiwiY29sIjoxLCJjYXQiOiIxIiwiYmFuIjoyMTg4NjQ4LCJhbXAiOnRydWV9" target="_blank" rel="nofollow sponsored noopener" class="ad-banner-image-link">
-    <img src="https://hbb.afl.rakuten.co.jp/hsb/57748ce0.6d086463.57712bff.daa9cf75/?me_id=2100001&me_adv_id=2188648&t=pict" alt="" title="" width="468" height="60">
+  <a id="adBannerLink" href="#" target="_blank" rel="nofollow sponsored noopener" class="ad-banner-image-link">
+    <img id="adBannerImg" src="" alt="" title="" width="468" height="60">
   </a>
 </div>
 <script>
   document.getElementById("adBannerClose")?.addEventListener("click", () => {
     document.getElementById("adBannerWrap")?.classList.add("hidden");
   });
+
+  (function () {
+    const ads = [
+      {
+        href: "https://hb.afl.rakuten.co.jp/hsc/57749314.cacf1390.57712bff.daa9cf75/_RTLink145252?link_type=pict&ut=eyJwYWdlIjoic2hvcCIsInR5cGUiOiJwaWN0IiwiY29sIjoxLCJjYXQiOiIxMzMiLCJiYW4iOjIxODg2NTgsImFtcCI6dHJ1ZX0%3D",
+        img: "https://hbb.afl.rakuten.co.jp/hsb/57749314.cacf1390.57712bff.daa9cf75/?me_id=2100001&me_adv_id=2188658&t=pict"
+      },
+      {
+        href: "https://hb.afl.rakuten.co.jp/hsc/5774970b.0e858c1b.57712bff.daa9cf75/_RTLink145252?link_type=pict&ut=eyJwYWdlIjoic2hvcCIsInR5cGUiOiJwaWN0IiwiY29sIjoxLCJjYXQiOiIyNyIsImJhbiI6MjE4ODY2NCwiYW1wIjp0cnVlfQ%3D%3D",
+        img: "https://hbb.afl.rakuten.co.jp/hsb/5774970b.0e858c1b.57712bff.daa9cf75/?me_id=2100001&me_adv_id=2188664&t=pict"
+      },
+      {
+        href: "https://hb.afl.rakuten.co.jp/hsc/5774980c.f016540c.57712bff.daa9cf75/_RTLink145252?link_type=pict&ut=eyJwYWdlIjoic2hvcCIsInR5cGUiOiJwaWN0IiwiY29sIjoxLCJjYXQiOiIxIiwiYmFuIjo3MzgxODUsImFtcCI6dHJ1ZX0%3D",
+        img: "https://hbb.afl.rakuten.co.jp/hsb/5774980c.f016540c.57712bff.daa9cf75/?me_id=2100017&me_adv_id=738185&t=pict"
+      },
+      {
+        href: "https://hb.afl.rakuten.co.jp/hsc/57749bb9.2bd73c20.57712bff.daa9cf75/_RTLink145252?link_type=pict&ut=eyJwYWdlIjoic2hvcCIsInR5cGUiOiJwaWN0IiwiY29sIjoxLCJjYXQiOiIxMTgiLCJiYW4iOjMzMDg0NDAsImFtcCI6dHJ1ZX0%3D",
+        img: "https://hbb.afl.rakuten.co.jp/hsb/57749bb9.2bd73c20.57712bff.daa9cf75/?me_id=2100001&me_adv_id=3308440&t=pict"
+      }
+    ];
+
+    let currentAdIndex = 0;
+    const linkEl = document.getElementById("adBannerLink");
+    const imgEl = document.getElementById("adBannerImg");
+
+    function showAd(index) {
+      if (!linkEl || !imgEl) return;
+      linkEl.href = ads[index].href;
+      imgEl.src = ads[index].img;
+    }
+
+    showAd(currentAdIndex);
+    setInterval(() => {
+      currentAdIndex = (currentAdIndex + 1) % ads.length;
+      showAd(currentAdIndex);
+    }, 6000);
+  })();
 </script>
 </body></html>

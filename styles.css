@@ -3,7 +3,7 @@
 .ad-banner-wrap{position:fixed;left:0;right:0;bottom:0;z-index:1400;padding:8px 40px 8px 8px;text-align:center;background:#fff;box-shadow:0 -4px 16px rgba(0,0,0,.15)}
 .ad-banner-image-link{display:inline-block;line-height:0}
 .ad-banner-image-link img{max-width:100%;height:auto;border-radius:6px}
-.ad-banner-close{position:absolute;top:6px;right:6px;background:#f0ece8;color:#615a53;border:none;width:26px;height:26px;border-radius:50%;font-size:13px;line-height:1;z-index:1}
+.ad-banner-close{position:absolute;top:6px;right:6px;background:transparent;color:#615a53;border:none;width:26px;height:26px;font-size:15px;line-height:1;z-index:1}
 .ad-banner-wrap.hidden{display:none}
 body{padding-bottom:80px}
 .feedback-link{background:none;border:none;color:#875020;font-weight:700;font-size:14px;text-decoration:underline;cursor:pointer}
