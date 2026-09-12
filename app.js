@@ -6567,6 +6567,7 @@
     });
 
     $("search")?.addEventListener("input", () => {
+      saveAppState();
       // 検索時は現在表示できるデータを再取得
       if (window.__onsenData) {
         renderCards(window.__onsenData);
@@ -6578,6 +6579,7 @@
     });
 
     $("sortModeSelect")?.addEventListener("change", () => {
+      saveAppState();
       if (window.__onsenData) {
         renderCards(window.__onsenData);
         updateMap(getFilteredSortedList(window.__onsenData));
@@ -7240,11 +7242,13 @@
       resetFilterForm();
       filterPriceSliderTouched = false;
       window.__activeFacetFilters = null;
+      saveAppState();
       renderCardsWithData(window.__onsenData);
     });
 
     $("filterApply")?.addEventListener("click", () => {
       window.__activeFacetFilters = collectFacetFilters();
+      saveAppState();
       closeFilterModal();
       renderCardsWithData(window.__onsenData);
     });
@@ -7834,8 +7838,44 @@
     }
   }
 
+  const APP_STATE_KEY = "onsenAppState";
+
+  function saveAppState() {
+    try {
+      const state = {
+        search: value("search"),
+        sortMode: $("sortModeSelect")?.value || "distance",
+        facetFilters: window.__activeFacetFilters || null
+      };
+      localStorage.setItem(APP_STATE_KEY, JSON.stringify(state));
+    } catch (error) {
+      console.error("状態の保存に失敗:", error);
+    }
+  }
+
+  function restoreAppState() {
+    try {
+      const raw = localStorage.getItem(APP_STATE_KEY);
+      if (!raw) return;
+      const state = JSON.parse(raw);
+
+      if (state.search && $("search")) {
+        $("search").value = state.search;
+      }
+      if (state.sortMode && $("sortModeSelect")) {
+        $("sortModeSelect").value = state.sortMode;
+      }
+      if (state.facetFilters) {
+        window.__activeFacetFilters = state.facetFilters;
+      }
+    } catch (error) {
+      console.error("状態の復元に失敗:", error);
+    }
+  }
+
   async function start() {
     setupEvents();
+    restoreAppState();
 
     const isPublic = await checkSitePublic();
     if (!isPublic) return;
