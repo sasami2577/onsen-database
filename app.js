@@ -3621,6 +3621,20 @@
         if (bHas) return 1;
         return 0;
       });
+    } else if (sortMode === "distanceDesc" && userLoc) {
+      filtered.sort((a, b) => {
+        const aHas = a.lat != null && a.lng != null;
+        const bHas = b.lat != null && b.lng != null;
+        if (aHas && bHas) {
+          return (
+            distanceKm(userLoc.lat, userLoc.lng, Number(b.lat), Number(b.lng)) -
+            distanceKm(userLoc.lat, userLoc.lng, Number(a.lat), Number(a.lng))
+          );
+        }
+        if (aHas) return -1;
+        if (bHas) return 1;
+        return 0;
+      });
     } else if (sortMode === "priceAsc") {
       filtered.sort((a, b) => {
         const aPrice = getAdultBathFeeAmount(a);
